@@ -7,7 +7,9 @@
 # GPU extract needs the NVIDIA Container Toolkit and a 24 GB GPU.
 # Bind the published port to 127.0.0.1 on the host (see compose).
 
-FROM docker.io/nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+# CUDA libraries come from the pinned pip wheels (cu130); the host driver comes from the NVIDIA toolkit.
+# Ubuntu 22.04's python3.11 is 3.11.0rc1, which breaks torch 2.14; use a current 3.11.
+FROM docker.io/library/python:3.11-slim-bookworm
 
 ENV PYTHONUNBUFFERED=1 \
     APP_HOME=/app \
@@ -25,15 +27,14 @@ ENV PYTHONUNBUFFERED=1 \
     MEDAI_EAGER_LOAD=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        python3.11 python3.11-venv python3.11-dev python3-pip \
         build-essential git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY requirements-leo.txt gunicorn_config.py app.py ./
+COPY requirements-leo.lock.txt gunicorn_config.py app.py ./
 COPY bin/leo bin/leo
-COPY scripts/leo_cli.py scripts/__init__.py scripts/
+COPY scripts/leo_cli.py scripts/__init__.py scripts/enrich_ontology_from_epio.py scripts/
 COPY services/ services/
 COPY routes/ routes/
 COPY schema/ schema/
@@ -43,9 +44,9 @@ COPY data/guidelines data/guidelines
 
 RUN python3.11 -m venv /app/venv-medcat \
     && /app/venv-medcat/bin/pip install --upgrade pip \
-    && /app/venv-medcat/bin/pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cu124 \
-    && /app/venv-medcat/bin/pip install -r requirements-leo.txt \
-    && /app/venv-medcat/bin/python -m spacy download en_core_web_sm \
+    && /app/venv-medcat/bin/pip install --no-deps \
+        --extra-index-url https://download.pytorch.org/whl/cu130 \
+        -r requirements-leo.lock.txt \
     && chmod +x /app/bin/leo \
     && mkdir -p /app/logs /app/data/leo_jobs /app/data/leo_training /app/model_cache \
     && chmod 0700 /app/data/leo_jobs /app/data/leo_training

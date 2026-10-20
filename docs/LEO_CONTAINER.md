@@ -6,7 +6,7 @@ Yes — the **code** can live in a container. Med42 weights and the UMLS/MedCAT 
 
 | In the image | On the host (mount) |
 |---|---|
-| Python 3.11, `venv-medcat`, `requirements-leo.txt`, spaCy `en_core_web_sm` | `model_cache/models--m42-health--Llama3-Med42-8B` |
+| Python 3.11, `venv-medcat` from `requirements-leo.lock.txt` (exact tested set: torch 2.14 cu130, numpy 1.26, spaCy `en_core_web_sm`) | `model_cache/models--m42-health--Llama3-Med42-8B` |
 | `bin/leo`, Flask `/leo/ui`, gunicorn | `data/medcat_cdb_epilepsy/cdb` |
 | Offline env (`HF_HUB_OFFLINE`, no cloud LLM) | `.env` (`UMLS_API_KEY` only; never in the image) |
 | | Job outputs: `data/leo_jobs/` |
@@ -35,6 +35,9 @@ Needs the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-na
 Docker daemons are often banned on HPC, and rootless Podman needs `/etc/subuid` ranges. `leo.def` builds the same image with Apptainer, no Docker needed:
 
 ```bash
+# login nodes often mount /tmp noexec; point every temp dir at an exec-capable disk
+export T="$HOME/.apptainer_build"; mkdir -p "$T/tmp" "$T/cache"
+export TMPDIR="$T/tmp" PROOT_TMP_DIR="$T/tmp" APPTAINER_TMPDIR="$T/tmp" APPTAINER_CACHEDIR="$T/cache"
 apptainer build --fakeroot leo.sif leo.def
 
 apptainer exec --nv \
@@ -46,7 +49,7 @@ apptainer exec --nv \
   leo.sif /app/bin/leo batch notes.xlsx --local --research
 ```
 
-The `.sif` is read-only; bind a writable jobs folder and `logs/`. `leo.sif` is gitignored. If you already have a Docker image: `apptainer build leo.sif docker-daemon://leo:research`.
+The `.sif` is read-only; bind a writable jobs folder and `logs/`. The ontology layer (O, after extract) needs `--bind "$PWD/data/ontologies:/app/data/ontologies"` (writable: it caches a lookup index in `_index/`); without it extract still runs and O is skipped (SNOMED / RxNorm are licensed, so they are not in the image). `leo.sif` is gitignored. If you already have a Docker image: `apptainer build leo.sif docker-daemon://leo:research`.
 
 ## What we do not put in the image
 

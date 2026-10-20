@@ -30,6 +30,8 @@ services:
     volumes:
       - ./model_cache:/app/model_cache:ro
       - ./data/medcat_cdb_epilepsy:/app/data/medcat_cdb_epilepsy:ro
+      # optional: ontology layer (SNOMED / RxNorm are licensed; not in the image)
+      # - ./data/ontologies:/app/data/ontologies
       - ./data/leo_jobs:/app/data/leo_jobs
       - ./data/leo_training:/app/data/leo_training
       - ./logs:/app/logs
