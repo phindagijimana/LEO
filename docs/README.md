@@ -42,6 +42,7 @@ Operator pages on this site / Read the Docs (MkDocs; `docs_dir` is `docs_site/`,
 
 - `index.md` — landing
 - `QUICKSTART.md`, `LEO_USER_GUIDE.md`, `LEO_HOSTING.md`, `THEORY.md`, `LITERATURE.md`, `INTERPRETING_RESULTS.md`
+- `LEO_CONTAINER.md`, `LEO_RESEARCH_DEPLOY.md`, `LEO_PHI.md`, `LEO_IS_REQUEST.md`, `LEO_THIRD_PARTY.md`
 - `LEO_ROUTING_RULES.md`, `IMPLEMENTATION.md`, `WEAKNESSES.md`, `ACTIVE_LEARNING_PLAN.md`
 
 Not on the HTML site: `EVAL_PROTOCOL_LEO.md`, paper drafts (`writing/`, `paper_doc/`), hold-out leak tables. Import `phindagijimana/medAI` at readthedocs.org after this config is on `main`.

@@ -2,8 +2,10 @@
 """leo: install, check, start and use LEO (LLM + EpExtra + Ontology) for epilepsy phenotype extraction.
 
     leo install                       add the packages LEO needs to venv-medcat (needs network)
-    leo check [--slurm] [--gpu]       verify the install; --slurm runs the GPU check on a GPU node
-    leo start [--cpu] [--local]       start the web app (default: Slurm GPU job); then `leo status`
+    leo check [--slurm] [--gpu] [--research]
+                                      verify the install; --research adds offline/login/IRB-ack/perms
+    leo start [--cpu] [--local] [--research]
+                                      start the web app (default: Slurm GPU job); then `leo status`
     leo status | stop | ui            where the server is, stop it, print the URL
     leo batch IN [-o OUT]             spreadsheet in -> spreadsheet out with phenotype columns
     leo extract NOTE | -              one note, result as a table row (CSV or JSON)
@@ -11,6 +13,8 @@
     leo learn FILE.reviewed.csv       Loop A/B from validator clicks (routing + thresholds; not extract)
     leo phenotypes                    what can be extracted, panels, question templates
     leo evidence                      what has been measured, with n and the limits
+    leo phi-scan FILE                 heuristic HIPAA-18 flags (not de-id; not extract)
+    leo phi-mask FILE -o OUT          same scan, write a redacted copy (still not Safe Harbor)
 
 Where it runs.  The default is a Slurm job on a GPU node (Med42-8B + EpExtra): `--cpu` asks for a CPU
 node and runs EpExtra only (no LLM: nothing is cross-checked, so every value is marked needs_review);
@@ -274,13 +278,43 @@ def _selection(args):
     return phen, asks
 
 
+def _want_research(args) -> bool:
+    from services.leo_research_gate import research_requested
+    return research_requested(getattr(args, "research", False))
+
+
+def _research_env() -> dict:
+    from services.leo_research_gate import apply_offline_env
+    apply_offline_env()
+    return {
+        "MEDAI_LEO_RESEARCH": "1",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1",
+        "HF_HUB_DISABLE_TELEMETRY": "1",
+        "MEDAI_LEO_BLOCK_CLOUD": "1",
+    }
+
+
+def _enforce_research(args) -> None:
+    if not _want_research(args):
+        return
+    from services.leo_research_gate import enforce
+    host = None
+    if getattr(args, "local", False) and hasattr(args, "host"):
+        host = _bind_host(args)
+    enforce(apply_offline=True, host=host)
+
+
 def cmd_batch(args) -> int:
     from services import leo_batch as lb
     inp = Path(args.input).expanduser()
     if not inp.exists():
         raise SystemExit(f"input not found: {inp}")
+    _enforce_research(args)
     if not args.local:
         argv = ["batch", str(inp.resolve()), "--local", "--mode", "cpu" if args.cpu else "gpu"]
+        if _want_research(args):
+            argv.append("--research")
         for flag, val in (("-o", args.output), ("--format", args.format), ("--phenotypes", args.phenotypes),
                           ("--text-col", args.text_col), ("--id-col", args.id_col), ("--date-col", args.date_col),
                           ("--sheet", args.sheet),
@@ -297,7 +331,8 @@ def cmd_batch(args) -> int:
                 argv += ["--question-type", args.question_type[i]]
         if args.accepted_only:
             argv.append("--accepted-only")
-        jid = _submit("batch", argv, **_slurm_kw(args, gpu=not args.cpu,
+        extra = _research_env() if _want_research(args) else None
+        jid = _submit("batch", argv, extra_env=extra, **_slurm_kw(args, gpu=not args.cpu,
                                                  partition=args.partition or "interactive", hours=args.hours))
         if args.wait:
             _wait(jid)
@@ -340,6 +375,7 @@ def cmd_run(args) -> int:
     leo run "give seizure types for the first 100 subjects" --input notes.xlsx
     leo run --spec notes_leo.job.json --input notes.xlsx          (re-run, or run after editing the spec)
     """
+    _enforce_research(args)
     from services import leo_batch as lb
     from services import leo_job as lj
     inp = Path(args.input).expanduser()
@@ -395,7 +431,10 @@ def cmd_run(args) -> int:
             if val:
                 argv += [flag, val]
         argv += _model_argv(args)
-        jid = _submit("run", argv, **_slurm_kw(args, gpu=not args.cpu,
+        if _want_research(args):
+            argv.append("--research")
+        extra = _research_env() if _want_research(args) else None
+        jid = _submit("run", argv, extra_env=extra, **_slurm_kw(args, gpu=not args.cpu,
                                                partition=args.partition or "interactive", hours=args.hours))
         if args.wait:
             _wait(jid)
@@ -637,11 +676,14 @@ def _bind_host(args) -> str:
 
 
 def cmd_start(args) -> int:
+    _enforce_research(args)
     if args.local:
         port = str(args.port)
         mode = _mode(args.mode)
         env = dict(os.environ, SERVICE_PORT=port, SERVICE_HOST=_bind_host(args), APP_HOME=str(REPO),
                    MEDAI_LOAD_MED42="1" if mode == "gpu" else "0", MEDAI_REQUIRE_GPU="1" if mode == "gpu" else "0")
+        if _want_research(args):
+            env.update(_research_env())
         adapter = _adapter_dir(args)
         if adapter:
             env["MEDAI_LORA_ADAPTER_DIR"] = adapter
@@ -681,7 +723,10 @@ def cmd_start(args) -> int:
         os.execve(str(PY), [str(PY), "app.py"], env)
     argv = ["start", "--local", "--port", str(args.port), "--mode", "cpu" if args.cpu else "gpu"]
     argv += _model_argv(args)
-    _submit("server", argv, **_slurm_kw(args, gpu=not args.cpu,
+    if _want_research(args):
+        argv.append("--research")
+    extra = _research_env() if _want_research(args) else None
+    _submit("server", argv, extra_env=extra, **_slurm_kw(args, gpu=not args.cpu,
                                         partition=args.partition or "general", hours=args.hours))
     print("[leo] when it starts, `leo status` shows the URL and the SSH tunnel command.")
     return 0
@@ -778,7 +823,12 @@ def cmd_install(args) -> int:
 
 def cmd_check(args) -> int:
     if args.slurm:
-        jid = _submit("check", ["check", "--gpu"] + _model_argv(args),
+        chk = ["check", "--gpu"] + _model_argv(args)
+        extra = None
+        if getattr(args, "research", False):
+            chk.append("--research")
+            extra = _research_env()
+        jid = _submit("check", chk, extra_env=extra,
                       **_slurm_kw(args, gpu=True, partition=args.partition or "interactive", hours=args.hours or 1))
         if args.wait:
             _wait(jid)
@@ -813,6 +863,13 @@ def cmd_check(args) -> int:
     if _adapter_dir(args):
         rec(Path(_adapter_dir(args), "adapter_config.json").exists(), "adapter", _adapter_dir(args))
     rec(None, "GPU visible", "yes" if _cuda() else "no (normal on a login node)")
+    if args.research or os.environ.get("MEDAI_LEO_RESEARCH", "").strip() in ("1", "true", "yes"):
+        from services.leo_research_gate import apply_offline_env, report
+        apply_offline_env()
+        print("Research-host gate (required = notes stay on disk; others are info)")
+        for row in report(host=_bind_host(args)):
+            rec(row.ok if row.required or row.ok else None, row.name,
+                row.detail if row.ok or row.required else f"optional: {row.detail}")
     from services.leo_catalog import ask_template, resolve_phenotypes
     from services.leo_runtime import LeoRuntime
     try:
@@ -843,6 +900,36 @@ def cmd_check(args) -> int:
                 rec(False, "GPU path", f"{type(e).__name__}: {e}")
     print("RESULT:", "ALL CHECKS PASSED" if not fails else f"{fails} FAILED")
     return 1 if fails else 0
+
+
+def cmd_phi_scan(args) -> int:
+    """Flag likely identifiers. Never called from extract."""
+    from services import leo_phi
+    raw, src = leo_phi.read_input(Path(args.input) if args.input != "-" else None,
+                                  sys.stdin.read() if args.input == "-" else None)
+    rep = leo_phi.scan_report(raw, source=src)
+    if args.json:
+        print(json.dumps(rep, indent=2))
+    else:
+        print(leo_phi.format_text_report(rep), end="")
+    return 0 if rep["n_hits"] == 0 else 2
+
+
+def cmd_phi_mask(args) -> int:
+    from services import leo_phi
+    raw, src = leo_phi.read_input(Path(args.input) if args.input != "-" else None,
+                                  sys.stdin.read() if args.input == "-" else None)
+    hits = leo_phi.scan(raw)
+    rep = leo_phi.scan_report(raw, source=src)
+    out = Path(args.output).expanduser()
+    body = leo_phi.BANNER + "\n\n" + leo_phi.mask(raw, hits)
+    out.write_text(body, encoding="utf-8")
+    print(f"[leo] wrote {out}  ({rep['n_hits']} heuristic replacements). {leo_phi.BANNER}")
+    if args.json:
+        print(json.dumps(rep, indent=2))
+    else:
+        print(leo_phi.format_text_report(rep), end="")
+    return 0
 
 
 # ─── argument parsing ────────────────────────────────────────────────────
@@ -908,6 +995,8 @@ def main(argv=None) -> int:
 
     sp = sub.add_parser("check", help="verify the install")
     sp.add_argument("--gpu", action="store_true", help="also load the model and run the LLM path (GPU node)")
+    sp.add_argument("--research", action="store_true",
+                    help="check local weights/CDB, offline HF, no cloud LLM (docs/LEO_RESEARCH_DEPLOY.md)")
     sp.add_argument("--slurm", action="store_true", help="run `check --gpu` as a Slurm GPU job")
     sp.add_argument("--wait", action="store_true")
     sp.add_argument("--adapter", default="")
@@ -940,6 +1029,8 @@ def main(argv=None) -> int:
     sp.add_argument("--export-codes", action="store_true")
     sp.add_argument("--context-engine", choices=("medspacy", "sentence", "negex"), default="medspacy")
     sp.add_argument("--quote-entail", action="store_true")
+    sp.add_argument("--research", action="store_true",
+                    help="fail closed unless local weights/CDB, offline HF, no cloud LLM")
     sp.add_argument("--partition", default="")
     sp.add_argument("--hours", type=int, default=24)
     _slurm_resource_args(sp)
@@ -972,6 +1063,8 @@ def main(argv=None) -> int:
     sp.add_argument("--hours", type=int, default=4)
     _slurm_resource_args(sp)
     _common(sp)
+    sp.add_argument("--research", action="store_true",
+                    help="fail closed unless local weights/CDB, offline HF, no cloud LLM")
     sp.set_defaults(fn=cmd_batch)
 
     sp = sub.add_parser("run", help='describe the job in words: leo run "seizure types for the first 100 subjects" --input notes.xlsx')
@@ -994,6 +1087,8 @@ def main(argv=None) -> int:
     sp.add_argument("--hours", type=int, default=4)
     _slurm_resource_args(sp)
     _common(sp)
+    sp.add_argument("--research", action="store_true",
+                    help="fail closed unless local weights/CDB, offline HF, no cloud LLM")
     sp.set_defaults(fn=cmd_run)
 
     sp = sub.add_parser("review", help="make a reviewed.csv to fill in, or summarise validator clicks")
@@ -1089,6 +1184,17 @@ def main(argv=None) -> int:
     sp = sub.add_parser("phenotypes", help="catalogue")
     sp.add_argument("--json", action="store_true")
     sp.set_defaults(fn=cmd_phenotypes)
+
+    sp = sub.add_parser("phi-scan", help="flag likely HIPAA identifiers (not de-id; does not change extract)")
+    sp.add_argument("input", help="text file, or - for stdin")
+    sp.add_argument("--json", action="store_true")
+    sp.set_defaults(fn=cmd_phi_scan)
+
+    sp = sub.add_parser("phi-mask", help="write a redacted copy; NOT Safe Harbor; not used by extract")
+    sp.add_argument("input", help="text file, or - for stdin")
+    sp.add_argument("-o", "--output", required=True, help="redacted text path (gitignored if named *_phi.txt)")
+    sp.add_argument("--json", action="store_true", help="also print the scan report as JSON")
+    sp.set_defaults(fn=cmd_phi_mask)
 
     args = ap.parse_args(argv)
     return int(args.fn(args) or 0)

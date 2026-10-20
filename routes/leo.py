@@ -59,12 +59,9 @@ def _bad(msg: str, status: int = 400):
 
 
 def _jobs_root() -> Path:
+    from services.leo_research_gate import secure_dir
     root = Path(os.environ.get("APP_HOME", os.getcwd())) / "data" / "leo_jobs"
-    root.mkdir(parents=True, exist_ok=True)
-    try:
-        root.chmod(0o700)            # notes and results: owner only (the app has no login)
-    except OSError:
-        pass
+    secure_dir(root)
     return root
 
 

@@ -100,11 +100,14 @@ class Med42ModelService:
             logger.info(f"Cache directory: {self.config.model_cache_dir}")
 
             # Load tokenizer
+            offline = os.environ.get("HF_HUB_OFFLINE", "").strip() in ("1", "true", "yes") or (
+                os.environ.get("TRANSFORMERS_OFFLINE", "").strip() in ("1", "true", "yes"))
             self.tokenizer = AutoTokenizer.from_pretrained(
                 self.model_name,
                 trust_remote_code=True,
                 padding_side="left",
-                cache_dir=self.config.model_cache_dir
+                cache_dir=self.config.model_cache_dir,
+                local_files_only=offline,
             )
 
             if not self.tokenizer.pad_token:
@@ -119,7 +122,8 @@ class Med42ModelService:
                 "trust_remote_code": True,
                 "torch_dtype": model_dtype,
                 "cache_dir": self.config.model_cache_dir,
-                "low_cpu_mem_usage": True
+                "low_cpu_mem_usage": True,
+                "local_files_only": offline,
             }
 
             # Force loading on CPU only to avoid device conflicts

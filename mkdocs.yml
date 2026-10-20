@@ -23,6 +23,11 @@ theme:
 nav:
   - Home: index.md
   - Installation: LEO_HOSTING.md
+  - Container: LEO_CONTAINER.md
+  - Research-host deploy: LEO_RESEARCH_DEPLOY.md
+  - PHI scan: LEO_PHI.md
+  - IS request: LEO_IS_REQUEST.md
+  - Third-party licenses: LEO_THIRD_PARTY.md
   - Quick start: QUICKSTART.md
   - Usage: LEO_USER_GUIDE.md
   - Theory and Science: THEORY.md

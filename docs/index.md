@@ -27,6 +27,11 @@ Code: [github.com/phindagijimana/medAI](https://github.com/phindagijimana/medAI)
 | Page | Use |
 |---|---|
 | [Installation](LEO_HOSTING.md) | Workstation, Slurm, weights, UMLS |
+| [Container](LEO_CONTAINER.md) | Docker / Apptainer; mount weights and CDB |
+| [PHI scan](LEO_PHI.md) | HIPAA-18 flags; not de-id; not extract |
+| [Research-host deploy](LEO_RESEARCH_DEPLOY.md) | `--research`: local weights, offline, no cloud |
+| [IS request](LEO_IS_REQUEST.md) | Text to send privacy / research IS |
+| [Third-party licenses](LEO_THIRD_PARTY.md) | Med42 / UMLS / CDB — not in git |
 | [Quick start](QUICKSTART.md) | `bin/leo check` and a first batch |
 | [Usage](LEO_USER_GUIDE.md) | Commands, input/output, Validator |
 | [Theory and Science](THEORY.md) | Why L, E, and O — and why they are not voted |

@@ -7,6 +7,8 @@ For one site's research use: the app runs on a computer or GPU node the institut
 ```bash
 bin/leo user add yourname            # asks for a password (10+ characters); turns login on
 bin/leo start --local --port 8085    # this machine only: http://127.0.0.1:8085/leo/ui
+# real notes, after written IS/IRB for this host (offline extract; login optional on 127.0.0.1):
+# bin/leo start --local --research
 ```
 
 - **Server.** `bin/leo start --local` runs gunicorn with one worker and four threads (`gunicorn_config.py`). One worker means one copy of the model in memory. `--dev` uses Flask's development server instead. If gunicorn is not installed it falls back to the development server and says so.
@@ -66,7 +68,7 @@ Steps for a new machine (a test in a clean environment on 2026-10-05 found each 
 4. Download the model into `model_cache` (about 16 GB). There is no CPU-only install: `bin/leo check` fails without torch, transformers and peft (several GB).
 5. `bin/leo check`, then `bin/leo start --local`.
 
-Packages are listed in `requirements-leo.txt` (versions the tests ran with) and, for the exact set in `venv-medcat`, `requirements-leo.lock.txt`. `bin/leo install --check-only` lists what is missing. The model (Med42-8B, about 16 GB in half precision) must be downloaded first, and a GPU with roughly 20 GB or more of memory is expected for the language model. The development cluster uses an L40S 24 GB. Docker files exist (`Dockerfile`, `Dockerfile.gpu`) and use the same gunicorn settings; they were not tested for LEO.
+Packages are listed in `requirements-leo.txt` (versions the tests ran with) and, for the exact set in `venv-medcat`, `requirements-leo.lock.txt`. `bin/leo install --check-only` lists what is missing. The model (Med42-8B, about 16 GB in half precision) must be downloaded first, and a GPU with roughly 20 GB or more of memory is expected for the language model. The development cluster uses an L40S 24 GB. LEO container (weights and CDB mounted, not in the image): `docs/LEO_CONTAINER.md`, `Dockerfile.leo`, `docker-compose.leo.yml`. The older `Dockerfile` / `Dockerfile.gpu` are the pre-LEO `/extract` app.
 
 ## 7. What was tested, and what was not
 

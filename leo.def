@@ -1,0 +1,65 @@
+# LEO research extract — Apptainer / Singularity. Code only, same as Dockerfile.leo.
+# Med42 weights, the MedCAT CDB, and .env are bound at run time (licenses).
+#
+#   apptainer build --fakeroot leo.sif leo.def
+#   apptainer exec --nv \
+#     --bind model_cache:/app/model_cache:ro \
+#     --bind data/medcat_cdb_epilepsy:/app/data/medcat_cdb_epilepsy:ro \
+#     --bind .env:/app/.env:ro \
+#     --bind data/leo_jobs:/app/data/leo_jobs \
+#     --bind logs:/app/logs \
+#     leo.sif /app/bin/leo check --research
+
+Bootstrap: docker
+From: nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+
+%files
+    requirements-leo.txt /app/requirements-leo.txt
+    gunicorn_config.py /app/gunicorn_config.py
+    app.py /app/app.py
+    bin/leo /app/bin/leo
+    scripts/leo_cli.py /app/scripts/leo_cli.py
+    scripts/__init__.py /app/scripts/__init__.py
+    services /app/services
+    routes /app/routes
+    schema /app/schema
+    rules /app/rules
+    data/ontologies/MANIFEST.json /app/data/ontologies/MANIFEST.json
+    data/guidelines /app/data/guidelines
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        python3.11 python3.11-venv python3.11-dev python3-pip \
+        build-essential git ca-certificates
+    rm -rf /var/lib/apt/lists/*
+    find /app -name __pycache__ -type d -prune -exec rm -rf {} +
+    python3.11 -m venv /app/venv-medcat
+    /app/venv-medcat/bin/pip install --no-cache-dir --upgrade pip
+    /app/venv-medcat/bin/pip install --no-cache-dir torch==2.4.1 --index-url https://download.pytorch.org/whl/cu124
+    /app/venv-medcat/bin/pip install --no-cache-dir -r /app/requirements-leo.txt
+    /app/venv-medcat/bin/python -m spacy download en_core_web_sm
+    chmod +x /app/bin/leo
+    mkdir -p /app/logs /app/data/leo_jobs /app/data/leo_training /app/model_cache /app/data/medcat_cdb_epilepsy
+
+%environment
+    export PYTHONUNBUFFERED=1
+    export APP_HOME=/app
+    export HF_HUB_OFFLINE=1
+    export TRANSFORMERS_OFFLINE=1
+    export HF_HUB_DISABLE_TELEMETRY=1
+    export MEDAI_LEO_BLOCK_CLOUD=1
+    export MEDAI_LEO_RESEARCH=1
+
+%runscript
+    exec /app/bin/leo "$@"
+
+%labels
+    org.opencontainers.image.title LEO research extract
+    org.opencontainers.image.source https://github.com/phindagijimana/medAI
+
+%help
+    Code only. Bind Med42 weights, the CDB, .env, and a writable jobs folder.
+    Weights missing -> check --research fails (offline; no download).
+    See docs/LEO_CONTAINER.md.

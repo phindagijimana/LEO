@@ -5,6 +5,8 @@ __pycache__
 *.egg-info
 .eggs
 venv
+venv-medcat
+.venv-docs
 .env
 .env.*
 !.env.example
@@ -17,4 +19,16 @@ uploads
 *.pid
 .cursor
 terminals
+writing
+paper_doc
+site
+model_cache
+checkpoints
+Chain_System
+data/leo_jobs
+data/leo_runs
+data/leo_training
+data/eval_corpora
+*.xlsx
+*.csv
 data/*.db-journal

@@ -15,6 +15,7 @@ HTML docs: [medai.readthedocs.io](https://medai.readthedocs.io) (Read the Docs, 
 bin/leo install --check-only
 bin/leo check                    # CPU, specialist only
 bin/leo check --slurm            # Med42 on a GPU node
+bin/leo check --research         # local weights, offline HF, no cloud LLM
 
 # extract
 bin/leo phenotypes

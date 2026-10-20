@@ -10,6 +10,9 @@ How it was built, and what the numbers mean: `docs/IMPLEMENTATION.md`, `docs/INT
 bin/leo install --check-only
 bin/leo check                         # CPU / specialist only
 bin/leo check --slurm                 # plus Med42 on a GPU node
+bin/leo check --research              # local weights/CDB, offline HF, no cloud LLM
+bin/leo phi-scan note.txt             # heuristic HIPAA-18 flags (not de-id)
+bin/leo phi-mask note.txt -o note_phi.txt   # redacted copy; still not Safe Harbor
 bin/leo phenotypes                    # catalogue and evidence level
 bin/leo evidence                      # measured figures (not typed into the UI)
 bin/leo batch notes.xlsx              # Slurm GPU; writes notes_leo.xlsx next to the input
@@ -96,7 +99,7 @@ Loop A = which reader to show. Loop B = accept-threshold report (still rules). L
 
 ## 7. Data protection
 
-Real notes only on approved compute with IRB. No login until `bin/leo user add NAME`. `--local` binds `127.0.0.1`. Job folders owner-only, deleted after 24 hours, **not encrypted**. `data/leo_training/` is owner-only and is **not** deleted with the job. UMLS key stays in `.env`. Do not commit review files.
+Real notes only on approved compute with IRB (`docs/LEO_IS_REQUEST.md`). `--research` keeps extract offline (local weights/CDB, no cloud LLM). Login is optional on `127.0.0.1`; required if the UI binds a node address. `--local` binds `127.0.0.1`. Job folders owner-only, deleted after 24 hours, **not encrypted**. `data/leo_training/` is owner-only and is **not** deleted with the job. UMLS key stays in `.env`. Do not commit review files.
 
 ## 8. Limits
 

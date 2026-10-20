@@ -159,6 +159,9 @@ leo_out/
 *_leo.xlsx
 *_leo.claims.csv
 *_leo.provenance.json
+*_phi.txt
+*_phi_masked.txt
+*.sif
 .leo_server.json
 logs/leo_jobs/
 

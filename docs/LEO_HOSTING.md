@@ -1,6 +1,6 @@
 # Hosting LEO (workstation or HPC)
 
-Researchers can run LEO themselves. Synthetic notes only unless they have IRB + approved compute. Not a device.
+Researchers can run LEO themselves. Synthetic notes only unless they have IRB + approved compute. Not a device. Container (mount weights + CDB, do not bake them in): `docs/LEO_CONTAINER.md`.
 
 ## What they need
 
@@ -13,7 +13,7 @@ Researchers can run LEO themselves. Synthetic notes only unless they have IRB + 
 | Hardware | ~16 CPU / 48G | 1× 24G GPU (L40S here), 8 CPU / 64G |
 | Research extract | **empty** — one reader, every cell `needs_review` | `accepted` ∧ `specialist+llm` |
 
-`bin/leo install --check-only` then `bin/leo check`. GPU path: `bin/leo check --gpu` on a GPU node, or `bin/leo check --slurm` from a login node.
+`bin/leo install --check-only` then `bin/leo check`. GPU path: `bin/leo check --gpu` on a GPU node, or `bin/leo check --slurm` from a login node. Before real notes: written IS/IRB for this host (`docs/LEO_IS_REQUEST.md`), then `bin/leo check --research` (local weights, offline, no cloud) (`docs/LEO_RESEARCH_DEPLOY.md`). Weights and UMLS stay off git (`docs/LEO_THIRD_PARTY.md`).
 
 ## Workstation
 
@@ -49,4 +49,4 @@ Keep `--local` on an interactive GPU allocation, **or** set `--gres` / `MEDAI_LE
 
 ## Ready?
 
-Yes for a researcher who can: create `venv-medcat`, place Med42 weights, keep UMLS in `.env`, and either sit on a GPU workstation or submit Slurm with the right GRES. CPU-only is ready today and is **not** a research extract. Confirm with `bin/leo check` and, on GPU, `bin/leo check --gpu` / `--slurm`.
+Yes for a researcher who can: create `venv-medcat`, place Med42 weights, keep UMLS in `.env`, and either sit on a GPU workstation or submit Slurm with the right GRES. CPU-only is ready today and is **not** a research extract. Confirm with `bin/leo check` and, on GPU, `bin/leo check --gpu` / `--slurm`. Real notes: written IS/IRB, then `bin/leo check --research` (all PASS) before `--research` start/batch.
