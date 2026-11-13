@@ -122,6 +122,6 @@ The loader must yield tuples of `(visit_id, patient_id, raw_text, meta_dict)` wh
 
 ## Related documents
 
-- [Universal Corpus Manifest Schema](CORPUS_MANIFEST_SCHEMA.md)
-- [MetaCAT Training Plan](METACAT_TRAINING_PLAN.md)
+- Corpus manifest schema: `docs/CORPUS_MANIFEST_SCHEMA.md` (repository only)
+- MetaCAT training plan: `docs/METACAT_TRAINING_PLAN.md` (repository only)
 - [References](REFERENCES.md)

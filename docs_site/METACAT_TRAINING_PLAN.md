@@ -1,1 +1,0 @@
-../docs/METACAT_TRAINING_PLAN.md

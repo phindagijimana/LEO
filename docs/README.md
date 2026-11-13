@@ -34,6 +34,8 @@ These files only point at the LEO guides above: `QUICK_START.md`, `HPC_CLI_GUIDE
 
 ## On this site
 
-There is one documentation site, [medai.readthedocs.io](https://medai.readthedocs.io). The pages above are the front door. The same site also carries the evaluation log, the bibliography, the LoRA contract, and the other study notes. They are under “The record” in the sidebar.
+There is one documentation site, [medai.readthedocs.io](https://medai.readthedocs.io). The pages above are the front door. The same site carries the evaluation log, the bibliography, the LoRA contract, and the other notes a reader of the work needs. They are under “The record” in the sidebar.
+
+These stay in this folder and are not on the site: housekeeping, the release checklist, corpus outreach, the UX plan, the superseded Shape A protocol, schema v0.1, the synth-corpus plans, MetaCAT plans, the MedCAT build plan, the ExECT working drafts, the arm-target sheet, the model card, the Zenodo readme, and the short pointers `QUICK_START.md`, `HPC_CLI_GUIDE.md`, and `RESOURCE_MODES.md`.
 
 Paper drafts in `writing/` and `paper_doc/`, and the raw hold-out tables under `eval/results/`, stay in the repository.

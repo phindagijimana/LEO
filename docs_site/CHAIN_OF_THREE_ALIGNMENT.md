@@ -1,1 +1,0 @@
-../docs/CHAIN_OF_THREE_ALIGNMENT.md

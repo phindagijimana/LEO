@@ -1,1 +1,0 @@
-../docs/BATCH_B_METACAT_PLAN.md

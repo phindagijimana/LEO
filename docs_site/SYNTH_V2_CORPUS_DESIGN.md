@@ -1,1 +1,0 @@
-../docs/SYNTH_V2_CORPUS_DESIGN.md

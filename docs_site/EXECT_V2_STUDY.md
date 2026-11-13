@@ -1,1 +1,0 @@
-../docs/EXECT_V2_STUDY.md

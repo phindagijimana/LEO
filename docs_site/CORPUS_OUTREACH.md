@@ -1,1 +1,0 @@
-../docs/CORPUS_OUTREACH.md
