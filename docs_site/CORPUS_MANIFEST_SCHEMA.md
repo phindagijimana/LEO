@@ -1,0 +1,1 @@
+../docs/CORPUS_MANIFEST_SCHEMA.md

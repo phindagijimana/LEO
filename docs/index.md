@@ -47,4 +47,4 @@ Study the work in this order: [Theory and Science](THEORY.md), [Interpreting res
 
 ## What this site does not include
 
-Paper drafts stay local. The frozen evaluation log and hold-out leak tables are in the repo for the study, not this operator site.
+This is the only documentation site. Paper drafts in `writing/` and `paper_doc/`, and the raw hold-out tables under `eval/results/`, stay in the repository. The evaluation log is on this site: [Evaluation protocol](EVAL_PROTOCOL_LEO.md).

@@ -1,0 +1,1 @@
+../docs/FONFERKO_GOLD_SCOPE.md

@@ -1,0 +1,1 @@
+../docs/LORA_FLAT_CONTRACT.md

@@ -22,22 +22,71 @@ theme:
 
 nav:
   - Home: index.md
-  - Glossary: GLOSSARY.md
+  - Installation: LEO_HOSTING.md
+  - Quick start: QUICKSTART.md
+  - Usage: LEO_USER_GUIDE.md
   - Theory and Science: THEORY.md
   - Interpreting results: INTERPRETING_RESULTS.md
+  - Literature: LITERATURE.md
+  - Routing rules: LEO_ROUTING_RULES.md
   - Design: IMPLEMENTATION.md
   - Weaknesses: WEAKNESSES.md
-  - Literature: LITERATURE.md
-  - Installation: LEO_HOSTING.md
+  - Learning: ACTIVE_LEARNING_PLAN.md
+  - Glossary: GLOSSARY.md
   - Container: LEO_CONTAINER.md
   - Research-host deploy: LEO_RESEARCH_DEPLOY.md
   - PHI scan: LEO_PHI.md
   - IS request: LEO_IS_REQUEST.md
   - Third-party licenses: LEO_THIRD_PARTY.md
-  - Quick start: QUICKSTART.md
-  - Usage: LEO_USER_GUIDE.md
-  - Routing rules: LEO_ROUTING_RULES.md
-  - Learning: ACTIVE_LEARNING_PLAN.md
+  - Local deployment: LEO_LOCAL_DEPLOYMENT.md
+  - Epic: LEO_EPIC_INTEGRATION.md
+  - HPC: HPC_CLI_GUIDE.md
+  - CPU and GPU: RESOURCE_MODES.md
+  - The record:
+    - Documentation map: DOC_MAP.md
+    - Evaluation protocol: EVAL_PROTOCOL_LEO.md
+    - Bibliography: REFERENCES.md
+    - LoRA contract: LORA_FLAT_CONTRACT.md
+    - Measured failures: MEASURED_FAILURE_TECHNIQUES.md
+    - Arm targets: leo_target.md
+    - MedCAT: MedCAT.md
+    - ExECT and EpExtra: EXECT_EPEXTRA_PARITY.md
+    - ExECT v2 study: EXECT_V2_STUDY.md
+    - ExECT annotation notes: EXECT_V2_ANNOTATION_GUIDELINES_NOTES.md
+    - Field specialists: FIELD_SPECIALIST_DETECTORS.md
+    - External baselines: E_EXTERNAL_BASELINES.md
+    - Schema v0.1: SCHEMA_V0_1.md
+    - Schema v0.1 stress test: SCHEMA_V0_1_STRESS_TEST.md
+    - Schema v0.2: SCHEMA_V0_2.md
+    - Scope decisions: SCOPE_DECISIONS.md
+    - Deferred work: DEFERRED_BEYOND_MVP.md
+    - Future work: FUTURE_WORK.md
+    - Disagreement adjudication: DISAGREEMENT_ADJUDICATION.md
+    - NINDS CDE: NINDS_CDE_MAPPING.md
+    - Ontology sources: ONTOLOGY_SOURCES.md
+    - Ontology resources: ontology_resources.md
+    - Fonferko-Shadrach mapping: FONFERKO_SHADRACH_MAPPING.md
+    - Fonferko gold scope: FONFERKO_GOLD_SCOPE.md
+    - Concept gold set: CONCEPT_GOLD_SET.md
+    - US note preprocessing: US_NOTE_PREPROCESSING.md
+    - US annotation plan: US_ANNOTATION_PLAN.md
+    - Synth v2 design: SYNTH_V2_CORPUS_DESIGN.md
+    - Synth v3 plan: SYNTH_V3_MASTER_PLAN.md
+    - Corpus manifest: CORPUS_MANIFEST_SCHEMA.md
+    - Corpus outreach: CORPUS_OUTREACH.md
+    - Data quality audit: DATA_QUALITY_AUDIT.md
+    - Chain of three: CHAIN_OF_THREE_ALIGNMENT.md
+    - Protocol shape A: PROTOCOL_SHAPE_A.md
+    - MetaCAT training: METACAT_TRAINING_PLAN.md
+    - MetaCAT eval: METACAT_EVAL.md
+    - Batch B plan: BATCH_B_METACAT_PLAN.md
+    - Role placements: ROLE_PLACEMENTS.md
+    - App UX: APP_UX_IMPROVEMENTS.md
+    - Model card: huggingface_model_card.md
+    - Release checklist: RELEASE_CHECKLIST.md
+    - Repo housekeeping: REPO_HOUSEKEEPING.md
+    - Zenodo readme: zenodo_readme.md
+    - Older quick start: QUICK_START.md
 
 markdown_extensions:
   - admonition

@@ -32,8 +32,8 @@ These are also the Read the Docs site (`docs_site/` is symlinks into this folder
 
 These files only point at the LEO guides above: `QUICK_START.md`, `HPC_CLI_GUIDE.md`, `RESOURCE_MODES.md`. At the repo root, `COMMANDS.md`, `PROJECT_STRUCTURE.md`, `DEPLOYMENT.md`, `SELF_HOSTING.md`, `TEST_RESULTS_SUMMARY.md`, and `REAL_WORLD_TEST_RESULTS.md` do the same.
 
-## In the repo, not on the public site
+## On this site
 
-The frozen evaluation log is [`EVAL_PROTOCOL_LEO.md`](EVAL_PROTOCOL_LEO.md). Hold-out tables stay under `eval/results/`. Paper drafts in `writing/` and `paper_doc/` stay local.
+There is one documentation site, [medai.readthedocs.io](https://medai.readthedocs.io). The pages above are the front door. The same site also carries the evaluation log, the bibliography, the LoRA contract, and the other study notes. They are under “The record” in the sidebar.
 
-Other lab notes in this folder (scope decisions, field-specialist plan, external baselines, corpus outreach) are for the study. They are not the front door.
+Paper drafts in `writing/` and `paper_doc/`, and the raw hold-out tables under `eval/results/`, stay in the repository.

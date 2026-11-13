@@ -1,0 +1,1 @@
+../docs/huggingface_model_card.md

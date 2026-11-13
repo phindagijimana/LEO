@@ -1,6 +1,6 @@
 # Literature
 
-Papers and standards LEO cites. Full lab bibliography with leftover-rule notes: `docs/REFERENCES.md` in the repo. Nothing here is a claim we ran the other group’s weights.
+Papers and standards LEO cites. Full lab bibliography with leftover-rule notes: [REFERENCES.md](REFERENCES.md), on this site. Nothing here is a claim we ran the other group’s weights.
 
 ## How to read a citation here
 

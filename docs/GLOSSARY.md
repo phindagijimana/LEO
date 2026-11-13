@@ -13,4 +13,4 @@ Names a new reader meets on the first pages. One line each. The design is [Desig
 | F-S | The 40 held-out Fonferko-Shadrach letters (synthetic, clinician-authored) |
 | `leo-v0.9` | Current pipeline tag |
 
-The frozen evaluation log is `docs/EVAL_PROTOCOL_LEO.md` in the repo. It is not on the public site.
+The frozen evaluation log is [EVAL_PROTOCOL_LEO.md](EVAL_PROTOCOL_LEO.md), on this same site.

@@ -6,7 +6,7 @@
 
 ## Motivation
 
-The MedCAT+Rules pipeline (arm B1') was built on the [ExECT-V2](REFERENCES.md#exect) rule vocabulary, which is anchored to UK epilepsy clinician letters (the [Fonferko-Shadrach corpus](REFERENCES.md#fonferko-shadrach)). US clinical notes differ from UK letters in three ways that can cause extraction failures even when the underlying clinical facts are identical:
+The MedCAT+Rules pipeline (arm B1') was built on the [ExECT-V2](REFERENCES.md#exect-v2) rule vocabulary, which is anchored to UK epilepsy clinician letters (the [Fonferko-Shadrach corpus](REFERENCES.md#fonferko-shadrach)). US clinical notes differ from UK letters in three ways that can cause extraction failures even when the underlying clinical facts are identical:
 
 1. **Section header conventions.** US templated notes use abbreviations (`CC:`, `HX:`, `PMH:`, `MEDS:`, `EXAM:`) where UK letters spell them out (`Chief Complaint:`, `History of Present Illness:`). Section-aware rules that key off canonical labels effectively hide content when the header doesn't match.
 2. **Medication brand names.** US notes reach for `Keppra`, `Dilantin`, `Tegretol`, `Depakene` — brand names that are less common in UK narrative. If the concept catalogue is trained only on generic names, ~20 % of AED mentions get missed.

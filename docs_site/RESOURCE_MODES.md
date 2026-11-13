@@ -1,0 +1,1 @@
+../docs/RESOURCE_MODES.md

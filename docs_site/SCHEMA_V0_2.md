@@ -1,0 +1,1 @@
+../docs/SCHEMA_V0_2.md
