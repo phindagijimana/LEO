@@ -78,6 +78,54 @@ paper_doc/
 docs/TRIPOD_LLM_CHECKLIST.md
 docs/REVIEWER_PACKET.md
 
+# Lab notes — on disk only. Not GitHub, not the docs site.
+# Listed after !docs/*.md so these names stay ignored.
+docs/APP_UX_IMPROVEMENTS.md
+docs/BATCH_B_METACAT_PLAN.md
+docs/CHAIN_OF_THREE_ALIGNMENT.md
+docs/CONCEPT_GOLD_SET.md
+docs/CORPUS_MANIFEST_SCHEMA.md
+docs/CORPUS_OUTREACH.md
+docs/DATA_QUALITY_AUDIT.md
+docs/DEFERRED_BEYOND_MVP.md
+docs/DISAGREEMENT_ADJUDICATION.md
+docs/EVAL_PROTOCOL_LEO.md
+docs/EXECT_EPEXTRA_PARITY.md
+docs/EXECT_V2_ANNOTATION_GUIDELINES_NOTES.md
+docs/EXECT_V2_STUDY.md
+docs/E_EXTERNAL_BASELINES.md
+docs/FIELD_SPECIALIST_DETECTORS.md
+docs/FONFERKO_GOLD_SCOPE.md
+docs/FONFERKO_SHADRACH_EMAIL_DRAFT.md
+docs/FONFERKO_SHADRACH_MAPPING.md
+docs/FUTURE_WORK.md
+docs/HPC_CLI_GUIDE.md
+docs/LEO_EPIC_INTEGRATION.md
+docs/METACAT_EVAL.md
+docs/METACAT_TRAINING_PLAN.md
+docs/MedCAT.md
+docs/NINDS_CDE_MAPPING.md
+docs/ONTOLOGY_SOURCES.md
+docs/PROTOCOL_SHAPE_A.md
+docs/QUICK_START.md
+docs/REFERENCES.md
+docs/RELEASE_CHECKLIST.md
+docs/REPO_HOUSEKEEPING.md
+docs/RESOURCE_MODES.md
+docs/ROLE_PLACEMENTS.md
+docs/SCHEMA_V0_1.md
+docs/SCHEMA_V0_1_STRESS_TEST.md
+docs/SCHEMA_V0_2.md
+docs/SCOPE_DECISIONS.md
+docs/SYNTH_V2_CORPUS_DESIGN.md
+docs/SYNTH_V3_MASTER_PLAN.md
+docs/US_ANNOTATION_PLAN.md
+docs/US_NOTE_PREPROCESSING.md
+docs/huggingface_model_card.md
+docs/leo_target.md
+docs/ontology_resources.md
+docs/zenodo_readme.md
+
 # Environment (never commit — may contain API keys / secrets)
 .env
 .env.local

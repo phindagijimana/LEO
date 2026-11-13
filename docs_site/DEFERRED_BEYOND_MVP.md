@@ -1,1 +1,0 @@
-../docs/DEFERRED_BEYOND_MVP.md

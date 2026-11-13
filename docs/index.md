@@ -47,4 +47,4 @@ Study the work in this order: [Theory and Science](THEORY.md), [Interpreting res
 
 ## What this site does not include
 
-This is the only documentation site. The evaluation log is on this site: [Evaluation protocol](EVAL_PROTOCOL_LEO.md). Lab plans, outreach notes, superseded drafts, and duplicate command sheets stay in the `docs/` folder of the repository and are not published here. Paper drafts in `writing/` and `paper_doc/`, and the raw hold-out tables under `eval/results/`, stay in the repository too.
+This is the only documentation site. It has the operator pages and the short study pages. The evaluation log, schema, lab plans, and outreach notes stay on disk in `docs/` and are not published here or on GitHub. Paper drafts stay in `writing/` and `paper_doc/`. Hold-out tables stay under `eval/results/` in the repository.

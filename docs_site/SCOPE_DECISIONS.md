@@ -1,1 +1,0 @@
-../docs/SCOPE_DECISIONS.md

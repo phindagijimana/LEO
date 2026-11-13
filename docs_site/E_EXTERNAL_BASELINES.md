@@ -1,1 +1,0 @@
-../docs/E_EXTERNAL_BASELINES.md

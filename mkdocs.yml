@@ -39,27 +39,9 @@ nav:
   - IS request: LEO_IS_REQUEST.md
   - Third-party licenses: LEO_THIRD_PARTY.md
   - Local deployment: LEO_LOCAL_DEPLOYMENT.md
-  - The record:
-    - Documentation map: DOC_MAP.md
-    - Evaluation protocol: EVAL_PROTOCOL_LEO.md
-    - Bibliography: REFERENCES.md
-    - LoRA contract: LORA_FLAT_CONTRACT.md
-    - Measured failures: MEASURED_FAILURE_TECHNIQUES.md
-    - Field specialists: FIELD_SPECIALIST_DETECTORS.md
-    - Role placements: ROLE_PLACEMENTS.md
-    - External baselines: E_EXTERNAL_BASELINES.md
-    - Schema v0.2: SCHEMA_V0_2.md
-    - Scope decisions: SCOPE_DECISIONS.md
-    - Deferred work: DEFERRED_BEYOND_MVP.md
-    - Future work: FUTURE_WORK.md
-    - Disagreement adjudication: DISAGREEMENT_ADJUDICATION.md
-    - NINDS CDE: NINDS_CDE_MAPPING.md
-    - Ontology sources: ONTOLOGY_SOURCES.md
-    - Ontology resources: ontology_resources.md
-    - Fonferko-Shadrach mapping: FONFERKO_SHADRACH_MAPPING.md
-    - Fonferko gold scope: FONFERKO_GOLD_SCOPE.md
-    - Concept gold set: CONCEPT_GOLD_SET.md
-    - US note preprocessing: US_NOTE_PREPROCESSING.md
+  - LoRA contract: LORA_FLAT_CONTRACT.md
+  - Measured failures: MEASURED_FAILURE_TECHNIQUES.md
+  - Documentation map: DOC_MAP.md
 
 markdown_extensions:
   - admonition

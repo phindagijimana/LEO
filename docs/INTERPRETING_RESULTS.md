@@ -1,6 +1,6 @@
 # How to read the LEO results
 
-Status: 2026-10-10. Read this before quoting any figure from `EVAL_PROTOCOL_LEO.md`. Operator steps: `LEO_USER_GUIDE.md`. Design: `IMPLEMENTATION.md`. The frozen log is [EVAL_PROTOCOL_LEO.md](EVAL_PROTOCOL_LEO.md) on this site. The raw hold-out tables stay under `eval/results/` in the repository.
+Status: 2026-10-10. Read this before quoting any figure from `EVAL_PROTOCOL_LEO.md`. Operator steps: `LEO_USER_GUIDE.md`. Design: `IMPLEMENTATION.md`. The frozen log is `docs/EVAL_PROTOCOL_LEO.md` on disk. It is not published. The raw hold-out tables stay under `eval/results/` in the repository.
 
 Every figure comes from synthetic notes. Until real notes have been run under IRB approval on secure compute (`DEFERRED_BEYOND_MVP.md`), no result here says anything about real notes.
 

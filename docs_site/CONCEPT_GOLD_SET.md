@@ -1,1 +1,0 @@
-../docs/CONCEPT_GOLD_SET.md
