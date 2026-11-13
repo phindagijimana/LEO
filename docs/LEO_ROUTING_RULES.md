@@ -28,7 +28,7 @@ An LLM value of "unknown", "unspecified" and the like is dropped before fusion a
 
 ### Extra detectors (opt-in, default off)
 
-`--ext-detector` (or `MEDAI_LEO_EXT_DETECTOR`) runs a dictionary+NegEx sidecar on overlapping columns (`ctakes`, `freq`, `stated-type`, `hs`, `fail-reason`, `rescue-if`, `ictal`, `eeg-done`, `dre`, `first-feature`). After E vs L fusion:
+`--ext-detector` (or `LEO_EXT_DETECTOR`) runs a dictionary+NegEx sidecar on overlapping columns (`ctakes`, `freq`, `stated-type`, `hs`, `fail-reason`, `rescue-if`, `ictal`, `eeg-done`, `dre`, `first-feature`). After E vs L fusion:
 
 - same value → detector name is appended; verdict unchanged
 - same drug, different role (current vs prior vs failed vs rescue) → `sidecar_alternative`; verdict unchanged
@@ -144,7 +144,7 @@ One definition for both readers (`schema.enums.UNKNOWN_EPILEPSY_TYPE_DEFINITION`
 patient has epilepsy but does not name its type. EpExtra emits `unknown` when it finds such a statement
 and no stated type (`rules/fields/epilepsy_type.py`, step 4; "epilepsy nurse/clinic", a relative's
 epilepsy and doubt do not count) and no longer infers a type from seizure types. The model can say
-`unknown` only under flat prompt v2 (`MEDAI_FLAT_PROMPT_VERSION=v2`; v1, the default and every stored
+`unknown` only under flat prompt v2 (`LEO_FLAT_PROMPT_VERSION=v2`; v1, the default and every stored
 run, has no `unknown`). Fusion keeps an LLM `unknown` for this field, so two readers saying `unknown`
 agree and a typed answer against `unknown` is a disagreement.
 

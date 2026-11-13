@@ -1,6 +1,6 @@
 """
 Epilepsy ontology — 24 enum → CUI / SCTID / label / synonyms mappings for
-the MedAI-EPI MedCAT + Rules pipeline (arm B1').
+the LEO MedCAT + Rules pipeline (arm B1').
 
 Coverage
 --------

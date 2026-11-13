@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-pilot-variants
+#SBATCH --job-name=leo-pilot-variants
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=06:00:00
-#SBATCH --output=logs/medai_pilot_variants_%j.out
-#SBATCH --error=logs/medai_pilot_variants_%j.err
+#SBATCH --output=logs/leo_pilot_variants_%j.out
+#SBATCH --error=logs/leo_pilot_variants_%j.err
 #SBATCH --dependency=afterok:143696
 #
 # Submit (queued behind the R4c LoRA fine-tune job 143696):
@@ -30,7 +30,7 @@
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI: Med42 pilot variant sweep (R4e-i)"
+echo "LEO: Med42 pilot variant sweep (R4e-i)"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"
@@ -52,10 +52,10 @@ fi
 export APP_HOME="$_SUBMIT_DIR"
 
 # Adapter dir written by the R4c fine-tune (SLURM 143696).
-export MEDAI_ADAPTER_DIR="${MEDAI_ADAPTER_DIR:-$APP_HOME/checkpoints/llama3-med42-8b_lora_epi}"
+export LEO_ADAPTER_DIR="${LEO_ADAPTER_DIR:-$APP_HOME/checkpoints/llama3-med42-8b_lora_epi}"
 
 # All three variants (comma-separated). Override to run a subset.
-export MEDAI_PILOT_VARIANTS="${MEDAI_PILOT_VARIANTS:-base_constr,tuned,tuned_constr}"
+export LEO_PILOT_VARIANTS="${LEO_PILOT_VARIANTS:-base_constr,tuned,tuned_constr}"
 
 PY="$APP_HOME/venv/bin/python"
 if [ ! -x "$PY" ]; then
@@ -72,14 +72,14 @@ cd "$APP_HOME"
 
 echo ""
 echo "--- Running Med42 pilot variant sweep ---"
-echo "Adapter:  $MEDAI_ADAPTER_DIR"
-echo "Variants: $MEDAI_PILOT_VARIANTS"
+echo "Adapter:  $LEO_ADAPTER_DIR"
+echo "Variants: $LEO_PILOT_VARIANTS"
 $PY scripts/run_med42_on_pilot_variants.py
 
 echo ""
 echo "Finished: $(date)"
 echo ""
 echo "Follow-up scoring:"
-for v in ${MEDAI_PILOT_VARIANTS//,/ }; do
+for v in ${LEO_PILOT_VARIANTS//,/ }; do
     echo "    $PY scripts/score_med42_on_pilot.py --manifests-dir data/run_manifests_pilot_${v} --suffix ${v}"
 done

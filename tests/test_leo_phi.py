@@ -45,6 +45,17 @@ def test_does_not_blank_drug_or_phenotype():
     assert "focal epilepsy" in masked
 
 
+def test_labels_are_whole_words_and_ids_need_a_digit():
+    text = ("These findings support focal onset. Finger-to-nose intact. Started vincristine. "
+            "Harmonic EEG pattern. MRN pending. DEA certified prescriber. Death of father.")
+    assert p.scan(text) == []
+    assert "vincristine" in p.mask(text)
+    assert p.scan("Pt: doing well on lamotrigine") == []
+    assert {h.kind for h in p.scan("PATIENT NAME: Jane Public")} == {"name"}
+    kinds = {h.kind for h in p.scan("FIN: 4400998877 and VIN 1HGCM82633A004352")}
+    assert kinds == {"other", "vehicle"}
+
+
 def test_mask_replaces_ssn_and_keeps_banner_out_of_span():
     text = "SSN 123-45-6789 and lamotrigine"
     out = p.mask(text)

@@ -1,10 +1,10 @@
-# NINDS Epilepsy CDE mapping (MedAI-EPI schema v0.2.1)
+# NINDS Epilepsy CDE mapping (LEO schema v0.2.1)
 
 Status: first version, 2026-10-01. Decision D2 in `docs/SCOPE_DECISIONS.md` §3.2.
 
 ## 1. What this is, and what it is not
 
-A documentation and export table: which MedAI-EPI field corresponds to which element of the NINDS
+A documentation and export table: which LEO field corresponds to which element of the NINDS
 Epilepsy Common Data Elements (CDEs), so that LEO output can be compared with other epilepsy
 networks that collect the CDEs. It changes **nothing** in extraction, retrieval, fusion or scoring.
 It is not an ontology source and nothing here is loaded at run time.
@@ -34,7 +34,7 @@ Confidence column: **V** = element name read in a source above; **P** = partial 
 
 ### 3.1 Seizures and epilepsy classification
 
-| MedAI-EPI field (`clinical_seizure.*`) | NINDS element or module | Conf. | Notes |
+| LEO field (`clinical_seizure.*`) | NINDS element or module | Conf. | Notes |
 |---|---|---|---|
 | `predominant_seizure_type`, `other_seizure_types[]` | Classification of Seizures: `SeizClassTyp` (type of seizures present, by classification), `SeizGenClassTyp` (generalized subtype), `SeizFocClassTyp` (focal subtype), `SeizUnclassClassTyp` (unclassifiable) | V | The NINDS form records each subtype as present or not (`SeizPresentStatus`); we store one predominant type plus a list. Export: the predominant type sets its subtype element to present; each entry of `other_seizure_types` likewise. A patient with several types needs `SeizMultConfLvlDistinctTyp` (how sure it is that they are distinct types), which we do not extract. |
 | `awareness` | The focal-subtype list distinguishes seizures with and without impaired awareness | P | Check the exact permitted values on the current form before mapping `focal_aware` / `focal_impaired_awareness`. |
@@ -51,7 +51,7 @@ Confidence column: **V** = element name read in a source above; **P** = partial 
 The NINDS AED log is one line per drug (and per dose change). Our `Medication` holds one drug with a
 status. The fit is good for current drugs and weaker for stopped ones.
 
-| MedAI-EPI field | NINDS AED log element | Conf. | Notes |
+| LEO field | NINDS AED log element | Conf. | Notes |
 |---|---|---|---|
 | `generic_name` | Name of antiepileptic drug; "generic or brand used" (generic / brand / unknown) | V | We store the generic name and drop the brand; export the flag as "unknown" unless the brand appeared in the quote. |
 | `dose_text` | Dose (a number) with unit (code list: g, gr, gtt, mcg, mcL, mg, mL, oz, spray, suppository, tablespoon, teaspoon, other, unknown); dosing schedule times of administration; formulation; route | V | `dose_text` is free text. Splitting it into number, unit, schedule, formulation and route is not done by the extractor; an export needs a parser, or leaves those elements empty. |
@@ -79,8 +79,8 @@ EEG and MRI modules of the schema are scored, which they are not yet in any LEO 
   found**. Those two are fields most research networks want, so confirming them is the first
   action item.
 * Most mappings are many-to-one or lossy in one direction (our single value to their per-item
-  grid, or their four reasons to our two statuses). The export would be one-way from MedAI-EPI to
-  CDE; reading CDE data into MedAI-EPI is out of scope.
+  grid, or their four reasons to our two statuses). The export would be one-way from LEO to
+  CDE; reading CDE data into LEO is out of scope.
 * No clinician has reviewed this table. It was built from web sources by the engineer.
 
 ## 5. Next steps

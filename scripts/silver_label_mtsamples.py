@@ -37,7 +37,7 @@ def _build_prompt(note: str, schema_json: str) -> str:
     """M2-style schema-injected prompt for v0.2.1 EpilepsyPhenotype extraction."""
     return (
         "You are a clinical NLP extractor. Read the US neurology note "
-        "below and produce a MedAI-EPI v0.2.1 EpilepsyPhenotype JSON that "
+        "below and produce a LEO v0.2.1 EpilepsyPhenotype JSON that "
         "STRICTLY conforms to the schema below.\n\n"
         "Rules:\n"
         "- Nest fields as shown in the schema (clinical_seizure.predominant_seizure_type "

@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import json
 import os
+from services.leo_env import getenv
 import platform
 import socket
 import subprocess
@@ -37,11 +38,10 @@ from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-# MANIFEST_ROOT can be overridden by the MEDAI_MANIFEST_DIR env var so a
+# MANIFEST_ROOT can be overridden by the LEO_MANIFEST_DIR env var so a
 # sensitivity-analysis SLURM run (e.g. max_new_tokens=4096) can write to a
 # separate directory without colliding with the baseline manifests.
-MANIFEST_ROOT = Path(os.environ.get(
-    "MEDAI_MANIFEST_DIR",
+MANIFEST_ROOT = Path(getenv("LEO_MANIFEST_DIR",
     str(REPO_ROOT / "data" / "run_manifests"),
 ))
 

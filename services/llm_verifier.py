@@ -1,4 +1,4 @@
-"""Cross-model extractor-verifier pattern for MedAI-EPI.
+"""Cross-model extractor-verifier pattern for LEO.
 
 Given an extracted phenotype from one LLM (the extractor), a *different*
 LLM (the verifier) is asked, per Evidence-carrying field:

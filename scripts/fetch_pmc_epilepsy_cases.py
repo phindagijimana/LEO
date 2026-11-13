@@ -25,7 +25,7 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
-UA = "MedAI-EPI schema-stress-test (research; contact via project maintainer)"
+UA = "LEO schema-stress-test (research; contact via project maintainer)"
 OUT_DIR = Path(__file__).resolve().parent.parent / "data" / "pmc_cases"
 
 # Diversity: several narrow queries beat one broad query for varied content.

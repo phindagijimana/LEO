@@ -106,7 +106,7 @@ def add_demo_data():
 
 def main():
     print("="*70)
-    print("MedAI Validation System - Initialization")
+    print("LEO Validation System - Initialization")
     print("="*70)
     
     # Initialize database

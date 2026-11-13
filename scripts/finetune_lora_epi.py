@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LoRA fine-tune Med42-8B or DeepSeek-R1-Distill-Llama-8B on MedAI-EPI pairs.
+"""LoRA fine-tune Med42-8B or DeepSeek-R1-Distill-Llama-8B on LEO pairs.
 
 Accepts `--base-model` (med42 | deepseek | any HF id) and `--corpus` so
 the same script trains either model on any of the training sources.
@@ -46,6 +46,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
+from services.leo_env import getenv
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +73,7 @@ BASE_MODEL_ALIASES = {
 
 PROMPT_TEMPLATE = (
     "Extract the epilepsy phenotype from this clinical text into the "
-    "MedAI-EPI v0.2.1 JSON schema. Return only valid JSON.\n\n"
+    "LEO v0.2.1 JSON schema. Return only valid JSON.\n\n"
     "Clinical text:\n\"\"\"\n{note}\n\"\"\"\n\n"
     "Phenotype JSON:\n"
 )
@@ -470,7 +471,7 @@ def main():
 
     # Adapter output dir: {slug}_lora_epi[_<suffix>]. Suffix is env-overridable
     # so the SLURM script can flip v1 → v2 without editing this file.
-    suffix = os.environ.get("MEDAI_LORA_ADAPTER_SUFFIX", args.adapter_suffix) or ""
+    suffix = getenv("LEO_LORA_ADAPTER_SUFFIX", args.adapter_suffix) or ""
     slug = _slug(model_id) + "_lora_epi" + (f"_{suffix}" if suffix else "")
     output_dir = args.output_dir or str(REPO / "checkpoints" / slug)
 

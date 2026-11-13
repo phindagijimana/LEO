@@ -7,19 +7,19 @@ one run manifest per letter (``prompt_id = epilepsy_phenotype.FT.v1``,
 ``arm = FT``) that ``services.chain_llm.ManifestLLMReasoner`` and
 ``scripts/score_leo_vs_fs_gold.py`` read.
 
-Resumable: letters that already have a manifest in MEDAI_MANIFEST_DIR are
+Resumable: letters that already have a manifest in LEO_MANIFEST_DIR are
 skipped, so a job that hits its wall-clock limit can simply be resubmitted.
 
-    MEDAI_LORA_ADAPTER_DIR=checkpoints/llama3-med42-8b_lora_epi_v3_polish \\
-    MEDAI_MANIFEST_DIR=data/run_manifests_fs_test_ft_v3_polish \\
+    LEO_LORA_ADAPTER_DIR=checkpoints/llama3-med42-8b_lora_epi_v3_polish \\
+    LEO_MANIFEST_DIR=data/run_manifests_fs_test_ft_v3_polish \\
     venv/bin/python scripts/run_med42_ft_on_fs_test.py
 
-Env: MEDAI_MAX_NEW_TOKENS (default 4096), MEDAI_PIDS (comma list, default the
-40 held-out letters), MEDAI_LIMIT (stop after N new letters, for smoke runs).
+Env: LEO_MAX_NEW_TOKENS (default 4096), LEO_PIDS (comma list, default the
+40 held-out letters), LEO_LIMIT (stop after N new letters, for smoke runs).
 
-MEDAI_CORPUS=synth runs the US-style synthetic evaluation notes instead of the F-S letters
+LEO_CORPUS=synth runs the US-style synthetic evaluation notes instead of the F-S letters
 (``services.synth_eval``: visit ids, default = the 143 evaluation visits).  Manifests are then
-keyed ``synth-<visit_id>`` and the PATIENT_ID line carries the patient id.  MEDAI_SHARD=i/n runs
+keyed ``synth-<visit_id>`` and the PATIENT_ID line carries the patient id.  LEO_SHARD=i/n runs
 every n-th pending note starting at i, so several GPU jobs can share one manifest directory.
 """
 
@@ -35,8 +35,9 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
+from services.leo_env import getenv, setdefault
 
-os.environ.setdefault("MEDAI_MANIFEST_DIR", str(REPO / "data" / "run_manifests_fs_test_ft"))
+setdefault("LEO_MANIFEST_DIR", str(REPO / "data" / "run_manifests_fs_test_ft"))
 
 from services.extract import DecodingConfig  # noqa: E402
 from services.ft_extract import (  # noqa: E402
@@ -70,23 +71,23 @@ def _done(manifest_dir: Path) -> set[str]:
 
 
 def main() -> int:
-    adapter = os.environ.get("MEDAI_LORA_ADAPTER_DIR", "")
+    adapter = getenv("LEO_LORA_ADAPTER_DIR", "")
     if not adapter:
-        raise SystemExit("MEDAI_LORA_ADAPTER_DIR is required (this is the tuned-adapter contract).")
-    synth = os.environ.get("MEDAI_CORPUS", "fs") == "synth"
+        raise SystemExit("LEO_LORA_ADAPTER_DIR is required (this is the tuned-adapter contract).")
+    synth = getenv("LEO_CORPUS", "fs") == "synth"
     if synth:
         from services import synth_eval
-        pids = [p for p in os.environ.get("MEDAI_PIDS", "").split(",") if p] or synth_eval.eval_visits()
+        pids = [p for p in getenv("LEO_PIDS", "").split(",") if p] or synth_eval.eval_visits()
     else:
-        pids = [p for p in os.environ.get("MEDAI_PIDS", "").split(",") if p] or HELD_OUT
+        pids = [p for p in getenv("LEO_PIDS", "").split(",") if p] or HELD_OUT
     prefix = "synth-" if synth else "fs-test-"
-    limit = int(os.environ.get("MEDAI_LIMIT", "0") or 0)
-    max_new = int(os.environ.get("MEDAI_MAX_NEW_TOKENS", "4096"))
+    limit = int(getenv("LEO_LIMIT", "0") or 0)
+    max_new = int(getenv("LEO_MAX_NEW_TOKENS", "4096"))
 
     done = _done(Path(MANIFEST_ROOT)) if Path(MANIFEST_ROOT).exists() else set()
     todo = [p for p in pids if f"{prefix}{p}" not in done]
-    if os.environ.get("MEDAI_SHARD"):
-        i0, n0 = (int(x) for x in os.environ["MEDAI_SHARD"].split("/"))
+    if getenv("LEO_SHARD"):
+        i0, n0 = (int(x) for x in os.environ["LEO_SHARD"].split("/"))
         todo = todo[i0::n0]
     print(f"adapter={adapter}\nmanifests={MANIFEST_ROOT}\nletters: {len(pids)} total, "
           f"{len(pids) - len(todo)} already done, {len(todo)} to run", flush=True)

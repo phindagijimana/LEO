@@ -4,14 +4,14 @@ POST /analyze with sample_patient_visits.csv: classify MRI documentation as epil
 
 In-process (loads model in this Python process — use on a GPU node with CUDA PyTorch for GPU):
   export APP_HOME=$(pwd)
-  export MEDAI_MAX_NEW_TOKENS=384 MEDAI_GREEDY_FAST=1
+  export LEO_MAX_NEW_TOKENS=384 LEO_GREEDY_FAST=1
   python3 scripts/test_mri_epilepsy_csv.py
 
 HTTP (hit a running gunicorn — RAG/few-shot/GPU follow server env; set USE_RAG/USE_FEW_SHOT on the server):
   export USE_RAG=1 USE_FEW_SHOT=1
-  export MEDAI_SERVICE_URL=http://127.0.0.1:8085
+  export LEO_SERVICE_URL=http://127.0.0.1:8085
   export CSV_PATH=data/sample_patient_visits/patient_visits_tiny.csv   # optional; faster smoke test
-  export MEDAI_HTTP_TIMEOUT=3600
+  export LEO_HTTP_TIMEOUT=3600
   python3 scripts/test_mri_epilepsy_csv.py
 
 On GPU node, same command; much faster than CPU for full patient_visits.csv.
@@ -22,6 +22,7 @@ Long runs: raise Gunicorn timeout so the worker is not killed mid-inference, e.g
 """
 import json
 import os
+from services.leo_env import getenv
 import sys
 import uuid
 from typing import Optional, Tuple
@@ -54,7 +55,7 @@ Do not diagnose the patient; only classify what the MRI documentation states."""
 
 
 def _service_url() -> Optional[str]:
-    u = os.environ.get("MEDAI_SERVICE_URL") or os.environ.get("MEDAI_BASE_URL")
+    u = getenv("LEO_SERVICE_URL") or getenv("LEO_BASE_URL")
     return u.strip().rstrip("/") if u else None
 
 
@@ -111,7 +112,7 @@ def _run_http(csv_path: str) -> int:
 
     body, ctype = _multipart_analyze_body(csv_path)
     url = f"{base}/analyze"
-    timeout = int(os.environ.get("MEDAI_HTTP_TIMEOUT", "1200"))
+    timeout = int(getenv("LEO_HTTP_TIMEOUT", "1200"))
     req = Request(
         url,
         data=body,
@@ -126,7 +127,7 @@ def _run_http(csv_path: str) -> int:
     except socket.timeout:
         print(
             f"POST /analyze timed out after {timeout}s. On CPU, tabular 8B runs can exceed this; "
-            "raise MEDAI_HTTP_TIMEOUT, use CSV_PATH=.../patient_visits_tiny.csv, or run on GPU.",
+            "raise LEO_HTTP_TIMEOUT, use CSV_PATH=.../patient_visits_tiny.csv, or run on GPU.",
             file=sys.stderr,
         )
         return 1

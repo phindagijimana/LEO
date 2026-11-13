@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import logging
 import os
+from services.leo_env import getenv
 import uuid
 from datetime import date
 from pathlib import Path
@@ -47,7 +48,7 @@ def _repo_root() -> Path:
 
 
 def _ledger_db_path() -> Path:
-    raw = os.environ.get("MEDAI_LEDGER_DB", "")
+    raw = getenv("LEO_LEDGER_DB", "")
     if raw:
         return Path(raw)
     return _repo_root() / "data" / "ledger" / "evidence.sqlite"
@@ -69,15 +70,15 @@ def _get_pipeline():
     if pipe is None:
         from services.chain_pipeline import ChainPipeline
 
-        # LLM channel is opt-in: MEDAI_LEO_LLM=live loads Med42-8B (GPU);
-        # MEDAI_LEO_LORA_DIR selects a tuned adapter; MEDAI_LEO_ARM the
+        # LLM channel is opt-in: LEO_LLM=live loads Med42-8B (GPU);
+        # LEO_LORA_DIR selects a tuned adapter; LEO_ARM the
         # base-model prompt arm.  Default is specialist-only (EpExtra + ontology).
         reasoner = None
-        if os.environ.get("MEDAI_LEO_LLM", "off").lower() == "live":
+        if getenv("LEO_LLM", "off").lower() == "live":
             from services.chain_llm import load_live_reasoner
             reasoner = load_live_reasoner(
-                arm=os.environ.get("MEDAI_LEO_ARM", "M3"),
-                adapter_dir=os.environ.get("MEDAI_LEO_LORA_DIR", ""),
+                arm=getenv("LEO_ARM", "M3"),
+                adapter_dir=getenv("LEO_LORA_DIR", ""),
             )
         pipe = ChainPipeline(llm_reasoner=reasoner)
         current_app._chain_pipeline = pipe  # type: ignore[attr-defined]

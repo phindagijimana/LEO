@@ -1,4 +1,4 @@
-"""Versioned prompt registry for MedAI-EPI extraction (paper §10, §20, Table 9).
+"""Versioned prompt registry for LEO extraction (paper §10, §20, Table 9).
 
 Prompts are addressed by `(module_name, arm, version)`. `doc_type` is stored
 for documentation but the same prompt template applies to any doc_type where

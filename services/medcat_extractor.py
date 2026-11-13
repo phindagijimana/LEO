@@ -1,4 +1,4 @@
-"""MedCAT-backed concept extractor for the MedAI-EPI pipeline (arm B1').
+"""MedCAT-backed concept extractor for the LEO pipeline (arm B1').
 
 Phase 1c deliverable. Takes free text; returns a list of
 :class:`LinkedEntity` records with:
@@ -385,11 +385,11 @@ def attach_medspacy_context(entities: list[LinkedEntity], text: str, nlp) -> "an
     spacy_spans = []
     idx_to_span: list[Optional[int]] = []
     for e in entities:
-        span = doc.char_span(e.char_start, e.char_end, label="MEDAI_EPI")
+        span = doc.char_span(e.char_start, e.char_end, label="LEO_EPI")
         if span is None:
             span = doc.char_span(
                 e.char_start, e.char_end,
-                label="MEDAI_EPI", alignment_mode="expand",
+                label="LEO_EPI", alignment_mode="expand",
             )
         if span is None:
             idx_to_span.append(None)

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# MedAI-EPI CLI shim. Locates the repo, uses its venv if present, else system
-# python. Passes all args through to scripts/medai_epi_cli.py.
+# Older name for the LEO extract HTTP client. Prefer bin/leo-extract.
+# Locates the repo, uses its venv if present, else system python.
+# Passes all args through to scripts/medai_epi_cli.py.
 set -euo pipefail
 
 # Resolve the real path even if this file is symlinked into $PATH.

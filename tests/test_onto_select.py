@@ -131,7 +131,7 @@ def test_code_accepted_only_when_value_accepted_and_code_is_real():
 
 
 def test_runtime_ontology_select_defaults_off(monkeypatch):
-    monkeypatch.delenv("MEDAI_LEO_ONTOLOGY_SELECT", raising=False)
+    monkeypatch.delenv("LEO_ONTOLOGY_SELECT", raising=False)
     from services.leo_runtime import LeoRuntime
     from test_leo_app import FakeBackend, FLAT_OK
     rt = LeoRuntime(backend=FakeBackend(FLAT_OK))

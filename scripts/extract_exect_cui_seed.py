@@ -14,7 +14,7 @@ Legal / attribution notes:
       are NOT redistributed in the output.
     * See ``docs/MedCAT.md`` §Phase 1a and §8 for full rationale.
 
-Author: MedAI-EPI (Vecta AI)
+Author: LEO (Vecta AI)
 """
 
 from __future__ import annotations
@@ -95,7 +95,7 @@ CATEGORY_PRIORITY: Dict[str, int] = {
     "custom_main":         9,
 }
 
-# Category -> comma-separated MedAI-EPI v0.2.1 schema field hints.
+# Category -> comma-separated LEO v0.2.1 schema field hints.
 CATEGORY_SCHEMA_HINTS: Dict[str, str] = {
     "epilepsy":            "epilepsy.type,epilepsy.syndrome",
     "seizure":             "clinical_seizure.predominant_seizure_type",

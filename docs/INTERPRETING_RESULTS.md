@@ -1,6 +1,6 @@
 # How to read the LEO results
 
-Status: 2026-10-10. Read this before quoting any figure from `EVAL_PROTOCOL_LEO.md`. Operator steps: `LEO_USER_GUIDE.md`. Design: `IMPLEMENTATION.md`.
+Status: 2026-10-10. Read this before quoting any figure from `EVAL_PROTOCOL_LEO.md`. Operator steps: `LEO_USER_GUIDE.md`. Design: `IMPLEMENTATION.md`. The frozen log (`docs/EVAL_PROTOCOL_LEO.md`) and the hold-out tables stay in the repo. They are not on the public site.
 
 Every figure comes from synthetic notes. Until real notes have been run under IRB approval on secure compute (`DEFERRED_BEYOND_MVP.md`), no result here says anything about real notes.
 
@@ -113,7 +113,7 @@ D14: score patients whose generation plan marks stopped drugs, denied, hedged or
 | Set | Role | n patients | prior / denied / hedged / hypothetical / any |
 |---|---|---:|---|
 | `slices30` (`leo_vs_synth_gold_slices30.*`) | Smoke. Only 10 `polish_val` patients have tags | 30 (10 tagged) | 5 / 4 / 5 / 4 / 10 |
-| `polish90` (`MEDAI_SYNTH_SET=polish90`) | Intended n. Adapter **trained** on these; rules developed here. L1C only | 90 | 65 / 39 / 36 / 23 / 83 |
+| `polish90` (`LEO_SYNTH_SET=polish90`) | Intended n. Adapter **trained** on these; rules developed here. L1C only | 90 | 65 / 39 / 36 / 23 / 83 |
 
 L1C manifests on polish90 cover **277 / 443** notes (5 / 90 patients have every note). Do not read L1C / LEO slice F1 on that set as a complete-patient result. The full-coverage table is EpExtra on all notes (`leo_vs_synth_gold_slices_polish90_eonly.*`; short table `leo_vs_synth_gold_slices_polish90.tables.md`).
 

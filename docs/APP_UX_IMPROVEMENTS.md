@@ -1,6 +1,6 @@
-# MedAI-EPI app UX improvement plan
+# LEO app UX improvement plan
 
-**Framing.** MedAI-EPI is a research phenotyping assistant, not a clinical decision-support product. UX improvements are scoped to make **researchers, annotators, and reviewers** more productive — not to make it feel like consumer software or to nudge users toward automated clinical decisions.
+**Framing.** LEO is a research phenotyping assistant, not a clinical decision-support product. UX improvements are scoped to make **researchers, annotators, and reviewers** more productive — not to make it feel like consumer software or to nudge users toward automated clinical decisions.
 
 Improvements ranked by user-value ÷ engineering-cost. Section 5 lists what was implemented in-session; the rest are proposals.
 
@@ -118,4 +118,4 @@ Implementation is in the current commit; smoke test verifies the endpoint return
 - Dark patterns encouraging users to trust extractions without human review.
 - Any UX that hides the "research use only" framing.
 
-The paper's Discussion (§5.1) is explicit: MedAI-EPI is a methodology + open framework contribution, not a clinical-accuracy tool. UX must reinforce that framing, not undermine it.
+The paper's Discussion (§5.1) is explicit: LEO is a methodology + open framework contribution, not a clinical-accuracy tool. UX must reinforce that framing, not undermine it.

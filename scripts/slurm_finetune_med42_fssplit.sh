@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-lora-fssplit
+#SBATCH --job-name=leo-lora-fssplit
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=04:00:00
-#SBATCH --output=logs/medai_lora_fssplit_%j.out
-#SBATCH --error=logs/medai_lora_fssplit_%j.err
+#SBATCH --output=logs/leo_lora_fssplit_%j.out
+#SBATCH --error=logs/leo_lora_fssplit_%j.err
 #
 # Submit:
 #     sbatch scripts/slurm_finetune_med42_fssplit.sh
@@ -25,7 +25,7 @@
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI: LoRA fine-tune Med42-8B on synth+fs80"
+echo "LEO: LoRA fine-tune Med42-8B on synth+fs80"
 echo "  (F-S 80/20 patient-level split; 40 pts held out)"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
@@ -57,13 +57,13 @@ cd "$APP_HOME"
 
 BASE_MODEL="${BASE_MODEL:-med42}"
 CORPUS="${CORPUS:-synth+fs80}"
-SUFFIX="${MEDAI_LORA_ADAPTER_SUFFIX:-v3_fssplit}"
+SUFFIX="${LEO_LORA_ADAPTER_SUFFIX:-v3_fssplit}"
 
 echo ""
 echo "--- Running LoRA fine-tune (base=$BASE_MODEL corpus=$CORPUS suffix=$SUFFIX) ---"
 echo "Adapter will land at checkpoints/llama3-med42-8b_lora_epi_${SUFFIX}/"
 
-export MEDAI_LORA_ADAPTER_SUFFIX="$SUFFIX"
+export LEO_LORA_ADAPTER_SUFFIX="$SUFFIX"
 $PY scripts/finetune_lora_epi.py --base-model "$BASE_MODEL" --corpus "$CORPUS" --adapter-suffix "$SUFFIX"
 
 echo ""

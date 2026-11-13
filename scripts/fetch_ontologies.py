@@ -63,7 +63,7 @@ def _load_dotenv() -> None:
 
 
 def _get_json(url: str) -> object:
-    req = urllib.request.Request(url, headers={"User-Agent": "medai-epi-ontology-fetch"})
+    req = urllib.request.Request(url, headers={"User-Agent": "leo-ontology-fetch"})
     with urllib.request.urlopen(req, timeout=60) as r:
         return json.load(r)
 
@@ -72,7 +72,7 @@ def _download(url: str, dest: Path, *, label: str) -> None:
     """Stream url → dest via a .part file. `label` is what gets logged (never the URL)."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp = dest.with_suffix(dest.suffix + ".part")
-    req = urllib.request.Request(url, headers={"User-Agent": "medai-epi-ontology-fetch"})
+    req = urllib.request.Request(url, headers={"User-Agent": "leo-ontology-fetch"})
     with urllib.request.urlopen(req, timeout=600) as r, tmp.open("wb") as f:
         total = int(r.headers.get("Content-Length") or 0)
         done = 0

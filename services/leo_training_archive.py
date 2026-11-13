@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import os
+from services.leo_env import getenv
 import re
 import shutil
 from datetime import datetime, timezone
@@ -23,7 +24,7 @@ _JOB_ID = re.compile(r"^[0-9a-f]{32}$")
 
 
 def archive_root() -> Path:
-    root = Path(os.environ.get("MEDAI_LEO_TRAINING_DIR") or
+    root = Path(getenv("LEO_TRAINING_DIR") or
                 Path(os.environ.get("APP_HOME", os.getcwd())) / "data" / "leo_training")
     root.mkdir(parents=True, exist_ok=True)
     try:

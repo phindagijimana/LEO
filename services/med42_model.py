@@ -4,6 +4,7 @@ Handles model loading, inference, and resource management
 """
 
 import os
+from services.leo_env import getenv
 import time
 import uuid
 import logging
@@ -33,44 +34,44 @@ class Med42ModelService:
         self.model = None
         self.tokenizer = None
         # Device selection.
-        #   MEDAI_DEVICE=auto (default) → cuda if available, else cpu
-        #   MEDAI_DEVICE=cpu            → force CPU (slow: ~5-10 min per module)
-        #   MEDAI_DEVICE=cuda           → require CUDA, fail loudly if absent
-        _dev = (os.environ.get("MEDAI_DEVICE") or "auto").strip().lower()
+        #   LEO_DEVICE=auto (default) → cuda if available, else cpu
+        #   LEO_DEVICE=cpu            → force CPU (slow: ~5-10 min per module)
+        #   LEO_DEVICE=cuda           → require CUDA, fail loudly if absent
+        _dev = (getenv("LEO_DEVICE") or "auto").strip().lower()
         _cuda_ok = bool(torch and torch.cuda.is_available())
         if _dev == "cuda":
             if not _cuda_ok:
                 raise RuntimeError(
-                    "MEDAI_DEVICE=cuda but CUDA is not available. "
+                    "LEO_DEVICE=cuda but CUDA is not available. "
                     "Either install a CUDA-enabled PyTorch build + drivers, or set "
-                    "MEDAI_DEVICE=auto to fall back to CPU (slow), or "
-                    "MEDAI_DEVICE=cpu to force CPU explicitly."
+                    "LEO_DEVICE=auto to fall back to CPU (slow), or "
+                    "LEO_DEVICE=cpu to force CPU explicitly."
                 )
             self.device = "cuda"
-            logger.info(f"MEDAI_DEVICE=cuda; GPU detected: {torch.cuda.get_device_name(0)}")
+            logger.info(f"LEO_DEVICE=cuda; GPU detected: {torch.cuda.get_device_name(0)}")
         elif _dev == "cpu":
             self.device = "cpu"
             logger.warning(
-                "MEDAI_DEVICE=cpu — Med42-8B inference will be ~50-100× slower "
+                "LEO_DEVICE=cpu — Med42-8B inference will be ~50-100× slower "
                 "than GPU. Expect several minutes per module extraction. "
-                "For paper reproduction use MEDAI_DEVICE=auto on a GPU host."
+                "For paper reproduction use LEO_DEVICE=auto on a GPU host."
             )
         else:  # auto
             if _cuda_ok:
                 self.device = "cuda"
-                logger.info(f"MEDAI_DEVICE=auto → CUDA: {torch.cuda.get_device_name(0)}")
+                logger.info(f"LEO_DEVICE=auto → CUDA: {torch.cuda.get_device_name(0)}")
             else:
                 self.device = "cpu"
                 logger.warning(
-                    "MEDAI_DEVICE=auto → CPU (no GPU detected). Med42-8B inference "
+                    "LEO_DEVICE=auto → CPU (no GPU detected). Med42-8B inference "
                     "will be slow; offline components (chunker, tabular, CSV, "
                     "smoke tests) will run fine."
                 )
         self.model_name = config.model_name
         # Optional LoRA adapter to layer on top of the base Med42 weights.
-        # Set MEDAI_LORA_ADAPTER_DIR to a PEFT adapter directory (as produced by
-        # scripts/finetune_lora_epi.py) to load a fine-tuned MedAI-EPI model.
-        self.lora_adapter_dir = os.environ.get("MEDAI_LORA_ADAPTER_DIR") or None
+        # Set LEO_LORA_ADAPTER_DIR to a PEFT adapter directory (as produced by
+        # scripts/finetune_lora_epi.py) to load a fine-tuned LEO model.
+        self.lora_adapter_dir = getenv("LEO_LORA_ADAPTER_DIR") or None
         self.lora_loaded = False
         self.model_loaded = False
         self.load_error = None
@@ -155,7 +156,7 @@ class Med42ModelService:
                     from peft import PeftModel
                 except ImportError as _peft_err:
                     raise RuntimeError(
-                        f"MEDAI_LORA_ADAPTER_DIR={self.lora_adapter_dir!r} set but "
+                        f"LEO_LORA_ADAPTER_DIR={self.lora_adapter_dir!r} set but "
                         f"peft is not installed: {_peft_err}. "
                         "Install with: pip install peft"
                     )

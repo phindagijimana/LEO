@@ -21,12 +21,12 @@ services:
       HF_HUB_OFFLINE: "1"
       TRANSFORMERS_OFFLINE: "1"
       HF_HUB_DISABLE_TELEMETRY: "1"
-      MEDAI_LEO_BLOCK_CLOUD: "1"
-      MEDAI_LEO_RESEARCH: "1"
+      LEO_BLOCK_CLOUD: "1"
+      LEO_RESEARCH: "1"
       SERVICE_HOST: "0.0.0.0"
       SERVICE_PORT: "8085"
-      MEDAI_LOAD_MED42: "1"
-      MEDAI_REQUIRE_GPU: "1"
+      LEO_LOAD_MED42: "1"
+      LEO_REQUIRE_GPU: "1"
     volumes:
       - ./model_cache:/app/model_cache:ro
       - ./data/medcat_cdb_epilepsy:/app/data/medcat_cdb_epilepsy:ro

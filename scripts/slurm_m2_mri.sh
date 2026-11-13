@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-epi-m2
+#SBATCH --job-name=leo-m2
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=00:45:00
-#SBATCH --output=logs/medai_epi_m2_%j.out
-#SBATCH --error=logs/medai_epi_m2_%j.err
+#SBATCH --output=logs/leo_epi_m2_%j.out
+#SBATCH --error=logs/leo_epi_m2_%j.err
 #
 # Submit with:  sbatch scripts/slurm_m2_mri.sh
 #
@@ -19,7 +19,7 @@
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI M0/M1/M2 MRI Extraction Run"
+echo "LEO M0/M1/M2 MRI Extraction Run"
 echo "=================================================="
 echo "Job ID: ${SLURM_JOB_ID:-local}"
 echo "Node:   ${SLURM_NODELIST:-$(hostname)}"

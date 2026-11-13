@@ -270,7 +270,7 @@ def claim_from_evidence(
     concept_system: str = "MEDAI-ENUM",
     concept_id: Optional[str] = None,
     concept_label: Optional[str] = None,
-    ontology_release: str = "medai-enum-v0.2.1",
+    ontology_release: str = "leo-enum-v0.2.1",
     assertion: Assertion = Assertion.PRESENT,
     experiencer: Experiencer = Experiencer.PATIENT,
     temporal_status: TemporalStatus = TemporalStatus.CURRENT,

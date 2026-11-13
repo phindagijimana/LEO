@@ -1,4 +1,4 @@
-"""Phase 1c — Build the MedAI-EPI custom MedCAT Concept Database (CDB).
+"""Phase 1c — Build the LEO custom MedCAT Concept Database (CDB).
 
 Reads :mod:`rules.epilepsy_ontology` (Phase 1b output, 24 enum ontologies +
 4 supplementary ontologies, 255 total ``ConceptEntry`` rows) and emits a
@@ -30,7 +30,7 @@ Design decisions
 - **name_status**: ``P`` for the primary label (canonical ``entry.label``),
   ``A`` for aliases (each synonym in ``entry.synonyms``). If the label
   itself is not already in the synonyms list, we add it as ``P``.
-- **ontologies**: ``SNOMED`` if ``sctid`` is present, else ``MEDAI_EPI``
+- **ontologies**: ``SNOMED`` if ``sctid`` is present, else ``LEO_EPI``
   for placeholder concepts.
 
 Idempotency: rerunning overwrites the CSV and CDB atomically. No state is
@@ -95,7 +95,7 @@ def _ontology_tag(entry: ConceptEntry) -> str:
         return "SNOMED"
     if entry.cui:
         return "UMLS"
-    return "MEDAI_EPI"
+    return "LEO_EPI"
 
 
 def _iter_concept_rows():

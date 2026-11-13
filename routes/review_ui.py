@@ -10,7 +10,7 @@ _REVIEW_HTML = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>MedAI-EPI — LEO claim review queue</title>
+<title>LEO claim review queue</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   body { font-family: system-ui, sans-serif; margin: 0; background: #f5f7fb; color: #1a2432; }

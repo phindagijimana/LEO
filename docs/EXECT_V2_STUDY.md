@@ -1,9 +1,9 @@
-# ExECT-V2 File Inventory Mapped to MedAI-EPI v0.2.1 Schema Fields
+# ExECT-V2 File Inventory Mapped to LEO v0.2.1 Schema Fields
 
 **Purpose.** Phase 0.4 of the MedCAT+Rules build plan (`docs/MedCAT.md`).
 Complete file-by-file inventory of the ExECT-V2 GATE pipeline
 (github.com/swneurosci/ExECT-V2), with every JAPE / Groovy file mapped to the
-MedAI-EPI v0.2.1 schema field it feeds (or marked `UNUSED`/`SKIP` if not
+LEO v0.2.1 schema field it feeds (or marked `UNUSED`/`SKIP` if not
 relevant).
 
 **Source.** All content in this doc is *metadata* (filename, byte size,

@@ -1,6 +1,6 @@
 # Corpus outreach tracker
 
-Track requests to authors + registrations for annotated corpora that would fill MedAI-EPI schema fields the Fonferko-Shadrach 2024 corpus doesn't cover (EEG structured fields, MRI structured fields, Engel/ILAE outcomes, drug-resistance labels, semiology→localization pairs).
+Track requests to authors + registrations for annotated corpora that would fill LEO schema fields the Fonferko-Shadrach 2024 corpus doesn't cover (EEG structured fields, MRI structured fields, Engel/ILAE outcomes, drug-resistance labels, semiology→localization pairs).
 
 ## Status board
 
@@ -33,7 +33,7 @@ Log responses under each request block below (date received, terms offered, next
 >
 > Dear Professor Liu,
 >
-> I am `<YOUR_NAME>`, `<YOUR_TITLE>` at `<YOUR_INSTITUTION>`, working with `<PI_NAME>` on MedAI-EPI, a research phenotyping project that extracts structured epilepsy phenotypes from heterogeneous clinical documents for downstream research use.
+> I am `<YOUR_NAME>`, `<YOUR_TITLE>` at `<YOUR_INSTITUTION>`, working with `<PI_NAME>` on LEO, a research phenotyping project that extracts structured epilepsy phenotypes from heterogeneous clinical documents for downstream research use.
 >
 > Your recent JMIR paper *Clinical Value of ChatGPT for Epilepsy Presurgical Decision-Making* (10.2196/69173) describes a publicly compiled cohort of 852 semiology-EZ pairs drawn from 193 peer-reviewed case reports. Your data-availability statement notes this dataset is available upon request. I am writing to ask whether it would be possible to receive a copy for our project.
 >
@@ -64,13 +64,13 @@ Log responses under each request block below (date received, terms offered, next
 
 ### Draft registration email / letter of intent
 
-> **Subject:** TUH EEG Corpus access request — MedAI-EPI research phenotyping (epilepsy NLP)
+> **Subject:** TUH EEG Corpus access request — LEO research phenotyping (epilepsy NLP)
 >
 > Dear TUH EEG Corpus team,
 >
 > I am writing to request access to the Temple University Hospital EEG Corpus for a research NLP study.
 >
-> **Project name:** MedAI-EPI — Research Phenotyping Assistant for Epilepsy Clinical Documentation
+> **Project name:** LEO — Research Phenotyping Assistant for Epilepsy Clinical Documentation
 > **Principal investigator:** `<PI_NAME>`, `<PI_TITLE>`, `<YOUR_INSTITUTION>`
 > **Requestor:** `<YOUR_NAME>`, `<YOUR_TITLE>`
 > **Institutional email:** `<YOUR_EMAIL>`
@@ -79,7 +79,7 @@ Log responses under each request block below (date received, terms offered, next
 > - Primary: TUEG (main EEG corpus, including report text)
 > - Secondary: TUEP (epileptic vs. non-epileptic labels), TUSZ (seizure event annotations)
 >
-> **Research purpose:** MedAI-EPI develops an evidence-grounded structured phenotype-extraction system for epilepsy clinical documents. The paper's blueprint requires per-doc-type baselines (rules and BERT-family models) plus prompted / adapted medical LLM arms. The TUH EEG report text would be used as:
+> **Research purpose:** LEO develops an evidence-grounded structured phenotype-extraction system for epilepsy clinical documents. The paper's blueprint requires per-doc-type baselines (rules and BERT-family models) plus prompted / adapted medical LLM arms. The TUH EEG report text would be used as:
 >
 > 1. A silver-labeled training corpus for our B1 clinical-BERT baseline on EEG-report extraction targets (study type, background, IED type/localization/laterality/dominant frequency, ictal onset lobe/laterality, seizures captured count).
 > 2. A held-out external-validation slice for our locally deployed Med42 extraction system.
@@ -116,11 +116,11 @@ Log responses under each request block below (date received, terms offered, next
 
 ### Draft email
 
-> **Subject:** Collaboration inquiry — Penn epilepsy-NLP annotated corpora for MedAI-EPI cross-institutional evaluation
+> **Subject:** Collaboration inquiry — Penn epilepsy-NLP annotated corpora for LEO cross-institutional evaluation
 >
 > Dear Dr. Ellis and Dr. Davis,
 >
-> I am `<YOUR_NAME>`, `<YOUR_TITLE>` at `<YOUR_INSTITUTION>`. Along with `<PI_NAME>`, I am building **MedAI-EPI**, an evidence-grounded structured-phenotype extraction system for epilepsy clinical documentation, designed as a research phenotyping layer to support downstream retrospective epilepsy research at our institution.
+> I am `<YOUR_NAME>`, `<YOUR_TITLE>` at `<YOUR_INSTITUTION>`. Along with `<PI_NAME>`, I am building **LEO**, an evidence-grounded structured-phenotype extraction system for epilepsy clinical documentation, designed as a research phenotyping layer to support downstream retrospective epilepsy research at our institution.
 >
 > Your group's series of publications on epilepsy NLP has directly shaped our study design:
 >
@@ -152,15 +152,15 @@ Log responses under each request block below (date received, terms offered, next
 
 **Paper:** Adelson PD, Delaney H, D'Haese PF. (2026). Bridging the outcome documentation gap in epilepsy surgery: validating large language model agents for automated Engel and ILAE scoring from clinical notes. *Epilepsia* 2026;67(9):4483–4492. doi:10.1002/epi.70341.
 **Corresponding contact:** P. David Adelson, MD, West Virginia University (affiliation per PubMed, checked 2026-10-08; confirm the current title and corresponding author on the paper before sending).
-**What we want:** their post-operative follow-up notes labeled with Engel and ILAE outcome classes. Would strengthen MedAI-EPI's `SurgeryHistoryItem.engel_class` / `.ilae_outcome` fields dramatically since our own institution likely has small surgical volume compared with theirs.
+**What we want:** their post-operative follow-up notes labeled with Engel and ILAE outcome classes. Would strengthen LEO's `SurgeryHistoryItem.engel_class` / `.ilae_outcome` fields dramatically since our own institution likely has small surgical volume compared with theirs.
 
 ### Draft email
 
-> **Subject:** Collaboration inquiry — Engel/ILAE outcome extraction (MedAI-EPI cross-site validation)
+> **Subject:** Collaboration inquiry — Engel/ILAE outcome extraction (LEO cross-site validation)
 >
 > Dear Dr. Adelson,
 >
-> I am `<YOUR_NAME>`, `<YOUR_TITLE>` at `<YOUR_INSTITUTION>`, working with `<PI_NAME>` on **MedAI-EPI**, a research phenotyping system for structured extraction of epilepsy phenotypes from heterogeneous clinical documents.
+> I am `<YOUR_NAME>`, `<YOUR_TITLE>` at `<YOUR_INSTITUTION>`, working with `<PI_NAME>` on **LEO**, a research phenotyping system for structured extraction of epilepsy phenotypes from heterogeneous clinical documents.
 >
 > Your recent Epilepsia paper *Bridging the outcome documentation gap in epilepsy surgery: validating large language model agents for automated Engel and ILAE scoring* is directly upstream of one part of our schema. Our `SurgeryHistoryItem` module already includes structured slots for `engel_class` (IA–IVC) and `ilae_outcome` (1–6) with per-field evidence-span grounding, but our institutional cohort has modest surgical volume, which limits our ability to evaluate those specific fields with statistical power.
 >

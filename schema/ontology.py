@@ -1,4 +1,4 @@
-"""MedAI-EPI phenotype ontology v0.2.1 (§5, Table 3 + stress-test additions + coding cross-refs).
+"""LEO phenotype ontology v0.2.1 (§5, Table 3 + stress-test additions + coding cross-refs).
 
 Modules:
   1. ClinicalSeizureModule       — semiology, seizure/epilepsy type, frequency, onset, etiology, focal subtypes

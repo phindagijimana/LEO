@@ -1,4 +1,4 @@
-"""Schema-constrained decoding for MedAI-EPI extraction.
+"""Schema-constrained decoding for LEO extraction.
 
 Wraps the model generation call with an lm-format-enforcer prefix-allowed-tokens
 function derived from a Pydantic model's JSON schema. Every generated token is

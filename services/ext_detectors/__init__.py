@@ -26,6 +26,7 @@ LEO catalogue column). ``acute_administration`` is already on ``ctakes``.
 from __future__ import annotations
 
 import os
+from services.leo_env import getenv
 from typing import Iterable, Optional
 
 from services.chain_llm import FieldItem
@@ -85,9 +86,9 @@ _NOT_CATALOGUE = {
 
 
 def parse_ext_detectors(value: Optional[str | Iterable[str]] = None) -> tuple[str, ...]:
-    """CLI / env ``MEDAI_LEO_EXT_DETECTOR`` → known names. Empty default (LEO frozen)."""
+    """CLI / env ``LEO_EXT_DETECTOR`` → known names. Empty default (LEO frozen)."""
     if value is None:
-        value = os.environ.get("MEDAI_LEO_EXT_DETECTOR", "")
+        value = getenv("LEO_EXT_DETECTOR", "")
     if isinstance(value, str):
         parts = [p.strip().lower() for p in value.replace(";", ",").split(",")]
     else:

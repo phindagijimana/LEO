@@ -1,6 +1,6 @@
 # JAPE → Python (spaCy Matcher + medspaCy ConText) cheatsheet
 
-MedAI-EPI Phase 2 — one-page port guide for the ExECT-V2 JAPE study. We are
+LEO Phase 2 — one-page port guide for the ExECT-V2 JAPE study. We are
 NOT running JAPE / GATE / Groovy; we mimic the semantics with `spacy.Matcher`,
 `spacy.tokens.Doc`, medspaCy `ConText`, and Pydantic-validated `Evidence[T]`.
 

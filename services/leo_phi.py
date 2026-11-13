@@ -90,24 +90,22 @@ def scan(text: str) -> list[Hit]:
         r"\bhttps?://[^\s<>\"]+", re.I))
     hits += _hits_for("ip", "O", text, re.compile(
         r"\b(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b"))
-    hits += _hits_for("mrn", "H", text, re.compile(
-        r"\b(?:MRN|medical\s+record(?:\s+number)?)\s*[:#]?\s*[A-Za-z0-9-]{4,}\b", re.I))
-    hits += _hits_for("plan", "I", text, re.compile(
-        r"\b(?:member\s+id|subscriber\s+id|health\s+plan\s+(?:id|number)|beneficiary\s+(?:id|number))\s*[:#]?\s*[A-Za-z0-9-]{4,}\b",
-        re.I))
-    hits += _hits_for("account", "J", text, re.compile(
-        r"\b(?:account\s+(?:number|#|no\.?)|acct\.?)\s*[:#]?\s*[A-Za-z0-9-]{4,}\b", re.I))
-    hits += _hits_for("license", "K", text, re.compile(
-        r"\b(?:driver'?s?\s+license|license\s+(?:number|#)|DEA\s*#?)\s*[:#]?\s*[A-Za-z0-9-]{4,}\b",
-        re.I))
-    hits += _hits_for("vehicle", "L", text, re.compile(
-        r"\b(?:VIN|license\s+plate)\s*[:#]?\s*[A-Za-z0-9-]{5,}\b", re.I))
-    hits += _hits_for("device", "M", text, re.compile(
-        r"\b(?:device\s+(?:id|serial)|serial\s+(?:number|#)|IMEI)\s*[:#]?\s*[A-Za-z0-9-]{4,}\b",
-        re.I))
-    hits += _hits_for("other", "R", text, re.compile(
-        r"\b(?:CSN|FIN|HAR|visit\s+number|encounter\s+(?:number|id)|NPI)\s*[:#]?\s*[A-Za-z0-9-]{4,}\b",
-        re.I))
+    # Label must end as a word (FIN ≠ "findings", VIN ≠ "vincristine"); the ID must contain a digit.
+    def labeled(labels: str, min_len: int = 4) -> re.Pattern:
+        return re.compile(
+            rf"\b(?:{labels})(?![A-Za-z0-9])\s*[:#]?\s*(?=[A-Za-z-]*\d)[A-Za-z0-9-]{{{min_len},}}\b", re.I)
+
+    hits += _hits_for("mrn", "H", text, labeled(r"MRN|medical\s+record(?:\s+number)?"))
+    hits += _hits_for("plan", "I", text, labeled(
+        r"member\s+id|subscriber\s+id|health\s+plan\s+(?:id|number)|beneficiary\s+(?:id|number)"))
+    hits += _hits_for("account", "J", text, labeled(r"account\s+(?:number|no\.?)|account\s*#|acct\.?"))
+    hits += _hits_for("license", "K", text, labeled(
+        r"driver'?s?\s+license|license\s+number|license\s*#|DEA\s*#|DEA"))
+    hits += _hits_for("vehicle", "L", text, labeled(r"VIN|license\s+plate", 5))
+    hits += _hits_for("device", "M", text, labeled(
+        r"device\s+(?:id|serial)|serial\s+number|serial\s*#|IMEI"))
+    hits += _hits_for("other", "R", text, labeled(
+        r"CSN|FIN|HAR|visit\s+number|encounter\s+(?:number|id)|NPI"))
     hits += _hits_for("date", "C", text, re.compile(
         r"\b(?:\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}|DOB\s*[:#]?\s*\S+)\b",
         re.I))
@@ -121,8 +119,7 @@ def scan(text: str) -> list[Hit]:
     hits += _hits_for("geo", "B", text, re.compile(
         r"\b[A-Z]{2}\s+\d{5}(?:-\d{4})?\b"))
     hits += _hits_for("name", "A", text, re.compile(
-        r"\b(?:patient(?:\s+name)?|pt\.?|name)\s*[:#]\s*[A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]*)+\b",
-        re.I))
+        r"\b(?i:patient(?:\s+name)?|pt\.?|name)\s*[:#]\s*[A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]*)+\b"))
     hits += _hits_for("name", "A", text, re.compile(
         r"\b(?:Mr|Mrs|Ms|Miss|Mx|Dr)\.?\s+[A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]*)?\b"))
     hits += _hits_for("biometric", "P", text, re.compile(

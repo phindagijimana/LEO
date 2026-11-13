@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert v1 synthetic-corpus semantic plans → MedAI-EPI Evidence[T] targets.
+"""Convert v1 synthetic-corpus semantic plans → LEO Evidence[T] targets.
 
 Extended vocabulary compared to Phase 6D.2 pilot's converter — this handles
 the full 8-field EpilepsyPhenotype vocabulary emitted by

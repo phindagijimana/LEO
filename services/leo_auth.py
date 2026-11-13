@@ -1,7 +1,7 @@
 """Optional login and audit log for a locally hosted LEO.
 
-Login is OFF until a user exists (``bin/leo user add NAME``) or ``MEDAI_LEO_REQUIRE_LOGIN=1`` is set.  With
-``MEDAI_LEO_REQUIRE_LOGIN=1`` and no users, nobody can log in (fails closed).
+Login is OFF until a user exists (``bin/leo user add NAME``) or ``LEO_REQUIRE_LOGIN=1`` is set.  With
+``LEO_REQUIRE_LOGIN=1`` and no users, nobody can log in (fails closed).
 
 When on, every page and API route except ``/health`` and the login page needs either a login session (cookie) or
 HTTP Basic credentials (for scripts).  Passwords are stored only as salted hashes (werkzeug scrypt) in
@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import os
+from services.leo_env import getenv
 import threading
 import time
 from datetime import datetime, timezone
@@ -29,7 +30,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 MIN_PASSWORD = 10
 MAX_FAILS, FAIL_WINDOW_S = 5, 600
-SESSION_HOURS = float(os.environ.get("MEDAI_LEO_SESSION_HOURS", "8"))
+SESSION_HOURS = float(getenv("LEO_SESSION_HOURS", "8"))
 EXEMPT = ("/health", "/leo/login", "/leo/logout")
 ANON = "(no login)"
 
@@ -45,11 +46,11 @@ def _data_dir() -> Path:
 
 
 def users_path() -> Path:
-    return Path(os.environ.get("MEDAI_LEO_USERS") or _data_dir() / "leo_users.json")
+    return Path(getenv("LEO_USERS") or _data_dir() / "leo_users.json")
 
 
 def audit_path() -> Path:
-    return Path(os.environ.get("MEDAI_LEO_AUDIT") or _data_dir() / "leo_audit.jsonl")
+    return Path(getenv("LEO_AUDIT") or _data_dir() / "leo_audit.jsonl")
 
 
 def _secure(path: Path) -> None:
@@ -106,7 +107,7 @@ def remove_user(name: str) -> bool:
 
 
 def enabled() -> bool:
-    return os.environ.get("MEDAI_LEO_REQUIRE_LOGIN", "") in ("1", "true", "yes") or bool(load_users())
+    return getenv("LEO_REQUIRE_LOGIN", "") in ("1", "true", "yes") or bool(load_users())
 
 
 def current_user() -> str:
@@ -231,7 +232,7 @@ def init_app(app) -> None:
     """Install the guard, login routes and cookie settings.  Safe to call when login is off."""
     app.config.setdefault("SESSION_COOKIE_HTTPONLY", True)
     app.config.setdefault("SESSION_COOKIE_SAMESITE", "Lax")
-    if os.environ.get("MEDAI_LEO_COOKIE_SECURE", "") in ("1", "true", "yes"):
+    if getenv("LEO_COOKIE_SECURE", "") in ("1", "true", "yes"):
         app.config["SESSION_COOKIE_SECURE"] = True
     app.before_request(_guard)
 

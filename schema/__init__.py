@@ -1,4 +1,4 @@
-"""MedAI-EPI phenotype schema (v0.2.1).
+"""LEO phenotype schema (v0.2.1).
 
 Public API:
 

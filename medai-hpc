@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-MedAI - HPC Deployment CLI
-Manage MedAI deployment on HPC clusters with SLURM
+LEO - HPC Deployment CLI
+Manage LEO deployment on HPC clusters with SLURM
 """
 import os
 import sys
@@ -41,7 +41,7 @@ def _read_service_port_from_job_script():
 def print_banner():
     print("")
     print("=" * 70)
-    print("  MedAI - HPC Deployment CLI")
+    print("  LEO - HPC Deployment CLI")
     print("  SLURM Cluster Management")
     print("=" * 70)
     print("")
@@ -80,9 +80,9 @@ def auto_load_modules():
 
 
 def cmd_install(args):
-    """Install MedAI on HPC cluster"""
+    """Install LEO on HPC cluster"""
     print_banner()
-    print("Installing MedAI on HPC cluster...")
+    print("Installing LEO on HPC cluster...")
     print("")
     
     # Auto-load required modules
@@ -95,7 +95,7 @@ def cmd_install(args):
     
     # Check if already installed
     if INSTALL_MARKER.exists():
-        print("[INFO] MedAI already installed.")
+        print("[INFO] LEO already installed.")
         print("")
         response = input("Reinstall? (y/N): ").strip().lower()
         if response != 'y':
@@ -187,7 +187,7 @@ def create_slurm_job_script(args, resource_mode='gpu'):
     
     # Build SBATCH directives
     sbatch_directives = f"""#!/bin/bash
-#SBATCH --job-name=medai
+#SBATCH --job-name=leo
 #SBATCH --partition={partition}"""
     
     # Add GPU request only if in GPU mode
@@ -202,14 +202,14 @@ def create_slurm_job_script(args, resource_mode='gpu'):
 #SBATCH --cpus-per-task={cpus}
 #SBATCH --mem={mem}
 #SBATCH --time={time_limit}
-#SBATCH --output=logs/medai_%j.out
-#SBATCH --error=logs/medai_%j.err"""
+#SBATCH --output=logs/leo_%j.out
+#SBATCH --error=logs/leo_%j.err"""
     
     script_content = sbatch_directives + f"""
 
 # Print job information
 echo "=================================================="
-echo "MedAI - HPC Job ({resource_mode.upper()} Mode)"
+echo "LEO - HPC Job ({resource_mode.upper()} Mode)"
 echo "=================================================="
 echo "Job ID: $SLURM_JOB_ID"
 echo "Node: $SLURM_NODELIST"
@@ -297,8 +297,8 @@ echo ""
     
     # Add final part of script
     script_content += f"""
-# Start MedAI (Gunicorn — see gunicorn_config.py; single worker for one model copy)
-echo "Starting MedAI on 0.0.0.0:{port} (Gunicorn)..."
+# Start LEO (Gunicorn — see gunicorn_config.py; single worker for one model copy)
+echo "Starting LEO on 0.0.0.0:{port} (Gunicorn)..."
 exec python3 -m gunicorn -c gunicorn_config.py app:app
 
 # Job completion (unreachable if exec succeeds; kept for clarity)
@@ -315,14 +315,14 @@ echo "=================================================="
 
 
 def cmd_run(args):
-    """Submit MedAI job to SLURM"""
+    """Submit LEO job to SLURM"""
     print_banner()
     
     # Auto-load required modules
     auto_load_modules()
     
     if not INSTALL_MARKER.exists():
-        print("[ERROR] MedAI not installed on HPC.")
+        print("[ERROR] LEO not installed on HPC.")
         print("        Run: ./medai-hpc install")
         return 1
     
@@ -358,7 +358,7 @@ def cmd_run(args):
     # Recreate job script with current args and resource mode
     create_slurm_job_script(args, resource_mode)
     
-    print(f"Submitting MedAI job to SLURM ({resource_mode.upper()} mode)...")
+    print(f"Submitting LEO job to SLURM ({resource_mode.upper()} mode)...")
     print("")
     
     try:
@@ -403,7 +403,7 @@ def cmd_stop(args):
     
     if not JOB_ID_FILE.exists():
         print("[INFO] No job ID file found.")
-        print("       No MedAI job to cancel.")
+        print("       No LEO job to cancel.")
         return 0
     
     with open(JOB_ID_FILE) as f:
@@ -466,7 +466,7 @@ def cmd_status(args):
             
             if state == 'RUNNING':
                 print("\n[OK] Job is RUNNING")
-                print("\nAccess MedAI:")
+                print("\nAccess LEO:")
                 
                 # Get node name
                 node_result = subprocess.run(
@@ -516,7 +516,11 @@ def cmd_logs(args):
         
         logs_dir = APP_DIR / "logs"
         if logs_dir.exists():
-            log_files = sorted(logs_dir.glob("medai_*.out"), reverse=True)
+            log_files = sorted(
+                list(logs_dir.glob("leo_*.out")) + list(logs_dir.glob("medai_*.out")),
+                key=lambda p: p.stat().st_mtime,
+                reverse=True,
+            )
             if log_files:
                 print("Recent log files:")
                 for i, log_file in enumerate(log_files[:5], 1):
@@ -545,8 +549,11 @@ def cmd_logs(args):
     print("")
     
     # Determine log file
-    log_file = APP_DIR / "logs" / f"medai_{job_id}.out"
-    err_file = APP_DIR / "logs" / f"medai_{job_id}.err"
+    log_file = APP_DIR / "logs" / f"leo_{job_id}.out"
+    err_file = APP_DIR / "logs" / f"leo_{job_id}.err"
+    if not log_file.exists():
+        log_file = APP_DIR / "logs" / f"medai_{job_id}.out"
+        err_file = APP_DIR / "logs" / f"medai_{job_id}.err"
     
     lines = args.lines or 50
     
@@ -655,7 +662,7 @@ def cmd_config(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='MedAI HPC Deployment CLI',
+        description='LEO HPC Deployment CLI',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -684,7 +691,7 @@ Examples:
     subparsers = parser.add_subparsers(dest='command', help='Command to execute')
     
     # Install command
-    install_parser = subparsers.add_parser('install', help='Install MedAI on HPC')
+    install_parser = subparsers.add_parser('install', help='Install LEO on HPC')
     install_parser.add_argument('--partition', default='general', help='SLURM partition')
     install_parser.add_argument('--gpus', type=int, default=1, help='Number of GPUs')
     install_parser.add_argument('--memory', default='64G', help='Memory allocation')

@@ -1,4 +1,4 @@
-# MedAI-EPI — future work
+# LEO — future work
 
 **Purpose**: capture follow-up study designs that are out of scope for Shape A
 (the current manuscript) but that the framework and its released artifacts
@@ -44,7 +44,7 @@ review, and clinician annotation time.
 **One-line thesis**: generate 300–500 synthetic epilepsy *patients* — each
 represented by a linked set of documents (progress note + EEG report + MRI
 report + EMU discharge + presurgical evaluation) generated from a shared
-controlled ground truth — and evaluate MedAI-EPI's cross-modality
+controlled ground truth — and evaluate LEO's cross-modality
 extraction and the `IntegratedPhenotypeModule` empirically for the first
 time.
 
@@ -94,7 +94,7 @@ are stratified to test linguistic robustness:
 **Evaluation loop**:
 
 For each generated document `X_ij` (patient *i*, document family *j*),
-run MedAI-EPI extraction and score against the source `Y_i`:
+run LEO extraction and score against the source `Y_i`:
 `P(Ŷ = Y | doc_family, generator_style, arm)`. This lets Shape C ask
 *which document families are hardest*, *which generator styles trip which
 arms*, and *whether the `IntegratedPhenotypeModule`'s cross-modality
@@ -115,7 +115,7 @@ addressed by design:
    between LLM-generated and clinician-written documents for the same
    underlying `Y_i`.
 3. Cross-validate with the Shape A F-S-gold numbers on the shared field
-   set — if MedAI-EPI's Shape C numbers on `Medication` closely track its
+   set — if LEO's Shape C numbers on `Medication` closely track its
    Shape A numbers, the generator is not adversely inflating results.
 
 **What Shape C gives Shape A**:

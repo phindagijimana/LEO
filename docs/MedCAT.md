@@ -1,7 +1,7 @@
 # MedCAT + Rules Pipeline (arm B1') — Full Build Plan
 
 **Status (2026-10-01):** Phases 0-8 and 1d COMPLETE. Phase 9 manuscript integration in progress. Phases 6d, 6e, 6f PENDING external approvals.
-**Owner:** MedAI-EPI team
+**Owner:** LEO team
 **Estimated effort:** ~19 working days end-to-end; first F1 measurement at Day 11
 **Scope:** all 24 v0.2.1 enums, 6 evaluation corpora
 **F1 target on F-S 40 held-out:** 0.72-0.85 — **ACHIEVED at F1=0.8053 [95 % CI 0.762, 0.848] (Phase 8, 2026-09-29)**; 0.60-0.75 on US corpora (secondary; synth-v1 F1=0.8189 [0.795, 0.841])
@@ -531,7 +531,7 @@ med42_service/
 >
 > Hi Dr Fonferko-Shadrach and Dr Lacey,
 >
-> We're building a US-side implementation of an epilepsy phenotype extractor at the University of Rochester Medical Center. Our project (MedAI-EPI) is a research comparison of rule-based vs LLM approaches for structured extraction from clinical notes. We plan to include ExECT-V2 as a specialized rule-based comparator by reimplementing your pipeline's logic in Python (MedCAT + medspaCy), citing your work.
+> We're building a US-side implementation of an epilepsy phenotype extractor at the University of Rochester Medical Center. Our project (LEO) is a research comparison of rule-based vs LLM approaches for structured extraction from clinical notes. We plan to include ExECT-V2 as a specialized rule-based comparator by reimplementing your pipeline's logic in Python (MedCAT + medspaCy), citing your work.
 >
 > We've studied the swneurosci/ExECT-V2 and arronlacey/ExECT repositories. Two questions:
 >

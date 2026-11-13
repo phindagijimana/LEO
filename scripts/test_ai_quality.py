@@ -3,8 +3,8 @@
 Send a curated set of medical cases through /analyze and dump every raw
 response to a markdown report for clinician grading.
 
-  export MEDAI_SERVICE_URL=http://<node>:8085
-  export MEDAI_HTTP_TIMEOUT=1800
+  export LEO_SERVICE_URL=http://<node>:8085
+  export LEO_HTTP_TIMEOUT=1800
   python3 scripts/test_ai_quality.py [report_path]
 
 Tests three modes:
@@ -19,6 +19,7 @@ from __future__ import annotations
 import csv
 import json
 import os
+from services.leo_env import getenv
 import socket
 import sys
 import time
@@ -29,11 +30,11 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parent.parent
-URL = (os.environ.get("MEDAI_SERVICE_URL") or os.environ.get("MEDAI_BASE_URL") or "").rstrip("/")
-TIMEOUT = int(os.environ.get("MEDAI_HTTP_TIMEOUT", "1800"))
+URL = (getenv("LEO_SERVICE_URL") or getenv("LEO_BASE_URL") or "").rstrip("/")
+TIMEOUT = int(getenv("LEO_HTTP_TIMEOUT", "1800"))
 
 if not URL:
-    sys.exit("Set MEDAI_SERVICE_URL=http://<node>:8085 (or MEDAI_BASE_URL).")
+    sys.exit("Set LEO_SERVICE_URL=http://<node>:8085 (or LEO_BASE_URL).")
 
 
 def _post_form(path: str, fields: dict) -> tuple[int, dict | str]:
@@ -155,7 +156,7 @@ def main() -> int:
         health_status, health = 0, f"health-check failed: {e}"
 
     lines: list[str] = []
-    lines.append(f"# MedAI /analyze quality run — {datetime.now().isoformat(timespec='seconds')}")
+    lines.append(f"# LEO /analyze quality run — {datetime.now().isoformat(timespec='seconds')}")
     lines.append("")
     lines.append(f"- Service: `{URL}`")
     lines.append(f"- HTTP timeout: {TIMEOUT}s")

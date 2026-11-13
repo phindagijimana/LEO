@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import logging
 import os
+from services.leo_env import getenv
 from typing import Optional
 
 from services.extract import DecodingConfig
@@ -47,9 +48,9 @@ class DeepSeekBackend:
         self.model_cache_dir: str = model_cache_dir or os.environ.get(
             "MED42_MODEL_CACHE_DIR", "model_cache",
         )
-        # Device selection follows the same MEDAI_DEVICE convention as
+        # Device selection follows the same LEO_DEVICE convention as
         # services/med42_model.py so a single env var controls the whole stack.
-        env_dev = (os.environ.get("MEDAI_DEVICE") or "auto").strip().lower()
+        env_dev = (getenv("LEO_DEVICE") or "auto").strip().lower()
         try:
             import torch
         except ImportError as e:
@@ -59,7 +60,7 @@ class DeepSeekBackend:
             self._device = device
         elif env_dev == "cuda":
             if not cuda_ok:
-                raise RuntimeError("MEDAI_DEVICE=cuda but CUDA is not available.")
+                raise RuntimeError("LEO_DEVICE=cuda but CUDA is not available.")
             self._device = "cuda"
         elif env_dev == "cpu":
             self._device = "cpu"

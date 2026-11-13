@@ -1,8 +1,8 @@
-# MedAI-EPI Phenotype Schema v0.2.1
+# LEO Phenotype Schema v0.2.1
 
 **Status.** Supersedes `SCHEMA_V0_1.md`. Applies the 12 changes recommended by the v0.1 stress test (`SCHEMA_V0_1_STRESS_TEST.md`), plus the v0.2.1 patch adding structured etiology specifics + coding cross-references (see §7.1). Items marked **PROVISIONAL** below still need epileptologist confirmation before v0.2.1 is frozen.
 
-**Framing.** Unchanged. MedAI-EPI is a research phenotyping assistant. Every field is an extraction from a source document, not a clinical inference. Unknown / not-documented is always a valid answer and is preferred over guessing.
+**Framing.** Unchanged. LEO is a research phenotyping assistant. Every field is an extraction from a source document, not a clinical inference. Unknown / not-documented is always a valid answer and is preferred over guessing.
 
 **How to review this doc.** If you already reviewed v0.1, jump straight to §7 ("v0.2 change log") — it tells you exactly what's new and which items still need your sign-off. §1–§6 restate the schema in full so the doc is self-contained.
 

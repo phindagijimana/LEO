@@ -64,7 +64,7 @@ BASE = "https://www.mtsamples.com"
 INDEX_URL = f"{BASE}/site/pages/browse.asp?Type=42-Neurology"
 ROBOTS_URL = f"{BASE}/robots.txt"
 
-USER_AGENT = "MedAI-EPI-research/0.1 (academic epilepsy NLP eval; no personal contact)"
+USER_AGENT = "LEO-research/0.1 (academic epilepsy NLP eval; no personal contact)"
 
 # Epilepsy keyword filter. Case-insensitive; word-boundary anchored to
 # avoid false positives (e.g. "MRI brain" matches only when both words
@@ -357,7 +357,7 @@ def _write_readme(out: Path, n_links: int, n_fetched: int,
         "",
         "## Fetch protocol",
         "",
-        f"- User-Agent identifies MedAI-EPI project + contact email.",
+        f"- User-Agent identifies LEO project + contact email.",
         f"- Rate limit: {args.delay}s minimum between network requests.",
         f"- Local HTML cache at `.cache/<sha1>.html`; reruns short-circuit.",
         f"- Epilepsy keyword filter: `{'|'.join(EPI_KEYWORDS)}`",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Smoke test for the medai-epi CLI.
+"""Smoke test for the leo-extract CLI.
 
 Boots the Flask app in a background thread with a scripted mock backend
 attached, then invokes every CLI subcommand through subprocess and asserts
@@ -20,7 +20,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-CLI = REPO / "bin" / "medai-epi"
+CLI = REPO / "bin" / "leo-extract"
 PORT = 18099
 BASE_URL = f"http://127.0.0.1:{PORT}"
 
@@ -123,7 +123,7 @@ def _start_app():
 
 def _cli(*args) -> subprocess.CompletedProcess:
     env = os.environ.copy()
-    env["MEDAI_EPI_URL"] = BASE_URL
+    env["LEO_EPI_URL"] = BASE_URL
     return subprocess.run(
         [str(CLI), *args], env=env,
         capture_output=True, text=True, timeout=30,

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-epi-open
+#SBATCH --job-name=leo-open
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=12:00:00
-#SBATCH --output=logs/medai_epi_open_%j.out
-#SBATCH --error=logs/medai_epi_open_%j.err
+#SBATCH --output=logs/leo_epi_open_%j.out
+#SBATCH --error=logs/leo_epi_open_%j.err
 #
 # Submit with:
 #   sbatch scripts/slurm_open_benchmark.sh
@@ -24,7 +24,7 @@
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI Open Benchmark — full Fonferko sweep"
+echo "LEO Open Benchmark — full Fonferko sweep"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"

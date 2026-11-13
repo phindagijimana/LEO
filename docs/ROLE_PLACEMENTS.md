@@ -30,7 +30,7 @@ instead of the quote (the same failure mode as schema-echo).
 
 **Guardrails**
 
-- Off unless `--ask-rag` or `MEDAI_LEO_ASK_RAG=1`.
+- Off unless `--ask-rag` or `LEO_ASK_RAG=1`.
 - Never imported by L1C / X1C / P1C / F1C (`services/flat_extract.py` and siblings).
 - Injected only when the question is a guideline-judgment ask (`services/guideline_rag.py`).
   A seizure-type question retrieves nothing even if the flag is on.
@@ -58,7 +58,7 @@ NINDS CDE export join to other sites. Dumping them into E only adds collisions.
 
 **Guardrails**
 
-- Off unless `--export-codes` or `MEDAI_LEO_EXPORT_CODES=1`.
+- Off unless `--export-codes` or `LEO_EXPORT_CODES=1`.
 - Does not change ACCEPT / REVIEW, `concept`, detectors, or D17.
 - Not added to the ontology *retriever* (SCOPE D3–D5 retrieval still deferred).
 - `drug_resistance_status` never maps to ICD intractable.
@@ -87,7 +87,7 @@ type. Scoring it as a phenotype system confuses a preprocessor with a table fill
 | `sentence` | `rules.sentence_context` |
 | `negex` | Chapman 2001 pre-negation (`services.ext_detectors.span`) |
 
-`MEDAI_LEO_CONTEXT_ENGINE` overrides. Default ≡ previous E.
+`LEO_CONTEXT_ENGINE` overrides. Default ≡ previous E.
 
 ## 4. Not shipped: 70B, chain-of-thought, self-consistency
 

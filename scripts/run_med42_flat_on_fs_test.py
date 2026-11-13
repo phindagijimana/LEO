@@ -4,14 +4,14 @@ the 40 held-out F-S letters.  See ``services/flat_extract.py`` for why these
 replace the per-module M-prompts for the base model.
 
 One manifest per (letter, arm): ``prompt_id = flat_phenotype.<arm>.<version>``
-(MEDAI_FLAT_PROMPT_VERSION, default v1; v2 adds an "unknown" epilepsy type).
-Resumable.  Arm L2 = k retrieved F-S training letters (MEDAI_FEWSHOT_K, default 3);
+(LEO_FLAT_PROMPT_VERSION, default v1; v2 adds an "unknown" epilepsy type).
+Resumable.  Arm L2 = k retrieved F-S training letters (LEO_FEWSHOT_K, default 3);
 the letter itself is excluded from its own examples, so development letters
-(MEDAI_PIDS=EA0081,...) can be run too.  MEDAI_CORPUS=synth: US-style synthetic evaluation notes (``services.synth_eval``; manifests keyed
+(LEO_PIDS=EA0081,...) can be run too.  LEO_CORPUS=synth: US-style synthetic evaluation notes (``services.synth_eval``; manifests keyed
 ``synth-<visit_id>``; arms L0/L1 and their constrained forms L0C/L1C; L2 needs F-S exemplars and is
-not used there); MEDAI_SHARD=i/n splits the pending work across jobs.
-Env: MEDAI_ARMS (default "L0,L1"), MEDAI_MAX_NEW_TOKENS (768),
-MEDAI_PIDS, MEDAI_LIMIT, MEDAI_MANIFEST_DIR.  Do NOT set MEDAI_LORA_ADAPTER_DIR:
+not used there); LEO_SHARD=i/n splits the pending work across jobs.
+Env: LEO_ARMS (default "L0,L1"), LEO_MAX_NEW_TOKENS (768),
+LEO_PIDS, LEO_LIMIT, LEO_MANIFEST_DIR.  Do NOT set LEO_LORA_ADAPTER_DIR:
 this is the untuned model.
 """
 
@@ -27,7 +27,8 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
-os.environ.setdefault("MEDAI_MANIFEST_DIR", str(REPO / "data" / "run_manifests_fs_test_flat"))
+from services.leo_env import getenv, setdefault
+setdefault("LEO_MANIFEST_DIR", str(REPO / "data" / "run_manifests_fs_test_flat"))
 
 from services.extract import DecodingConfig  # noqa: E402
 from services.flat_extract import (FLAT_PROMPT_VERSION, build_flat_prompt, flat_answer_model,
@@ -60,28 +61,28 @@ def _done(root: Path) -> set[tuple[str, str]]:
 
 
 def main() -> int:
-    if os.environ.get("MEDAI_LORA_ADAPTER_DIR") and os.environ.get("MEDAI_FLAT_ADAPTER_OK") != "1":
-        raise SystemExit("Unset MEDAI_LORA_ADAPTER_DIR: flat arms are for the untuned model.  "
-                         "(Arm H2 runs the flat contract with its own adapter: set MEDAI_FLAT_ADAPTER_OK=1 "
-                         "and a separate MEDAI_MANIFEST_DIR.)")
-    arms = [a for a in os.environ.get("MEDAI_ARMS", "L0,L1").split(",") if a]
-    synth = os.environ.get("MEDAI_CORPUS", "fs") == "synth"
+    if getenv("LEO_LORA_ADAPTER_DIR") and getenv("LEO_FLAT_ADAPTER_OK") != "1":
+        raise SystemExit("Unset LEO_LORA_ADAPTER_DIR: flat arms are for the untuned model.  "
+                         "(Arm H2 runs the flat contract with its own adapter: set LEO_FLAT_ADAPTER_OK=1 "
+                         "and a separate LEO_MANIFEST_DIR.)")
+    arms = [a for a in getenv("LEO_ARMS", "L0,L1").split(",") if a]
+    synth = getenv("LEO_CORPUS", "fs") == "synth"
     if synth:
         from services import synth_eval
-        pids = [p for p in os.environ.get("MEDAI_PIDS", "").split(",") if p] or synth_eval.eval_visits()
+        pids = [p for p in getenv("LEO_PIDS", "").split(",") if p] or synth_eval.eval_visits()
         if any(a.startswith("L2") for a in arms):
             raise SystemExit("L2/L2C retrieve F-S letters; not available for the synthetic corpus.")
     else:
-        pids = [p for p in os.environ.get("MEDAI_PIDS", "").split(",") if p] or HELD_OUT
+        pids = [p for p in getenv("LEO_PIDS", "").split(",") if p] or HELD_OUT
     prefix = "synth-" if synth else "fs-test-"
-    limit = int(os.environ.get("MEDAI_LIMIT", "0") or 0)
-    max_new = int(os.environ.get("MEDAI_MAX_NEW_TOKENS", "768"))
+    limit = int(getenv("LEO_LIMIT", "0") or 0)
+    max_new = int(getenv("LEO_MAX_NEW_TOKENS", "768"))
 
     root = Path(MANIFEST_ROOT)
     done = _done(root) if root.exists() else set()
     todo = [(p, a) for a in arms for p in pids if (f"{prefix}{p}", a) not in done]
-    if os.environ.get("MEDAI_SHARD"):
-        i0, n0 = (int(x) for x in os.environ["MEDAI_SHARD"].split("/"))
+    if getenv("LEO_SHARD"):
+        i0, n0 = (int(x) for x in os.environ["LEO_SHARD"].split("/"))
         todo = todo[i0::n0]
     print(f"manifests={root}\narms={arms}  {len(todo)} (letter, arm) pairs to run", flush=True)
     if limit:
@@ -99,7 +100,7 @@ def main() -> int:
                 else (FS_TEXT_DIR / f"{pid}.txt").read_text(encoding="utf-8"))
         started = datetime.now(timezone.utc)
         t0 = time.time()
-        prompt = build_flat_prompt(note, arm, exclude=pid, k=int(os.environ.get("MEDAI_FEWSHOT_K", "3")))
+        prompt = build_flat_prompt(note, arm, exclude=pid, k=int(getenv("LEO_FEWSHOT_K", "3")))
         if arm.endswith("C"):
             raw, n_tok = backend.generate_constrained(prompt, flat_answer_model(), decoding)
         else:

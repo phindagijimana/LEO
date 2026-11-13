@@ -36,6 +36,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
+from services.leo_env import getenv
 
 PY = REPO / "venv-medcat" / "bin" / "python"
 STATE = REPO / ".leo_server.json"
@@ -65,7 +66,7 @@ def _slurm_ok() -> bool:
 def _slurm_resource_args(sp) -> None:
     """Site-specific Slurm resources. Defaults match this cluster (L40S 24G)."""
     sp.add_argument("--gres", default="",
-                    help="Slurm GPU GRES (default gpu:l40s.24g:1, or MEDAI_LEO_GRES). Ignored on --cpu.")
+                    help="Slurm GPU GRES (default gpu:l40s.24g:1, or LEO_GRES). Ignored on --cpu.")
     sp.add_argument("--cpus", type=int, default=None, help="Slurm --cpus-per-task (default 8 GPU / 16 CPU)")
     sp.add_argument("--mem", default="", help="Slurm --mem (default 64G GPU / 48G CPU)")
 
@@ -163,7 +164,7 @@ def _runtime(args):
 
 
 def _slurm_gres(explicit: str | None = None) -> str:
-    return (explicit or os.environ.get("MEDAI_LEO_GRES") or "gpu:l40s.24g:1").strip()
+    return (explicit or getenv("LEO_GRES") or "gpu:l40s.24g:1").strip()
 
 
 def _submit(name: str, argv: list[str], *, gpu: bool, partition: str, hours: int,
@@ -287,11 +288,11 @@ def _research_env() -> dict:
     from services.leo_research_gate import apply_offline_env
     apply_offline_env()
     return {
-        "MEDAI_LEO_RESEARCH": "1",
+        "LEO_RESEARCH": "1",
         "HF_HUB_OFFLINE": "1",
         "TRANSFORMERS_OFFLINE": "1",
         "HF_HUB_DISABLE_TELEMETRY": "1",
-        "MEDAI_LEO_BLOCK_CLOUD": "1",
+        "LEO_BLOCK_CLOUD": "1",
     }
 
 
@@ -299,7 +300,8 @@ def _enforce_research(args) -> None:
     if not _want_research(args):
         return
     from services.leo_research_gate import enforce
-    host = None
+    # batch/run open no port, so web login does not apply to them
+    host = "127.0.0.1"
     if getattr(args, "local", False) and hasattr(args, "host"):
         host = _bind_host(args)
     enforce(apply_offline=True, host=host)
@@ -681,29 +683,29 @@ def cmd_start(args) -> int:
         port = str(args.port)
         mode = _mode(args.mode)
         env = dict(os.environ, SERVICE_PORT=port, SERVICE_HOST=_bind_host(args), APP_HOME=str(REPO),
-                   MEDAI_LOAD_MED42="1" if mode == "gpu" else "0", MEDAI_REQUIRE_GPU="1" if mode == "gpu" else "0")
+                   LEO_LOAD_MED42="1" if mode == "gpu" else "0", LEO_REQUIRE_GPU="1" if mode == "gpu" else "0")
         if _want_research(args):
             env.update(_research_env())
         adapter = _adapter_dir(args)
         if adapter:
-            env["MEDAI_LORA_ADAPTER_DIR"] = adapter
-            env["MEDAI_LEO_ARM"] = args.arm or "L0C"
+            env["LEO_LORA_ADAPTER_DIR"] = adapter
+            env["LEO_ARM"] = args.arm or "L0C"
         elif args.arm:
-            env["MEDAI_LEO_ARM"] = args.arm
+            env["LEO_ARM"] = args.arm
         ext = _ext_reader_arg(args)
         if ext is False:
-            env["MEDAI_LEO_EXT_READER"] = "0"
+            env["LEO_EXT_READER"] = "0"
         elif ext is True:
-            env["MEDAI_LEO_EXT_READER"] = "1"
+            env["LEO_EXT_READER"] = "1"
         elif adapter:
-            env["MEDAI_LEO_EXT_READER"] = "0"
+            env["LEO_EXT_READER"] = "0"
         if getattr(args, "no_ontology_select", False):
-            env["MEDAI_LEO_ONTOLOGY_SELECT"] = "0"
+            env["LEO_ONTOLOGY_SELECT"] = "0"
         elif getattr(args, "ontology_select", False):
-            env["MEDAI_LEO_ONTOLOGY_SELECT"] = "1"
+            env["LEO_ONTOLOGY_SELECT"] = "1"
         dets = getattr(args, "ext_detector", None) or []
         if dets:
-            env["MEDAI_LEO_EXT_DETECTOR"] = ",".join(dets)
+            env["LEO_EXT_DETECTOR"] = ",".join(dets)
         STATE.write_text(json.dumps({"node": os.uname().nodename, "port": args.port, "mode": mode,
                                      "job": os.environ.get("SLURM_JOB_ID", ""), "started": datetime.now().isoformat()}))
         host = env["SERVICE_HOST"]
@@ -716,7 +718,7 @@ def cmd_start(args) -> int:
         gunicorn_ok = subprocess.run([str(PY), "-c", "import gunicorn"], capture_output=True).returncode == 0
         if gunicorn_ok and not getattr(args, "dev", False):
             # one worker (one model in memory), several threads; settings in gunicorn_config.py
-            env.update(GUNICORN_BIND=f"{host}:{port}", MEDAI_EAGER_LOAD="1")
+            env.update(GUNICORN_BIND=f"{host}:{port}", LEO_EAGER_LOAD="1")
             os.execve(str(PY), [str(PY), "-m", "gunicorn", "-c", "gunicorn_config.py", "app:app"], env)
         print("[leo] gunicorn not installed in this environment (or --dev): using Flask's development server.",
               file=sys.stderr)
@@ -863,7 +865,7 @@ def cmd_check(args) -> int:
     if _adapter_dir(args):
         rec(Path(_adapter_dir(args), "adapter_config.json").exists(), "adapter", _adapter_dir(args))
     rec(None, "GPU visible", "yes" if _cuda() else "no (normal on a login node)")
-    if args.research or os.environ.get("MEDAI_LEO_RESEARCH", "").strip() in ("1", "true", "yes"):
+    if args.research or getenv("LEO_RESEARCH", "").strip() in ("1", "true", "yes"):
         from services.leo_research_gate import apply_offline_env, report
         apply_offline_env()
         print("Research-host gate (required = notes stay on disk; others are info)")

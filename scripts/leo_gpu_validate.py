@@ -145,7 +145,7 @@ def _parity(args, stage: str, docs: list[tuple[str, str]], old_dir: Path, live_d
 
     if args.selftest:
         live_dir = Path("/tmp/leo_gpu_selftest/manifests") / live_dir.name
-    os.environ["MEDAI_MANIFEST_DIR"] = str(live_dir)
+    os.environ["LEO_MANIFEST_DIR"] = str(live_dir)
     import services.run_manifest as rm
     rm.MANIFEST_ROOT = live_dir
     rt = make_runtime(args)

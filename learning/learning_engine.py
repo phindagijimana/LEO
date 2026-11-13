@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MedAI Self-Improvement Engine
+LEO Self-Improvement Engine
 Automatically learns from expert validations and updates prompts
 """
 
@@ -21,7 +21,7 @@ LEARNING_LOG_PATH = APP_DIR / "data" / "learning_history.json"
 
 
 class LearningEngine:
-    """MedAI Self-Improvement Engine"""
+    """LEO Self-Improvement Engine"""
     
     def __init__(self, min_confidence_threshold=0.8, min_validations=1):
         """

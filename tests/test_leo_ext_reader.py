@@ -237,19 +237,19 @@ def test_combined_reasoner_merges_and_survives_one_failure():
 
 
 def test_runtime_switch(monkeypatch):
-    monkeypatch.setenv("MEDAI_LEO_EXT_READER", "0")
+    monkeypatch.setenv("LEO_EXT_READER", "0")
     rt = LeoRuntime(backend=FakeBackend(FLAT_OK), ext_reader=None)
     assert rt.ext_reader is False
-    monkeypatch.setenv("MEDAI_LEO_EXT_READER", "1")
+    monkeypatch.setenv("LEO_EXT_READER", "1")
     rt = LeoRuntime(backend=FakeBackend(FLAT_OK), ext_reader=None)
     assert rt.ext_reader is True
     rt = LeoRuntime(backend=FakeBackend(FLAT_OK), ext_reader=False)
     assert rt.ext_reader is False
-    assert env_flag("MEDAI_LEO_EXT_READER") is True
+    assert env_flag("LEO_EXT_READER") is True
 
 
 def test_h2_adapter_defaults_x1c_off(monkeypatch):
-    monkeypatch.delenv("MEDAI_LEO_EXT_READER", raising=False)
+    monkeypatch.delenv("LEO_EXT_READER", raising=False)
     rt = LeoRuntime(backend=FakeBackend(FLAT_OK), adapter_label="llama3-med42-8b_lora_epi_h2")
     assert rt.ext_reader is False
     rt = LeoRuntime(backend=FakeBackend(FLAT_OK), adapter_label="llama3-med42-8b_lora_epi_h2", ext_reader=True)

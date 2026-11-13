@@ -1,4 +1,4 @@
-"""MedAI-EPI evaluation harness (paper §15–16, Tables 7 and 8).
+"""LEO evaluation harness (paper §15–16, Tables 7 and 8).
 
 Public API:
 

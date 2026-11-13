@@ -1,10 +1,10 @@
 # Courtesy Email Draft — Fonferko-Shadrach ExECT-V2 Group
 
-**Status.** Draft. Intended to be reviewed by the MedAI-EPI PI and sent from
+**Status.** Draft. Intended to be reviewed by the LEO PI and sent from
 a signed institutional address; not to be automated.
 
 **Purpose.** Announce our US-side reimplementation of ExECT-V2 logic in
-Python (MedCAT + medspaCy) as a research comparator in the MedAI-EPI paper,
+Python (MedCAT + medspaCy) as a research comparator in the LEO paper,
 ask for explicit open-source relicensing to enable proper attribution, and
 open the door to cross-corpus collaboration.
 
@@ -22,7 +22,7 @@ Optionally cc your own PI + program manager at URMC.
 
 ## Subject line (pick one)
 
-- **Preferred:** `US reimplementation of ExECT-V2 for research comparison — MedAI-EPI (University of Rochester)`
+- **Preferred:** `US reimplementation of ExECT-V2 for research comparison — LEO (University of Rochester)`
 - Alternative: `Enquiry re: ExECT-V2 licensing + potential US cross-corpus collaboration`
 
 ---
@@ -33,7 +33,7 @@ Optionally cc your own PI + program manager at URMC.
 >
 > I hope this note finds you well. My colleagues and I at the University of
 > Rochester Medical Center are building a research framework called
-> **MedAI-EPI** for structured epilepsy phenotype extraction from clinical
+> **LEO** for structured epilepsy phenotype extraction from clinical
 > notes. The paper compares several extraction approaches — an ontology-aware
 > rule-based baseline, a fine-tuned Med42-8B (LoRA) system, GPT-family and
 > DeepSeek comparators, and a specialized rule-based comparator informed by
@@ -86,7 +86,7 @@ Optionally cc your own PI + program manager at URMC.
 >
 > —
 >
-> **MedAI-EPI team**
+> **LEO team**
 > University of Rochester Medical Center
 > Rochester, NY, USA
 > [Signature block — PI name, appointment, email, ORCID]
@@ -97,14 +97,14 @@ Optionally cc your own PI + program manager at URMC.
 
 - [ ] Confirm current corresponding-author email addresses on the 2024 J
       Biomed Semantics paper (may differ from the 2019 paper).
-- [ ] Attach a one-page PDF summary of MedAI-EPI (schema screenshot, arm
+- [ ] Attach a one-page PDF summary of LEO (schema screenshot, arm
       list, corpus list) so the recipient can react in five minutes.
 - [ ] Have PI + program manager approve the licensing ask (para 3, item 1)
       before sending. Some institutions require IP-office sign-off for any
       wording that touches licensing.
 - [ ] Send from a `@urmc.rochester.edu` address, not from a personal
       account.
-- [ ] BCC the MedAI-EPI shared mailbox for archival.
+- [ ] BCC the LEO shared mailbox for archival.
 
 ## Follow-up policy
 

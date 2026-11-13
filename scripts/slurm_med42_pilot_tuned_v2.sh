@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-pilot-tunedv2
+#SBATCH --job-name=leo-pilot-tunedv2
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,12 +7,12 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=04:00:00
-# Env knobs: MEDAI_MAX_NEW_TOKENS raised so the tuned model can emit the
+# Env knobs: LEO_MAX_NEW_TOKENS raised so the tuned model can emit the
 # full EpilepsyPhenotype JSON without truncation (previous 1024 caused
 # unclosed braces on ~half of manifests).
-export MEDAI_MAX_NEW_TOKENS=4096
-#SBATCH --output=logs/medai_pilot_tunedv2_%j.out
-#SBATCH --error=logs/medai_pilot_tunedv2_%j.err
+export LEO_MAX_NEW_TOKENS=4096
+#SBATCH --output=logs/leo_pilot_tunedv2_%j.out
+#SBATCH --error=logs/leo_pilot_tunedv2_%j.err
 #
 # Submit:
 #     sbatch scripts/slurm_med42_pilot_tuned_v2.sh
@@ -26,7 +26,7 @@ export MEDAI_MAX_NEW_TOKENS=4096
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI: Med42-8B + LoRA v2 on EpiSynth pilot"
+echo "LEO: Med42-8B + LoRA v2 on EpiSynth pilot"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"
@@ -47,11 +47,11 @@ if [ -f "$_SUBMIT_DIR/.env" ]; then
 fi
 export APP_HOME="$_SUBMIT_DIR"
 
-export MEDAI_LORA_ADAPTER_DIR="${MEDAI_LORA_ADAPTER_DIR:-$APP_HOME/checkpoints/llama3-med42-8b_lora_epi_v2}"
-export MEDAI_MANIFEST_DIR="${MEDAI_MANIFEST_DIR:-$APP_HOME/data/run_manifests_pilot_tuned_v2}"
+export LEO_LORA_ADAPTER_DIR="${LEO_LORA_ADAPTER_DIR:-$APP_HOME/checkpoints/llama3-med42-8b_lora_epi_v2}"
+export LEO_MANIFEST_DIR="${LEO_MANIFEST_DIR:-$APP_HOME/data/run_manifests_pilot_tuned_v2}"
 
-if [ ! -d "$MEDAI_LORA_ADAPTER_DIR" ]; then
-    echo "ERROR: adapter dir does not exist: $MEDAI_LORA_ADAPTER_DIR" >&2
+if [ ! -d "$LEO_LORA_ADAPTER_DIR" ]; then
+    echo "ERROR: adapter dir does not exist: $LEO_LORA_ADAPTER_DIR" >&2
     exit 1
 fi
 
@@ -70,12 +70,12 @@ cd "$APP_HOME"
 
 echo ""
 echo "--- Med42-8B + LoRA v2 on 60 pilot documents ---"
-echo "Adapter:   $MEDAI_LORA_ADAPTER_DIR"
-echo "Manifests: $MEDAI_MANIFEST_DIR"
+echo "Adapter:   $LEO_LORA_ADAPTER_DIR"
+echo "Manifests: $LEO_MANIFEST_DIR"
 $PY scripts/run_med42_on_pilot.py
 
 echo ""
 echo "Finished: $(date)"
 echo ""
 echo "Score with:"
-echo "  $PY scripts/score_med42_on_pilot.py --manifests-dir $MEDAI_MANIFEST_DIR --suffix tuned_v2"
+echo "  $PY scripts/score_med42_on_pilot.py --manifests-dir $LEO_MANIFEST_DIR --suffix tuned_v2"

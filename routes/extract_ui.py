@@ -1,4 +1,4 @@
-"""MedAI-EPI single-page research UI (paper §21 framing).
+"""LEO single-page research UI (paper §21 framing).
 
 `GET /extract/ui` renders a self-contained HTML page (no external assets,
 no JS frameworks) that talks to the existing /extract/* API endpoints:
@@ -32,7 +32,7 @@ _UI_HTML = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>MedAI-EPI — Research Phenotyping Assistant</title>
+<title>LEO — Research Phenotyping Assistant</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
 <style>
@@ -134,7 +134,7 @@ _UI_HTML = r"""<!DOCTYPE html>
   .status-ready   { background: #d1fae5; color: #067647; }
   .status-error   { background: #fee4e2; color: #b42318; }
 
-  /* Model-variant chip (base Med42 vs tuned MedAI-EPI adapter). */
+  /* Model-variant chip (base Med42 vs tuned LEO adapter). */
   #model-chip {
     display: inline-block; padding: 4px 10px; border-radius: 999px;
     font-size: 12px; font-weight: 500; margin-left: 8px;
@@ -219,7 +219,7 @@ _UI_HTML = r"""<!DOCTYPE html>
 
 <header class="nav">
   <div>
-    <h1>MedAI-EPI — Research Phenotyping Assistant</h1>
+    <h1>LEO — Research Phenotyping Assistant</h1>
     <div class="subtitle">Structured epilepsy phenotype extraction from clinical documents · research use only</div>
   </div>
   <div>
@@ -232,13 +232,13 @@ _UI_HTML = r"""<!DOCTYPE html>
 </header>
 
 <div class="disclaimer">
-  <strong>Research use only.</strong> MedAI-EPI is a research information-extraction tool. It does <em>not</em> diagnose, does <em>not</em> recommend treatment, and is <em>not</em> clinical decision support. All extracted values must be reviewed by qualified clinicians. Use on real patient data requires IRB approval and institutionally-approved secure compute.
+  <strong>Research use only.</strong> LEO is a research information-extraction tool. It does <em>not</em> diagnose, does <em>not</em> recommend treatment, and is <em>not</em> clinical decision support. All extracted values must be reviewed by qualified clinicians. Use on real patient data requires IRB approval and institutionally-approved secure compute.
 </div>
 
 <div id="modal" class="modal-backdrop hidden">
   <div class="modal">
     <h2>Research use acknowledgment</h2>
-    <p>MedAI-EPI extracts structured phenotype fields from clinical text for <strong>research purposes only</strong>. Before you proceed:</p>
+    <p>LEO extracts structured phenotype fields from clinical text for <strong>research purposes only</strong>. Before you proceed:</p>
     <ul>
       <li>Outputs are <strong>not</strong> diagnostic or treatment recommendations.</li>
       <li>Every extracted value must be reviewed by a qualified clinician.</li>
@@ -344,7 +344,7 @@ _UI_HTML = r"""<!DOCTYPE html>
   };
 
   // ---- Chat history persistence (localStorage) ----
-  const CHAT_KEY_PREFIX = "medai-epi-chat-v1:";
+  const CHAT_KEY_PREFIX = "leo-chat-v1:";
   function chatKey(docId) { return CHAT_KEY_PREFIX + (docId || "__unspecified__"); }
   function saveChatHistory() {
     const doc_id = state.lastPhenotype?.document?.doc_id;
@@ -383,7 +383,7 @@ _UI_HTML = r"""<!DOCTYPE html>
   }
 
   // ---- Disclaimer modal ----
-  const ACK_KEY = "medai-epi-ack-v1";
+  const ACK_KEY = "leo-ack-v1";
   if (!localStorage.getItem(ACK_KEY)) {
     $("modal").classList.remove("hidden");
   }
@@ -397,7 +397,7 @@ _UI_HTML = r"""<!DOCTYPE html>
 
   // ---- Health polling ----
   function updateModelChip(d) {
-    // Render a chip that says "Base Med42" or "Tuned MedAI-EPI (adapter: <tag>)"
+    // Render a chip that says "Base Med42" or "Tuned LEO (adapter: <tag>)"
     // based on /extract/health's lora_loaded field. Robust to missing fields —
     // if the endpoint doesn't return lora info yet, the chip stays hidden.
     const chip = $("model-chip");
@@ -408,7 +408,7 @@ _UI_HTML = r"""<!DOCTYPE html>
     const tag = adapterDir ? adapterDir.replace(/\/+$/, "").split("/").pop() : "";
     if (loraLoaded && tag) {
       chip.className = "tuned";
-      chip.textContent = `Tuned MedAI-EPI (adapter: ${tag})`;
+      chip.textContent = `Tuned LEO (adapter: ${tag})`;
     } else if (d.backend_model) {
       chip.className = "base";
       chip.textContent = "Base Med42";

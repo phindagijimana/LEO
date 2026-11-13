@@ -25,9 +25,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
+from services.leo_env import getenv, setdefault
 
 # Route manifests to a dedicated dir so we don't collide with the F-S sweep.
-os.environ.setdefault("MEDAI_MANIFEST_DIR", str(REPO / "data" / "run_manifests_pilot"))
+setdefault("LEO_MANIFEST_DIR", str(REPO / "data" / "run_manifests_pilot"))
 
 from schema import DocumentMetadata, DocumentType, SCHEMA_VERSION
 from services.extract import DecodingConfig
@@ -86,9 +87,9 @@ def main():
     backend = Med42Backend(svc)
     decoding = DecodingConfig(
         do_sample=False, temperature=None, top_p=None,
-        max_new_tokens=int(os.environ.get("MEDAI_MAX_NEW_TOKENS", 1024)),
+        max_new_tokens=int(getenv("LEO_MAX_NEW_TOKENS", 1024)),
         seed=0,
-        constrained=os.environ.get("MEDAI_CONSTRAINED", "").lower() in ("1", "true", "yes"),
+        constrained=getenv("LEO_CONSTRAINED", "").lower() in ("1", "true", "yes"),
     )
     if decoding.constrained:
         print("Schema-constrained decoding: ON (lm-format-enforcer)")
@@ -104,7 +105,7 @@ def main():
     # so at inference we hand it the ACTUAL pilot pid (P001..P006) and
     # expect it to emit that pid into document.doc_id, document.patient_id,
     # and every Evidence.source_doc_id. Base-model runs stay unchanged.
-    use_id_aug = bool(os.environ.get("MEDAI_LORA_ADAPTER_DIR"))
+    use_id_aug = bool(getenv("LEO_LORA_ADAPTER_DIR"))
     if use_id_aug:
         print("LoRA adapter detected → prepending PATIENT_ID line to each note "
               "(inference contract for the v2 augmentation-trained adapter).")

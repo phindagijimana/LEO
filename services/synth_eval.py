@@ -121,7 +121,7 @@ def polish_val_patients(val_frac: float = 0.1, seed: int = 0) -> list[str]:
     return sorted(pids[:max(1, int(round(len(pids) * val_frac)))])
 
 
-# Which patients a run covers.  MEDAI_SYNTH_SET: "eval" (default, 30 patients), "ext" (the other
+# Which patients a run covers.  LEO_SYNTH_SET: "eval" (default, 30 patients), "ext" (the other
 # 80 synth-v3 patients, none of them looked at while the leo-v0.4/v0.5 rules were written) or
 # "v1v2" (the held-out synth-v1 and synth-v2 patients) or "polish90" (the 90 polish training
 # patients, base-model arms only).
@@ -133,7 +133,8 @@ def eval_patients(n_unpolished: int = 20, which: Optional[str] = None) -> dict[s
     """Evaluation strata: ``polish_val`` (10, same distribution as training, unseen patients)
     and ``synth_v3`` (every k-th of P003000-P003099; a different generation run)."""
     import os
-    which = which or os.environ.get("MEDAI_SYNTH_SET", "eval")
+    from services.leo_env import getenv
+    which = which or getenv("LEO_SYNTH_SET", "eval")
     all_v3 = sorted({r["patient_id"] for r in manifest_rows("synth_v3")})
     step = max(1, len(all_v3) // n_unpolished)
     used = all_v3[::step][:n_unpolished]

@@ -1,6 +1,6 @@
-# MedAI-EPI References
+# LEO References
 
-Consolidated bibliography of papers, tools, corpora, and standards that inform the MedAI-EPI project. Grouped by role. Entries flagged **[cite]** should be included in the manuscript reference list; **[tool]** entries need only a URL/citation in Methods; **[background]** may be footnoted or omitted depending on space.
+Consolidated bibliography of papers, tools, corpora, and standards that inform the LEO project. Grouped by role. Entries flagged **[cite]** should be included in the manuscript reference list; **[tool]** entries need only a URL/citation in Methods; **[background]** may be footnoted or omitted depending on space.
 
 ---
 
@@ -10,12 +10,12 @@ Consolidated bibliography of papers, tools, corpora, and standards that inform t
 - **Fonferko-Shadrach B, Strafford H, Jones C, et al. (2024).** "Annotation of epilepsy clinic letters for natural language processing." *J Biomed Semantics* 15(1):17. DOI 10.1186/s13326-024-00316-z. **[cite]**
 - **Dataset:** Fonferko-Shadrach B, Strafford H, Jones C, et al. "Gold standard annotation of epilepsy clinic letters for the development of information extraction tools." Zenodo, 2023. DOI 10.5281/zenodo.8381079. JSON version: Strafford H, Fonferko-Shadrach B, et al., Zenodo, 2024. DOI 10.5281/zenodo.8356493. **[cite]**
 - Corrected 2026-10-08: an earlier entry here cited "Fonferko-Shadrach 2023, *Scientific Data* 10:459" (DOI 10.1038/s41597-023-02351-4) and Zenodo record 8060906. That paper does not exist; the DOI is an unrelated *Sci Data* paper and record 8060906 is an unrelated dataset.
-- Role in MedAI-EPI: primary UK evaluation corpus. Note: the 200 letters are *clinician-authored synthetic* (structured to be schema-complete), not real patient records.
+- Role in LEO: primary UK evaluation corpus. Note: the 200 letters are *clinician-authored synthetic* (structured to be schema-complete), not real patient records.
 
 ### MTSamples
 - **MTSamples.com** — public transcribed medical dictations (open access, US). **[tool]**
 - URL: <https://mtsamples.com/site/pages/browse.asp?type=42-Neurology>
-- 78 neurology notes ingested for MedAI-EPI; 18 kept after epilepsy-relevance filter.
+- 78 neurology notes ingested for LEO; 18 kept after epilepsy-relevance filter.
 
 ### PMC Open Access
 - **PubMed Central Open Access Subset (PMC OAS)** — case reports usable under CC-BY. **[tool]**

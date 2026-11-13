@@ -1,12 +1,16 @@
-# MedAI-EPI / LEO
+# LEO
 
-**Research phenotyping for epilepsy notes.** LEO (runtime `leo-v0.9`; headline extras still the frozen D17 L1C files) fills a table from a note: value, quote, which reader said it, whether a person should look.
+**Research phenotyping for epilepsy notes.** LEO is an attempt, in epilepsy, to turn specialty literature into research software: a rules reader, a constrained clinical model, codes after extract, and a person on every clash. Whether that pattern can become a framework for another specialty is untested. Runtime `leo-v0.9` (headline extras still the frozen D17 L1C files) fills a table from a note: value, quote, which reader said it, whether a person should look.
+
+Cells where the two readers agree are the research extract. On 40 synthetic letters that table’s concordant PPV is 71/82 = 0.866. About one of those accepted cells in six or seven still misses gold. Cells where the readers clash are flagged for review; the rules value is shown and the model value is kept as an alternative. That figure is the accuracy of the agreed extract. It is synthetic notes only.
 
 > **Research use only.** Does not diagnose or recommend treatment. Real notes need IRB and approved compute. Tested on **synthetic notes only**.
 
-Operator: [`docs/LEO_USER_GUIDE.md`](docs/LEO_USER_GUIDE.md). Hosting: [`docs/LEO_HOSTING.md`](docs/LEO_HOSTING.md). Design: [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md). How to quote numbers: [`docs/INTERPRETING_RESULTS.md`](docs/INTERPRETING_RESULTS.md).
+Study the work, in this order: [`docs/THEORY.md`](docs/THEORY.md), [`docs/INTERPRETING_RESULTS.md`](docs/INTERPRETING_RESULTS.md), [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md), [`docs/WEAKNESSES.md`](docs/WEAKNESSES.md), [`docs/LITERATURE.md`](docs/LITERATURE.md). Names used on those pages: [`docs/GLOSSARY.md`](docs/GLOSSARY.md). The design choices, the numbers that can be quoted, and the holes that were left open are the record of the work.
 
-HTML docs: [medai.readthedocs.io](https://medai.readthedocs.io) (Read the Docs, same host as [QSIPrep](https://qsiprep.readthedocs.io)). Preview: `pip install -r docs_site/requirements.txt && mkdocs serve`.
+Operator: [`docs/LEO_USER_GUIDE.md`](docs/LEO_USER_GUIDE.md). Hosting: [`docs/LEO_HOSTING.md`](docs/LEO_HOSTING.md). Map of the rest: [`docs/README.md`](docs/README.md).
+
+Code: [github.com/phindagijimana/LEO](https://github.com/phindagijimana/LEO). HTML docs: [medai.readthedocs.io](https://medai.readthedocs.io) (Read the Docs project slug `medai`; [leo.readthedocs.io](https://leo.readthedocs.io) is a different project). Preview: `pip install -r docs_site/requirements.txt && mkdocs serve`.
 
 ## Crucial commands
 
@@ -55,7 +59,7 @@ Default extract is GPU (Med42-8B + EpExtra). `--cpu` has no second reader. Outpu
 - **Validator.** Accept / Correct / Deny / Add missed, why-tag, which-reader, 10% accepted audit. Merge writes `_final` for this job only.
 - **Learning is a command**, not a click. `leo learn` scores routing and thresholds. Few-shot and LoRA are paused.
 
-Research extract = `accepted` **and** `specialist+llm`. LEO does not beat the model on F1; it adds an audit trail. `bin/leo evidence`.
+Research extract = `accepted` **and** `specialist+llm` (71/82 = 0.866 on the 40 letters). The unreviewed table does not beat the model on F1; the product is the agreed extract plus the review flag. `bin/leo evidence`.
 
 ## Requirements
 
@@ -67,17 +71,19 @@ Research extract = `accepted` **and** `specialist+llm`. LEO does not beat the mo
 
 | File | Use |
 |---|---|
-| `docs/index.md` | Public HTML landing (Read the Docs) |
 | `docs/THEORY.md` | Why L, E, and O |
-| `docs/LITERATURE.md` | Papers cited on the docs site |
-| `docs/LEO_USER_GUIDE.md` | Run the tool |
-| `docs/LEO_HOSTING.md` | Workstation vs Slurm (`--gres`, `--cpu`, `--local`) |
+| `docs/INTERPRETING_RESULTS.md` | Concordant PPV; research extract is not the unreviewed table |
 | `docs/IMPLEMENTATION.md` | A–Z design, decisions, strengths, weaknesses |
 | `docs/WEAKNESSES.md` | Each hole, what accounts for it, what to improve next |
-| `docs/INTERPRETING_RESULTS.md` | Concordant PPV; research extract ≠ reviewed |
-| `docs/ACTIVE_LEARNING_PLAN.md` | `leo learn` |
-| `docs/EVAL_PROTOCOL_LEO.md` | Frozen protocol (D1–D33) |
+| `docs/LITERATURE.md` | Papers cited on the docs site |
+| `docs/GLOSSARY.md` | D17, L1C, F-S, research extract, `leo-v0.9` |
+| `docs/QUICKSTART.md` | `bin/leo check` and a first batch |
+| `docs/LEO_USER_GUIDE.md` | Run the tool |
+| `docs/LEO_HOSTING.md` | Workstation vs Slurm (`--gres`, `--cpu`, `--local`) |
 | `docs/LEO_ROUTING_RULES.md` | ACCEPT / REVIEW / REJECT |
+| `docs/ACTIVE_LEARNING_PLAN.md` | `leo learn` |
+| `docs/EVAL_PROTOCOL_LEO.md` | Frozen protocol in the repo (not on the public site) |
+| `docs/index.md` | Public HTML landing (Read the Docs) |
 
 The older Med42-only paper UI (`/extract/ui`, arms M0/M1/M2) is a separate URL, not linked from LEO. Day-to-day use is `bin/leo` and `/leo/ui`.
 

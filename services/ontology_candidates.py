@@ -260,7 +260,7 @@ class OntologyCandidateService:
     Load-once, query-many.  Thread-safe for reads.
     """
 
-    def __init__(self, release: str = "medai-enum-v0.2.1+ilae2017", *, use_releases: bool = True):
+    def __init__(self, release: str = "leo-enum-v0.2.1+ilae2017", *, use_releases: bool = True):
         self._release = release
         self._enum_ontologies = self._load_enum_ontologies()
         self._extra_ontologies = self._load_supplementary_ontologies()

@@ -20,7 +20,8 @@ KNOWN_CONTEXT_ENGINES = ("medspacy", "sentence", "negex")
 
 def parse_context_engine(value: Optional[str] = None) -> str:
     import os
-    raw = (value if value is not None else os.environ.get("MEDAI_LEO_CONTEXT_ENGINE", "")).strip().lower()
+    from services.leo_env import getenv
+    raw = (value if value is not None else getenv("LEO_CONTEXT_ENGINE", "")).strip().lower()
     if not raw:
         return "medspacy"
     if raw not in KNOWN_CONTEXT_ENGINES:

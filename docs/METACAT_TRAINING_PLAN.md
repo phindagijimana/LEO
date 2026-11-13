@@ -1,4 +1,4 @@
-# MetaCAT training plan for MedAI-EPI
+# MetaCAT training plan for LEO
 
 **Status:** proposal (see task #164). This document specifies what MetaCAT is, why we want one, how synth-v3 can serve as training data, and — importantly — the limitations of a synth-v3-trained MetaCAT compared to one trained on real clinical letters.
 
@@ -17,13 +17,13 @@ Architecturally MetaCAT is a small transformer/CNN that consumes the token windo
 
 MedCAT + MetaCAT is the pattern used by ExECT-V2: their model produces both the concept CUI *and* whether the mention is negated / historical / family / hedged. Our current pipeline uses `medspaCy ConText` rules for the same purpose — cheaper to build but less flexible.
 
-## 2. Why we want a MetaCAT for MedAI-EPI
+## 2. Why we want a MetaCAT for LEO
 
 Two reasons.
 
 **a) Better negation & experiencer handling in US notes.** The ConText rules were tuned on UK letters. US progress notes carry longer HPIs with mixed temporality ("she was on lamotrigine but Dr. X switched her to Keppra last month, now off both"). A learned classifier that has seen many US patterns will out-perform hand-crafted rules on ambiguous cases.
 
-**b) Method parity with ExECT.** Reviewers of the MedAI-EPI manuscript will ask whether we replicated ExECT's architecture. Having a MetaCAT lets us answer yes; running only ConText rules leaves us a step short.
+**b) Method parity with ExECT.** Reviewers of the LEO manuscript will ask whether we replicated ExECT's architecture. Having a MetaCAT lets us answer yes; running only ConText rules leaves us a step short.
 
 ## 3. Where the training data comes from
 

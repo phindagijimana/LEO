@@ -1,4 +1,4 @@
-# MedAI-EPI v1.0 — release checklist
+# LEO v1.0 — release checklist
 
 Everything below is a step the **user** (repo owner) must perform
 manually — either because it requires an account/credential Claude
@@ -33,12 +33,12 @@ automated. Steps are ordered by dependency.
 1. `huggingface-cli login` in a shell that has your write token.
 2. Create the repo (choose an org or personal namespace):
    ```
-   huggingface-cli repo create medai-epi-tuned --type model
+   huggingface-cli repo create leo-tuned --type model
    ```
 3. Clone the empty repo, copy the adapter files:
    ```
-   cd /tmp && git clone https://huggingface.co/<user>/medai-epi-tuned
-   cd medai-epi-tuned
+   cd /tmp && git clone https://huggingface.co/<user>/leo-tuned
+   cd leo-tuned
    cp -r $REPO/checkpoints/llama3-med42-8b_lora_epi/adapter_config.json .
    cp -r $REPO/checkpoints/llama3-med42-8b_lora_epi/adapter_model.safetensors .
    cp $REPO/docs/huggingface_model_card.md README.md
@@ -48,7 +48,7 @@ automated. Steps are ordered by dependency.
    fill validation loss, best epoch, wall-clock, and paper DOI
    once available).
 5. `git add . && git commit -m "Initial release v1.0" && git push`.
-6. The public URL is `https://huggingface.co/<user>/medai-epi-tuned`.
+6. The public URL is `https://huggingface.co/<user>/leo-tuned`.
 
 ## 3. Fill DOIs / URLs back into repo docs
 
@@ -69,7 +69,7 @@ HF URLs into release docs"`.
 ## 4. Tag v1.0
 
 ```
-git tag -a v1.0 -m "MedAI-EPI v1.0 — first citable release.
+git tag -a v1.0 -m "LEO v1.0 — first citable release.
 See RELEASE_NOTES.md for details.
 Zenodo DOI: <fill in>
 HuggingFace: <fill in>"

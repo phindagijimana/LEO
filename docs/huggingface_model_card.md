@@ -14,7 +14,7 @@ language:
 pipeline_tag: text-generation
 ---
 
-# MedAI-EPI-tuned: a LoRA adapter for structured epilepsy phenotype extraction from clinical notes
+# LEO-tuned: a LoRA adapter for structured epilepsy phenotype extraction from clinical notes
 
 **Base model:** [`m42-health/Llama3-Med42-8B`](https://huggingface.co/m42-health/Llama3-Med42-8B)
 
@@ -22,14 +22,14 @@ pipeline_tag: text-generation
 
 **Release version:** v1.0 ([TBD release date])
 
-**Framework:** [MedAI-EPI](https://github.com/[TBD]/med42_service) — evidence-grounded epilepsy phenotype extraction
+**Framework:** [LEO](https://github.com/[TBD]/med42_service) — evidence-grounded epilepsy phenotype extraction
 
 ---
 
 ## Model summary
 
-`MedAI-EPI-tuned` is a LoRA adapter on top of Med42-8B that emits
-schema-conformant `EpilepsyPhenotype` JSON (MedAI-EPI schema v0.2.1)
+`LEO-tuned` is a LoRA adapter on top of Med42-8B that emits
+schema-conformant `EpilepsyPhenotype` JSON (LEO schema v0.2.1)
 directly from a clinical document. Unlike the base model, which
 frequently emits clinically-correct values in prose but rarely wraps
 them in the required Evidence[T] structure, this adapter is trained
@@ -37,7 +37,7 @@ end-to-end to produce valid JSON with source-text evidence spans on
 every populated field.
 
 Deploy the adapter alongside the base weights via `peft.PeftModel`
-or by setting `MEDAI_LORA_ADAPTER_DIR=<path>` in the MedAI-EPI
+or by setting `LEO_LORA_ADAPTER_DIR=<path>` in the LEO
 service; see the framework repository for detailed instructions.
 
 ---
@@ -100,8 +100,8 @@ directory.
 | Configuration                          | Raw JSON valid | Final valid | Core-F1 | 95 % CI |
 |---|---:|---:|---:|---|
 | Base Med42-8B (M0 / M1 / M2, no adapter, unconstrained) | [TBD] | [TBD] | ≤ 0.15 | [TBD] |
-| **MedAI-EPI-tuned (this adapter, unconstrained)**       | [TBD] | [TBD] | **[TBD]** | [TBD] |
-| **MedAI-EPI-tuned (this adapter, LMFE-constrained)**    | 100  | 100  | **[TBD]** | [TBD] |
+| **LEO-tuned (this adapter, unconstrained)**       | [TBD] | [TBD] | **[TBD]** | [TBD] |
+| **LEO-tuned (this adapter, LMFE-constrained)**    | 100  | 100  | **[TBD]** | [TBD] |
 
 McNemar's exact test comparisons for the tuned vs. base and
 constrained vs. unconstrained pairs are reported in the manuscript.
@@ -113,7 +113,7 @@ constrained vs. unconstrained pairs are reported in the manuscript.
 - **Yes** — extracting structured `EpilepsyPhenotype` JSON from
   epilepsy clinic letters, MRI reports, EEG reports, or progress notes
   for research phenotyping pipelines; downstream use in epilepsy
-  cohort assembly; reproducibility of published MedAI-EPI results.
+  cohort assembly; reproducibility of published LEO results.
 - **No** — clinical decision-making; direct patient-facing use;
   extraction from non-epilepsy specialties (out of training
   distribution); languages other than English.
@@ -133,7 +133,7 @@ constrained vs. unconstrained pairs are reported in the manuscript.
 - **English-only.** Training data is entirely English clinical prose.
   Performance on non-English notes has not been measured; assume
   unusable without fine-tuning.
-- **Schema-scoped.** The adapter emits MedAI-EPI schema v0.2.1
+- **Schema-scoped.** The adapter emits LEO schema v0.2.1
   (six modules: `document`, `clinical_seizure`, `medication`,
   `clinical_localization`, `eeg`, `mri`, `integrated`). Fields outside
   this schema are not extracted.
@@ -183,14 +183,14 @@ tok = AutoTokenizer.from_pretrained("m42-health/Llama3-Med42-8B")
 model = PeftModel.from_pretrained(base, "[TBD hf-repo-id]")
 model.eval()
 
-# … then run the MedAI-EPI prompt registry against `model`.
+# … then run the LEO prompt registry against `model`.
 ```
 
-Or via the MedAI-EPI framework:
+Or via the LEO framework:
 
 ```bash
-MEDAI_LORA_ADAPTER_DIR=/path/to/adapter \
-MEDAI_CONSTRAINED=1 \
+LEO_LORA_ADAPTER_DIR=/path/to/adapter \
+LEO_CONSTRAINED=1 \
 python scripts/medai_epi_cli.py extract \
     --doc-type progress_note --arm M2 note.txt
 ```
@@ -208,7 +208,7 @@ Hugging Face model record:
 ```bibtex
 @misc{medai_epi_tuned_v1_0,
   author       = {Ndagijimana, P. and [TBD co-authors]},
-  title        = {{MedAI-EPI-tuned: a LoRA adapter for structured epilepsy phenotype extraction}},
+  title        = {{LEO-tuned: a LoRA adapter for structured epilepsy phenotype extraction}},
   month        = [TBD],
   year         = [TBD],
   publisher    = {Hugging Face},

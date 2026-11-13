@@ -27,7 +27,7 @@ from typing import Any, Optional
 # tests/test_ft_extract.py asserts this against the training script's text.
 FT_PROMPT_TEMPLATE = (
     "Extract the epilepsy phenotype from this clinical text into the "
-    "MedAI-EPI v0.2.1 JSON schema. Return only valid JSON.\n\n"
+    "LEO v0.2.1 JSON schema. Return only valid JSON.\n\n"
     "Clinical text:\n\"\"\"\n{note}\n\"\"\"\n\n"
     "Phenotype JSON:\n"
 )

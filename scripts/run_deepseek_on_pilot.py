@@ -24,10 +24,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
+from services.leo_env import getenv, setdefault
 
 # Dedicated manifest dir.
-os.environ.setdefault(
-    "MEDAI_MANIFEST_DIR", str(REPO / "data" / "run_manifests_pilot_deepseek")
+setdefault("LEO_MANIFEST_DIR", str(REPO / "data" / "run_manifests_pilot_deepseek")
 )
 
 from schema import DocumentMetadata, DocumentType, SCHEMA_VERSION  # noqa: E402
@@ -93,9 +93,9 @@ def main():
     backend.load()
     decoding = DecodingConfig(
         do_sample=False, temperature=None, top_p=None,
-        max_new_tokens=int(os.environ.get("MEDAI_MAX_NEW_TOKENS", 1024)),
+        max_new_tokens=int(getenv("LEO_MAX_NEW_TOKENS", 1024)),
         seed=0,
-        constrained=os.environ.get("MEDAI_CONSTRAINED", "").lower() in ("1", "true", "yes"),
+        constrained=getenv("LEO_CONSTRAINED", "").lower() in ("1", "true", "yes"),
     )
     if decoding.constrained:
         print("Schema-constrained decoding: ON (lm-format-enforcer)")

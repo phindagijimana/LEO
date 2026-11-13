@@ -1,4 +1,4 @@
-# MedAI-EPI target: how each arm reaches its F1 range
+# LEO target: how each arm reaches its F1 range
 
 **Purpose.** This document is the north-star technical plan for the 13-arm ablation table below. For each row it captures what the arm is, current state on F-S test 40, the F1 target, the gap, the concrete prerequisites (data, code, compute, guardrails), and the honest failure modes. It should let any collaborator answer, without asking, "what still needs to happen before arm X is publishable?"
 

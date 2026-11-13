@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""medai-epi — command-line client for the MedAI-EPI extraction service.
+"""leo-extract — command-line client for the LEO extraction service.
 
 Wraps the /extract/* HTTP surface so a researcher can run phenotype extraction
 from the shell without writing curl by hand or opening the browser UI.
@@ -7,25 +7,25 @@ from the shell without writing curl by hand or opening the browser UI.
 Usage examples:
 
     # Health probe (backend load status, registered prompts, doc types)
-    medai-epi health
+    leo-extract health
 
     # Single-document extraction from a file
-    medai-epi extract --doc-type progress_note --arm M1 note.txt
+    leo-extract extract --doc-type progress_note --arm M1 note.txt
 
     # Batch a CSV of notes → long-format CSV out
-    medai-epi csv notes.csv > phenotypes.csv
+    leo-extract csv notes.csv > phenotypes.csv
 
     # Freeform question grounded in one note
-    medai-epi chat --text-file note.txt "was surgery mentioned?"
+    leo-extract chat --text-file note.txt "was surgery mentioned?"
 
     # Long-note extraction (auto-chunk + merge)
-    medai-epi long --doc-type progress_note --arm M1 long_letter.txt
+    leo-extract long --doc-type progress_note --arm M1 long_letter.txt
 
     # Open the browser UI (starts nothing; just prints/opens the URL)
-    medai-epi ui
+    leo-extract ui
 
 By default connects to http://localhost:8085 (override with --server URL or
-$MEDAI_EPI_URL). Exits non-zero on HTTP error; prints structured JSON or CSV
+$LEO_EPI_URL). Exits non-zero on HTTP error; prints structured JSON or CSV
 to stdout on success.
 """
 
@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from services.leo_env import getenv
 import sys
 import urllib.error
 import urllib.request
@@ -41,7 +42,7 @@ import webbrowser
 from pathlib import Path
 
 
-DEFAULT_URL = os.environ.get("MEDAI_EPI_URL", "http://localhost:8085")
+DEFAULT_URL = getenv("LEO_EPI_URL", "http://localhost:8085")
 
 
 # ---------------------------------------------------------------------------
@@ -68,7 +69,7 @@ def _http(method: str, url: str, *, body: dict | bytes | None = None,
         return e.code, (e.read() if hasattr(e, "read") else b""), dict(e.headers or {})
     except urllib.error.URLError as e:
         sys.stderr.write(f"ERROR: cannot reach {url}: {e}\n")
-        sys.stderr.write("  Is the MedAI-EPI service running? "
+        sys.stderr.write("  Is the LEO service running? "
                          "  Try:  docker compose up   or   python app.py\n")
         sys.exit(3)
 
@@ -133,12 +134,12 @@ def cmd_registry(args):
 def cmd_extract(args):
     # If a LoRA adapter dir was supplied, publish it into the environment BEFORE
     # any downstream backend is instantiated. services/med42_model.py reads
-    # MEDAI_LORA_ADAPTER_DIR at Med42ModelService.__init__ time; setting it here
-    # lets `medai-epi extract --lora-adapter DIR ...` reach the backend even in
+    # LEO_LORA_ADAPTER_DIR at Med42ModelService.__init__ time; setting it here
+    # lets `leo-extract extract --lora-adapter DIR ...` reach the backend even in
     # in-process / test-launch scenarios where the service is spawned by the
     # same Python process.
     if getattr(args, "lora_adapter", None):
-        os.environ["MEDAI_LORA_ADAPTER_DIR"] = args.lora_adapter
+        os.environ["LEO_LORA_ADAPTER_DIR"] = args.lora_adapter
 
     text = _read_text_source(args)
     payload = {
@@ -297,21 +298,21 @@ def cmd_detect(args):
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="medai-epi",
-        description="Command-line client for the MedAI-EPI research phenotyping service.",
+        prog="leo-extract",
+        description="Command-line client for the LEO research phenotyping service.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "environment:\n"
-            "  MEDAI_EPI_URL       default server URL (overridden by --server)\n\n"
+            "  LEO_EPI_URL       default server URL (overridden by --server)\n\n"
             "quick examples:\n"
-            "  medai-epi health\n"
-            "  medai-epi extract --doc-type progress_note note.txt\n"
-            "  medai-epi csv notes.csv -o phenotypes.csv\n"
-            "  medai-epi chat --text-file note.txt \"was surgery mentioned?\"\n"
+            "  leo-extract health\n"
+            "  leo-extract extract --doc-type progress_note note.txt\n"
+            "  leo-extract csv notes.csv -o phenotypes.csv\n"
+            "  leo-extract chat --text-file note.txt \"was surgery mentioned?\"\n"
         ),
     )
     p.add_argument("--server", default=DEFAULT_URL,
-                    help=f"MedAI-EPI service base URL (default: {DEFAULT_URL})")
+                    help=f"LEO service base URL (default: {DEFAULT_URL})")
 
     sub = p.add_subparsers(dest="cmd", metavar="COMMAND")
     sub.required = True
@@ -355,7 +356,7 @@ def build_parser() -> argparse.ArgumentParser:
                      metavar="DIR",
                      help="path to a PEFT LoRA adapter directory to layer on "
                           "top of the base Med42-8B weights (sets "
-                          "MEDAI_LORA_ADAPTER_DIR before the backend loads).")
+                          "LEO_LORA_ADAPTER_DIR before the backend loads).")
     sp.set_defaults(func=cmd_extract)
 
     # csv

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-epi-b1
+#SBATCH --job-name=leo-b1
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --time=01:00:00
-#SBATCH --output=logs/medai_epi_b1_%j.out
-#SBATCH --error=logs/medai_epi_b1_%j.err
+#SBATCH --output=logs/leo_epi_b1_%j.out
+#SBATCH --error=logs/leo_epi_b1_%j.err
 #
 # Submit with:
 #   sbatch scripts/slurm_train_b1.sh
@@ -24,7 +24,7 @@ set -eu
 set -x   # command tracing to help diagnose future failures
 
 echo "=================================================="
-echo "MedAI-EPI B1 BioClinicalBERT training"
+echo "LEO B1 BioClinicalBERT training"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"

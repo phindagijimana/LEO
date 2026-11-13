@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MedAI Auto-Learning Scheduler
+LEO Auto-Learning Scheduler
 Automatically runs learning cycles based on triggers
 """
 
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 class AutoLearningScheduler:
-    """Automatic learning scheduler for MedAI"""
+    """Automatic learning scheduler for LEO"""
     
     def __init__(self):
         self.engine = LearningEngine()

@@ -41,12 +41,14 @@ bin/leo batch notes.csv --cpu --partition interactive --hours 2
 bin/leo batch notes.csv --partition interactive --hours 4 --gres gpu:l40s.24g:1
 ```
 
-Override site names: `--partition`, `--hours`, `--gres`, `--cpus`, `--mem`, or `MEDAI_LEO_GRES`. Secrets stay in `.env` (sourced on the node; never written into the sbatch script).
+Override site names: `--partition`, `--hours`, `--gres`, `--cpus`, `--mem`, or `LEO_GRES`. Secrets stay in `.env` (sourced on the node; never written into the sbatch script).
 
 ## Another cluster
 
-Keep `--local` on an interactive GPU allocation, **or** set `--gres` / `MEDAI_LEO_GRES` to that site’s name (`gpu:a100:1`, `gpu:1`, …). Change `--partition` to theirs. Weights and CDB must be on a filesystem the compute node can read.
+Keep `--local` on an interactive GPU allocation, **or** set `--gres` / `LEO_GRES` to that site’s name (`gpu:a100:1`, `gpu:1`, …). Change `--partition` to theirs. Weights and CDB must be on a filesystem the compute node can read.
 
 ## Ready?
 
 Yes for a researcher who can: create `venv-medcat`, place Med42 weights, keep UMLS in `.env`, and either sit on a GPU workstation or submit Slurm with the right GRES. CPU-only is ready today and is **not** a research extract. Confirm with `bin/leo check` and, on GPU, `bin/leo check --gpu` / `--slurm`. Real notes: written IS/IRB, then `bin/leo check --research` (all PASS) before `--research` start/batch.
+
+On this checkout, 2026-11-13, `bin/leo check` on the login node passed: packages, the epilepsy concept database, the ontology manifest, Med42-8B weights in `model_cache/`, and a specialist sample (`epilepsy_type=focal`). No GPU is visible on that node. A model run is still `bin/leo check --slurm` or `bin/leo start`.

@@ -1,6 +1,7 @@
 # Read the Docs — same pattern as QSIPrep (https://qsiprep.readthedocs.io)
-# Import github.com/phindagijimana/medAI at https://readthedocs.org
-# The slug you choose becomes https://<slug>.readthedocs.io
+# Import github.com/phindagijimana/LEO at https://readthedocs.org
+# The live project slug is medai, so the site stays https://medai.readthedocs.io
+# leo.readthedocs.io is a different project. Do not point this build there.
 version: 2
 
 build:

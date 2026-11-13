@@ -1,4 +1,4 @@
-"""Canonical enumerations for MedAI-EPI phenotype ontology v0.1.
+"""Canonical enumerations for LEO phenotype ontology v0.1.
 
 All string enums serialize as their .value. Terminology follows ILAE 2017
 seizure/epilepsy classification and ILAE 2010 drug-resistance definition.

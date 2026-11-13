@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Convert Phase 6D.1 v2 semantic plans → MedAI-EPI Evidence[T] extraction
+"""Convert Phase 6D.1 v2 semantic plans → LEO Evidence[T] extraction
 targets.
 
 For each pilot case (P001…P006) the freeze provides a semantic_plan with
 `required_assertions` naming which fields must be present. Each assertion has
 a `field` in the Phase 6D.1 vocabulary (`EP_TYPE`, `SZ_FREQ`, `EEG_RESULT`, …)
-which maps to a specific field in the MedAI-EPI v0.2.1 ontology.
+which maps to a specific field in the LEO v0.2.1 ontology.
 
 This script produces one `target_phenotype.json` per pilot patient — a fully
 validated `EpilepsyPhenotype` object that the current app can accept as the
@@ -52,7 +52,7 @@ SOURCE_DATE = date(2026, 9, 25)
 
 # ---------------------------------------------------------------------------
 # Field-mapping tables — the semantic bridge between freeze vocabulary and
-# MedAI-EPI v0.2.1 enums. All items here are MEDAI-PROPOSED under Phase
+# LEO v0.2.1 enums. All items here are MEDAI-PROPOSED under Phase
 # 4B.1/6D.3 §machine-projection policy.
 # ---------------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-epi-open-4096
+#SBATCH --job-name=leo-open-4096
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=12:00:00
-#SBATCH --output=logs/medai_epi_open_4096_%j.out
-#SBATCH --error=logs/medai_epi_open_4096_%j.err
+#SBATCH --output=logs/leo_epi_open_4096_%j.out
+#SBATCH --error=logs/leo_epi_open_4096_%j.err
 #
 # Sensitivity variant of scripts/slurm_open_benchmark.sh:
 #   - max_new_tokens=4096 (up from 1024 baseline)
@@ -28,7 +28,7 @@
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI Open Benchmark — max_new_tokens=4096 sensitivity"
+echo "LEO Open Benchmark — max_new_tokens=4096 sensitivity"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"
@@ -54,9 +54,9 @@ export APP_HOME="$_SUBMIT_DIR"
 
 # Write manifests to a distinct directory so this run does not collide with
 # the baseline 1024-token run.
-export MEDAI_MANIFEST_DIR="$APP_HOME/data/run_manifests_maxtok4096"
-mkdir -p "$MEDAI_MANIFEST_DIR"
-echo "MEDAI_MANIFEST_DIR=$MEDAI_MANIFEST_DIR"
+export LEO_MANIFEST_DIR="$APP_HOME/data/run_manifests_maxtok4096"
+mkdir -p "$LEO_MANIFEST_DIR"
+echo "LEO_MANIFEST_DIR=$LEO_MANIFEST_DIR"
 
 # Use venv Python explicitly + block user-site-packages fallback
 PY="$APP_HOME/venv/bin/python"
@@ -86,10 +86,10 @@ $PY scripts/run_open_benchmark_gpu.py \
 
 echo ""
 echo "Finished: $(date)"
-echo "Manifests: $MEDAI_MANIFEST_DIR/"
+echo "Manifests: $LEO_MANIFEST_DIR/"
 echo ""
 echo "Aggregate with:"
-echo "    MEDAI_MANIFEST_DIR=$MEDAI_MANIFEST_DIR $PY -m eval.aggregator_cli \\"
-echo "        --manifests $MEDAI_MANIFEST_DIR \\"
+echo "    LEO_MANIFEST_DIR=$LEO_MANIFEST_DIR $PY -m eval.aggregator_cli \\"
+echo "        --manifests $LEO_MANIFEST_DIR \\"
 echo "        --gold data/fonferko_shadrach_2024/silver_labels_v0_2_1 \\"
 echo "        --out eval/results/open_benchmark_4096_summary.json"

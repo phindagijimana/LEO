@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+from services.leo_env import getenv
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -8,20 +9,20 @@ except ImportError:
 # Defaults match inference_augmentation_flags() when env is unset
 os.environ.setdefault("USE_RAG", "1")
 os.environ.setdefault("USE_FEW_SHOT", "1")
-# Backward-compat: the brand changed from VECTA_* to MEDAI_*. Copy any legacy
+# Backward-compat: the brand changed from VECTA_* to LEO_*. Copy any legacy
 # vars set by older .env files or SLURM scripts so the new names resolve.
 # Logged once the logger is up — see _warn_legacy_env() below.
 _LEGACY_ENV_HITS = []
 for _new, _old in (
-    ("MEDAI_REQUIRE_GPU",     "VECTA_REQUIRE_GPU"),
-    ("MEDAI_MAX_NEW_TOKENS",  "VECTA_MAX_NEW_TOKENS"),
-    ("MEDAI_GREEDY_FAST",     "VECTA_GREEDY_FAST"),
-    ("MEDAI_CHUNK_CHARS",     "VECTA_CHUNK_CHARS"),
-    ("MEDAI_CHUNK_CARRY_CHARS","VECTA_CHUNK_CARRY_CHARS"),
-    ("MEDAI_PIP_USER",        "VECTA_PIP_USER"),
-    ("MEDAI_SERVICE_URL",     "VECTA_SERVICE_URL"),
-    ("MEDAI_BASE_URL",        "VECTA_BASE_URL"),
-    ("MEDAI_HTTP_TIMEOUT",    "VECTA_HTTP_TIMEOUT"),
+    ("LEO_REQUIRE_GPU",     "VECTA_REQUIRE_GPU"),
+    ("LEO_MAX_NEW_TOKENS",  "VECTA_MAX_NEW_TOKENS"),
+    ("LEO_GREEDY_FAST",     "VECTA_GREEDY_FAST"),
+    ("LEO_CHUNK_CHARS",     "VECTA_CHUNK_CHARS"),
+    ("LEO_CHUNK_CARRY_CHARS","VECTA_CHUNK_CARRY_CHARS"),
+    ("LEO_PIP_USER",        "VECTA_PIP_USER"),
+    ("LEO_SERVICE_URL",     "VECTA_SERVICE_URL"),
+    ("LEO_BASE_URL",        "VECTA_BASE_URL"),
+    ("LEO_HTTP_TIMEOUT",    "VECTA_HTTP_TIMEOUT"),
 ):
     if _new not in os.environ and _old in os.environ:
         os.environ[_new] = os.environ[_old]
@@ -79,7 +80,7 @@ logging.basicConfig(
     level=getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), logging.INFO),
     handlers=[_file_handler, _stream_handler],
 )
-logger = logging.getLogger("medai")
+logger = logging.getLogger("leo")
 
 for _old, _new in _LEGACY_ENV_HITS:
     logger.warning("Env var %s is deprecated; use %s. Honored for this run.", _old, _new)
@@ -178,7 +179,7 @@ try:
 except Exception as e:
     logger.warning(f"⚠️ /leo routes not registered: {e}")
 
-# Optional login + audit log (off until `bin/leo user add NAME` or MEDAI_LEO_REQUIRE_LOGIN=1). Not wrapped in
+# Optional login + audit log (off until `bin/leo user add NAME` or LEO_REQUIRE_LOGIN=1). Not wrapped in
 # try/except on purpose: if login is configured it must not silently fail to protect the routes.
 from services import leo_auth
 leo_auth.init_app(app)
@@ -232,8 +233,8 @@ def _attach_med42_backend_background():
 
 
 # Only start the background load when the app is running as a service, not
-# when it's imported by scripts or tests. Env var MEDAI_LOAD_MED42=0 disables.
-if os.environ.get("MEDAI_LOAD_MED42", "1") == "1" and __name__ != "__main__":
+# when it's imported by scripts or tests. Env var LEO_LOAD_MED42=0 disables.
+if getenv("LEO_LOAD_MED42", "1") == "1" and __name__ != "__main__":
     # We defer to a lazy trigger: attach on first request to /extract/*, so
     # unit tests and CLI imports never load the model. See routes/extract.py
     # where request handlers call `ensure_med42_loaded()`.
@@ -258,8 +259,8 @@ def ensure_med42_loaded():
 app.ensure_med42_loaded = ensure_med42_loaded
 
 # Under gunicorn (`bin/leo start --local`) the model is loaded when the server starts, as `python app.py` does,
-# instead of at the first LLM request. Off unless MEDAI_EAGER_LOAD=1.
-if (os.environ.get("MEDAI_EAGER_LOAD") == "1" and os.environ.get("MEDAI_LOAD_MED42", "1") == "1"
+# instead of at the first LLM request. Off unless LEO_EAGER_LOAD=1.
+if (getenv("LEO_EAGER_LOAD") == "1" and getenv("LEO_LOAD_MED42", "1") == "1"
         and __name__ != "__main__"):
     ensure_med42_loaded()
 
@@ -344,7 +345,7 @@ def inference_augmentation_flags():
 
 def inference_require_gpu():
     """If true, model load fails when CUDA is not available (production GPU nodes)."""
-    return os.environ.get("MEDAI_REQUIRE_GPU", "").lower() in ("1", "true", "yes")
+    return getenv("LEO_REQUIRE_GPU", "").lower() in ("1", "true", "yes")
 
 
 def structured_tasks_from_parsed(parsed: dict) -> list:
@@ -403,8 +404,8 @@ def _split_text_into_chunks(text: str, max_chars: int) -> list:
 # MED42-8B OPTIMIZED PROMPTING
 #############################
 
-class MedAIPromptEngine:
-    """Legacy /analyze prompt engine (MedAI-EPI epilepsy scope).
+class LeoPromptEngine:
+    """Legacy /analyze prompt engine (LEO epilepsy scope).
 
     Paper §21: this engine speaks the language of research information extraction,
     not autonomous clinical judgment. Non-neurology specialty branches were
@@ -413,7 +414,7 @@ class MedAIPromptEngine:
     """
 
     @staticmethod
-    def get_medai_identity_activation():
+    def get_leo_identity_activation():
         """Epilepsy-scoped extraction role."""
         return """You are a clinical information extraction assistant for research use, focused on epilepsy phenotyping from clinical documents.
 
@@ -439,7 +440,7 @@ This is a research phenotyping task, not clinical decision support."""
     def get_specialty_prompts():
         """Epilepsy-neurology extraction context.
 
-        MedAI-EPI is scoped to epilepsy. Non-neurology specialty branches
+        LEO is scoped to epilepsy. Non-neurology specialty branches
         (cardiology / psychiatry / emergency / internal medicine) were retired
         when the project pivoted per paper §21.
         """
@@ -455,16 +456,16 @@ Do not synthesize across modalities unless the document itself does so.""",
         }
 
     @staticmethod
-    def get_medai_system_prompts(analysis_type, is_tabular=False, specialty=None):
-        """Generate MedAI-optimized system prompts"""
+    def get_leo_system_prompts(analysis_type, is_tabular=False, specialty=None):
+        """Generate LEO-optimized system prompts"""
         
-        # Base MedAI identity
-        base_identity = MedAIPromptEngine.get_medai_identity_activation()
+        # Base LEO identity
+        base_identity = LeoPromptEngine.get_leo_identity_activation()
         
         # Add specialty-specific activation if specified
         specialty_activation = ""
         if specialty:
-            specialty_prompts = MedAIPromptEngine.get_specialty_prompts()
+            specialty_prompts = LeoPromptEngine.get_specialty_prompts()
             specialty_activation = f"\n\n{specialty_prompts.get(specialty, '')}"
         
         # Core prompt templates
@@ -472,7 +473,7 @@ Do not synthesize across modalities unless the document itself does so.""",
             templates = {
                 "classification": f"""{base_identity}{specialty_activation}
 
-MedAI: You are analyzing medical tabular data for classification purposes.
+LEO: You are analyzing medical tabular data for classification purposes.
 
 TABULAR CLASSIFICATION PROTOCOL:
 • Activate your medical pattern recognition for dataset analysis
@@ -489,7 +490,7 @@ For each classification:
                 
                 "epilepsy": f"""{base_identity}{specialty_activation}
 
-MedAI: You are analyzing medical tabular data for a focused classification task (e.g. condition-specific or schema-driven).
+LEO: You are analyzing medical tabular data for a focused classification task (e.g. condition-specific or schema-driven).
 
 MANDATORY FORMAT REQUIREMENT: End with exactly 4 bullets: Classification, Clinical_Confidence, Evidence, Medication_Analysis (max 25 words each).
 
@@ -500,7 +501,7 @@ TABULAR CLASSIFICATION PROTOCOL:
                 
                 "diagnosis": f"""{base_identity}{specialty_activation}
 
-MedAI: You are providing diagnostic analysis for medical datasets.
+LEO: You are providing diagnostic analysis for medical datasets.
 
 DIAGNOSTIC REASONING PROTOCOL:
 • Apply your differential diagnosis training to systematic analysis
@@ -517,7 +518,7 @@ For diagnostic analysis:
                 
                 "extraction": f"""{base_identity}{specialty_activation}
 
-MedAI: You are extracting medical information from tabular datasets.
+LEO: You are extracting medical information from tabular datasets.
 
 MEDICAL EXTRACTION PROTOCOL:
 • Apply your clinical documentation training for systematic extraction
@@ -534,7 +535,7 @@ For information extraction:
                 
                 "summary": f"""{base_identity}{specialty_activation}
 
-MedAI: You are summarizing medical datasets using your clinical training.
+LEO: You are summarizing medical datasets using your clinical training.
 
 CLINICAL SUMMARIZATION PROTOCOL:
 • Apply your clinical documentation expertise for comprehensive summaries
@@ -551,7 +552,7 @@ For clinical summaries:
                 
                 "custom": f"""{base_identity}{specialty_activation}
 
-MedAI: You are performing custom medical analysis on tabular data.
+LEO: You are performing custom medical analysis on tabular data.
 
 ADAPTIVE CLINICAL ANALYSIS:
 • Apply your comprehensive medical training to the specific task
@@ -565,7 +566,7 @@ ADAPTIVE CLINICAL ANALYSIS:
             templates = {
                 "classification": f"""{base_identity}{specialty_activation}
 
-MedAI: You are performing medical classification analysis.
+LEO: You are performing medical classification analysis.
 
 CLINICAL CLASSIFICATION PROTOCOL:
 • Apply your diagnostic training for systematic classification
@@ -582,7 +583,7 @@ For classification tasks:
                 
                 "epilepsy": f"""{base_identity}{specialty_activation}
 
-MedAI: You are performing a focused classification task on clinical data; follow the user’s analysis request for the exact scheme.
+LEO: You are performing a focused classification task on clinical data; follow the user’s analysis request for the exact scheme.
 
 MANDATORY FORMAT REQUIREMENT: End with exactly 4 bullets: Classification, Clinical_Confidence, Evidence, Medication_Analysis (max 25 words each).
 
@@ -593,7 +594,7 @@ CLASSIFICATION PROTOCOL:
                 
                 "diagnosis": f"""{base_identity}{specialty_activation}
 
-MedAI: You are providing diagnostic support using your medical training.
+LEO: You are providing diagnostic support using your medical training.
 
 DIAGNOSTIC ANALYSIS PROTOCOL:
 • Apply your differential diagnosis expertise for comprehensive analysis
@@ -610,7 +611,7 @@ For diagnostic analysis:
                 
                 "extraction": f"""{base_identity}{specialty_activation}
 
-MedAI: You are extracting medical information using your clinical expertise.
+LEO: You are extracting medical information using your clinical expertise.
 
 MEDICAL INFORMATION EXTRACTION:
 • Apply your clinical documentation training for systematic extraction
@@ -627,7 +628,7 @@ For information extraction:
                 
                 "summary": f"""{base_identity}{specialty_activation}
 
-MedAI: You are creating clinical summaries using your medical training.
+LEO: You are creating clinical summaries using your medical training.
 
 CLINICAL SUMMARIZATION PROTOCOL:
 • Apply your clinical documentation expertise for comprehensive summaries
@@ -644,7 +645,7 @@ For clinical summaries:
                 
                 "custom": f"""{base_identity}{specialty_activation}
 
-MedAI: You are performing custom medical analysis.
+LEO: You are performing custom medical analysis.
 
 ADAPTIVE MEDICAL ANALYSIS:
 • Apply your comprehensive medical training to the specific task
@@ -712,7 +713,7 @@ ADAPTIVE MEDICAL ANALYSIS:
     @staticmethod
     def construct_med42_prompt(system_prompt, user_prompt, medical_data, is_tabular=False, analysis_type="custom", 
                                condition=None, use_few_shot=True, use_rag=True):
-        """Construct optimized MedAI prompt with proper formatting
+        """Construct optimized LEO prompt with proper formatting
         
         Enhanced with:
         - Few-shot examples (Phase 1: Week 1-2)
@@ -721,12 +722,12 @@ ADAPTIVE MEDICAL ANALYSIS:
         """
         
         # Add clinical reasoning activation
-        clinical_activation = MedAIPromptEngine.get_clinical_reasoning_activation()
+        clinical_activation = LeoPromptEngine.get_clinical_reasoning_activation()
         
         # Get enhanced context (few-shot + static guidelines + RAG)
         enhanced_context = ""
         if medical_data and ((use_few_shot and condition) or use_rag):
-            enhanced_context = MedAIPromptEngine.get_enhanced_context(
+            enhanced_context = LeoPromptEngine.get_enhanced_context(
                 condition=condition,
                 analysis_type=analysis_type,
                 num_examples=2,
@@ -784,7 +785,7 @@ You may provide detailed analysis first, but MUST end with exactly these 4 bulle
 
 <|eot_id|><|start_header_id|>user<|end_header_id|>
 
-MedAI, please apply your specialized medical training to this analysis:
+LEO, please apply your specialized medical training to this analysis:
 
 ANALYSIS REQUEST: {user_prompt}
 
@@ -799,7 +800,7 @@ Use your comprehensive medical knowledge and clinical reasoning to provide a tho
         return final_prompt
 
     def _extract_structured_bullets(self, generated_text, analysis_type):
-        """Extract and format structured bullet points from MedAI response"""
+        """Extract and format structured bullet points from LEO response"""
         try:
             # Determine the correct first bullet label based on analysis type
             first_label = "Classification"
@@ -900,8 +901,8 @@ Use your comprehensive medical knowledge and clinical reasoning to provide a tho
 
     @staticmethod
     def get_med42_validation_prompt():
-        """MedAI clinical validation framework"""
-        return """MedAI CLINICAL VALIDATION PROTOCOL:
+        """LEO clinical validation framework"""
+        return """LEO CLINICAL VALIDATION PROTOCOL:
 
 Apply your medical training to verify analysis quality:
 
@@ -948,7 +949,7 @@ def _extract_text(path: str, filename: str):
         return f"Error extracting text from {filename}: {str(e)}"
 
 def _analyze_tabular_data(df, prompt, analysis_type="custom"):
-    """Enhanced tabular data analysis with MedAI optimization"""
+    """Enhanced tabular data analysis with LEO optimization"""
     try:
         # Basic data profiling
         profile = {
@@ -963,7 +964,7 @@ def _analyze_tabular_data(df, prompt, analysis_type="custom"):
         sample_size = min(100, len(df))
         sample_df = df.head(sample_size)
         
-        # Enhanced data summary for MedAI
+        # Enhanced data summary for LEO
         data_summary = f"""
 MED42 DATASET PROFILE:
 - Shape: {profile['shape'][0]} rows × {profile['shape'][1]} columns
@@ -974,7 +975,7 @@ SAMPLE DATA FOR MED42 ANALYSIS (first {sample_size} rows):
 {sample_df.to_string(max_cols=10, max_rows=20)}
 
 MEDICAL ANALYSIS CONTEXT:
-This dataset contains medical information that requires your specialized MedAI training for proper interpretation. Apply your clinical reasoning and medical knowledge to analyze patterns, identify clinically significant findings, and provide structured medical insights.
+This dataset contains medical information that requires your specialized LEO training for proper interpretation. Apply your clinical reasoning and medical knowledge to analyze patterns, identify clinically significant findings, and provide structured medical insights.
 """
         
         return {
@@ -1009,24 +1010,24 @@ def _generate_tabular_output(
         med = parsed.get("medication_analysis") or ""
 
         task_cell = _task_column_value(analysis_type, user_prompt)
-        output_df["MedAI_Task_Done"] = task_cell
-        output_df["MedAI_Classification"] = cls or "See analysis text"
-        output_df["MedAI_Clinical_Confidence"] = conf or "MEDIUM"
-        output_df["MedAI_Evidence"] = ev or "See analysis text"
-        output_df["MedAI_Medication_Analysis"] = med or "See analysis text"
+        output_df["LEO_Task_Done"] = task_cell
+        output_df["LEO_Classification"] = cls or "See analysis text"
+        output_df["LEO_Clinical_Confidence"] = conf or "MEDIUM"
+        output_df["LEO_Evidence"] = ev or "See analysis text"
+        output_df["LEO_Medication_Analysis"] = med or "See analysis text"
 
         if analysis_type == "extraction":
-            output_df["MedAI_Key_Findings"] = cls or ev or "See analysis text"
-            output_df["MedAI_Diagnoses"] = cls or "See analysis text"
-            output_df["MedAI_Risk_Assessment"] = conf or "See analysis text"
+            output_df["LEO_Key_Findings"] = cls or ev or "See analysis text"
+            output_df["LEO_Diagnoses"] = cls or "See analysis text"
+            output_df["LEO_Risk_Assessment"] = conf or "See analysis text"
         elif analysis_type == "diagnosis":
-            output_df["MedAI_Primary_Diagnosis"] = cls or "See analysis text"
-            output_df["MedAI_Differential"] = ev or "See analysis text"
-            output_df["MedAI_Clinical_Correlations"] = med or "See analysis text"
+            output_df["LEO_Primary_Diagnosis"] = cls or "See analysis text"
+            output_df["LEO_Differential"] = ev or "See analysis text"
+            output_df["LEO_Clinical_Correlations"] = med or "See analysis text"
 
-        output_df["MedAI_Analysis_Date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        output_df["MedAI_Model_Used"] = "MedAI-Optimized"
-        output_df["MedAI_Prompt_Version"] = "Enhanced-Clinical-Reasoning"
+        output_df["LEO_Analysis_Date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        output_df["LEO_Model_Used"] = "LEO-Optimized"
+        output_df["LEO_Prompt_Version"] = "Enhanced-Clinical-Reasoning"
 
         return output_df
 
@@ -1035,10 +1036,10 @@ def _generate_tabular_output(
         return original_df
 
 def _extract_tabular_text(path: str, filename: str):
-    """Enhanced tabular text extraction with MedAI optimization"""
+    """Enhanced tabular text extraction with LEO optimization"""
     try:
         ext = filename.rsplit(".", 1)[1].lower()
-        logger.info(f"Extracting tabular data from {filename} (type: {ext}) for MedAI analysis")
+        logger.info(f"Extracting tabular data from {filename} (type: {ext}) for LEO analysis")
         
         if ext == "csv":
             df = pd.read_csv(path)
@@ -1077,7 +1078,7 @@ def _extract_tabular_text(path: str, filename: str):
             "tabular_data": None
         }
 
-class MedAIService:
+class LeoService:
     def __init__(self):
         self.model = None
         self.tokenizer = None
@@ -1107,7 +1108,7 @@ class MedAIService:
         )
         if self._gpu_required_but_unavailable:
             self.load_error = (
-                "MEDAI_REQUIRE_GPU=1 but CUDA is not available. "
+                "LEO_REQUIRE_GPU=1 but CUDA is not available. "
                 "Use a CUDA build of PyTorch, GPU drivers, and a valid CUDA_VISIBLE_DEVICES on a GPU node."
             )
             logger.error(self.load_error)
@@ -1120,7 +1121,7 @@ class MedAIService:
         self._bg_loader_started = False
         self.request_queue = Queue(maxsize=app.config["MAX_CONCURRENT_REQUESTS"])
         self.stats = {"requests": 0, "successes": 0, "avg_time": 0}
-        self.prompt_engine = MedAIPromptEngine()
+        self.prompt_engine = LeoPromptEngine()
 
     def ensure_model_load_started(self):
         """Start loading the model in a background thread. Safe to call repeatedly."""
@@ -1161,7 +1162,7 @@ class MedAIService:
             if self.load_error:
                 return False
             try:
-                logger.info(f"Loading MedAI model: {self.model_name}")
+                logger.info(f"Loading LEO model: {self.model_name}")
                 logger.info(f"Device: {self.device}")
                 
                 # Load tokenizer
@@ -1193,12 +1194,12 @@ class MedAIService:
                 
                 self.model.eval()
                 self.model_loaded = True
-                logger.info("MedAI model loaded successfully with optimized prompting")
+                logger.info("LEO model loaded successfully with optimized prompting")
                 return True
                 
             except Exception as e:
                 self.load_error = str(e)
-                logger.error(f"MedAI model loading failed: {e}")
+                logger.error(f"LEO model loading failed: {e}")
                 logger.error(traceback.format_exc())
                 return False
 
@@ -1250,9 +1251,9 @@ class MedAIService:
 
     def _run_generation_pass(self, final_prompt, req_id, max_input_tokens):
         """Single forward pass: tokenize, generate, decode."""
-        max_new = int(os.environ.get("MEDAI_MAX_NEW_TOKENS", "512"))
+        max_new = int(getenv("LEO_MAX_NEW_TOKENS", "512"))
         max_new = max(64, min(max_new, 2048))
-        greedy_fast = os.environ.get("MEDAI_GREEDY_FAST", "").lower() in ("1", "true", "yes")
+        greedy_fast = getenv("LEO_GREEDY_FAST", "").lower() in ("1", "true", "yes")
         toks = self.tokenizer(
             final_prompt,
             return_tensors="pt",
@@ -1260,13 +1261,13 @@ class MedAIService:
             max_length=max_input_tokens,
         )
         input_token_count = toks["input_ids"].shape[1]
-        logger.info(f"[{req_id}] MedAI tokenized - Input tokens: {input_token_count}")
+        logger.info(f"[{req_id}] LEO tokenized - Input tokens: {input_token_count}")
         if input_token_count >= max_input_tokens:
-            logger.warning(f"[{req_id}] MedAI input truncated to fit token limit")
+            logger.warning(f"[{req_id}] LEO input truncated to fit token limit")
         if self.device == "cuda":
             toks = {k: v.to("cuda") for k, v in toks.items()}
         logger.info(
-            f"[{req_id}] Generating MedAI response (max_new_tokens={max_new}, greedy={greedy_fast})..."
+            f"[{req_id}] Generating LEO response (max_new_tokens={max_new}, greedy={greedy_fast})..."
         )
         with torch.no_grad():
             if greedy_fast:
@@ -1300,37 +1301,37 @@ class MedAIService:
     
     def analyze(self, prompt, text, analysis_type="custom", user_id=None, tabular_data=None, specialty=None):
         if not self.model_loaded:
-            raise RuntimeError(f"MedAI model not available: {self.load_error or 'not loaded'}")
+            raise RuntimeError(f"LEO model not available: {self.load_error or 'not loaded'}")
 
         req_id = uuid.uuid4().hex[:8]
         t0 = time.time()
         try:
             if self.request_queue.full():
-                raise RuntimeError("MedAI service at capacity. Try again later.")
+                raise RuntimeError("LEO service at capacity. Try again later.")
             self.request_queue.put(req_id, timeout=1)
 
             text_full_original = text
             original_len = len(text_full_original)
-            logger.info(f"[{req_id}] MedAI analysis started - Type: {analysis_type}, Text: {original_len} chars")
+            logger.info(f"[{req_id}] LEO analysis started - Type: {analysis_type}, Text: {original_len} chars")
             
             # Check if this is tabular data analysis
             is_tabular = tabular_data is not None and tabular_data.get("is_tabular", False)
             if is_tabular:
-                logger.info(f"[{req_id}] MedAI tabular data analysis - Shape: {tabular_data['dataframe'].shape}")
+                logger.info(f"[{req_id}] LEO tabular data analysis - Shape: {tabular_data['dataframe'].shape}")
 
             # Ensure we have actual content
             if not text or not text.strip():
-                raise ValueError("No text content provided for MedAI analysis")
+                raise ValueError("No text content provided for LEO analysis")
 
-            # Get optimized MedAI system prompt
-            system_prompt = self.prompt_engine.get_medai_system_prompts(
+            # Get optimized LEO system prompt
+            system_prompt = self.prompt_engine.get_leo_system_prompts(
                 analysis_type, 
                 is_tabular=is_tabular, 
                 specialty=specialty
             )
 
-            chunk_chars = int(os.environ.get("MEDAI_CHUNK_CHARS", "3200"))
-            carry_chars = int(os.environ.get("MEDAI_CHUNK_CARRY_CHARS", "1500"))
+            chunk_chars = int(getenv("LEO_CHUNK_CHARS", "3200"))
+            carry_chars = int(getenv("LEO_CHUNK_CARRY_CHARS", "1500"))
             carry_chars = max(0, min(carry_chars, 8000))
 
             if chunk_chars <= 0:
@@ -1342,13 +1343,13 @@ class MedAIService:
                     last_period = truncated.rfind('.')
                     if last_period > max_text_chars * 0.8:
                         truncated = truncated[:last_period + 1]
-                    text = truncated + "\n\n[Note: Text truncated for MedAI processing]"
-                    logger.info(f"[{req_id}] Text truncated to {len(text)} characters for MedAI")
+                    text = truncated + "\n\n[Note: Text truncated for LEO processing]"
+                    logger.info(f"[{req_id}] Text truncated to {len(text)} characters for LEO")
                 chunks = [text]
-                chunking_meta = {"enabled": False, "chunks": 1, "reason": "MEDAI_CHUNK_CHARS<=0 (legacy single pass)"}
+                chunking_meta = {"enabled": False, "chunks": 1, "reason": "LEO_CHUNK_CHARS<=0 (legacy single pass)"}
             elif len(text_full_original) <= chunk_chars:
                 chunks = [text_full_original]
-                chunking_meta = {"enabled": False, "chunks": 1, "reason": "under MEDAI_CHUNK_CHARS"}
+                chunking_meta = {"enabled": False, "chunks": 1, "reason": "under LEO_CHUNK_CHARS"}
             else:
                 chunks = _split_text_into_chunks(text_full_original, chunk_chars)
                 chunking_meta = {
@@ -1434,7 +1435,7 @@ class MedAIService:
 
             dt = time.time() - t0
             logger.info(
-                f"[{req_id}] MedAI all sections done: {sum_gen_tokens} new tokens total in {dt:.2f}s"
+                f"[{req_id}] LEO all sections done: {sum_gen_tokens} new tokens total in {dt:.2f}s"
             )
 
             # Normalize trailing bullets before parsing (tabular + JSON tasks use the same text)
@@ -1458,14 +1459,14 @@ class MedAIService:
                         analysis_type,
                         user_prompt=prompt,
                     )
-                    logger.info(f"[{req_id}] MedAI tabular output generated with shape: {tabular_output.shape}")
+                    logger.info(f"[{req_id}] LEO tabular output generated with shape: {tabular_output.shape}")
                 except Exception as e:
-                    logger.error(f"[{req_id}] MedAI tabular output generation failed: {e}")
+                    logger.error(f"[{req_id}] LEO tabular output generation failed: {e}")
 
-            # Apply MedAI validation if needed
+            # Apply LEO validation if needed
             validation_notes = ""
             if sum_gen_tokens < 30:
-                validation_notes = "MedAI validation: Very short response - consider more specific medical context"
+                validation_notes = "LEO validation: Very short response - consider more specific medical context"
             
             self._stat(dt, True)
             
@@ -1480,7 +1481,7 @@ class MedAIService:
                 "input_tokens": max_input_tokens_seen,
                 "text_length_original": original_len,
                 "model_used": f"{self.model_name}-Optimized",
-                "prompt_version": "MedAI-Enhanced",
+                "prompt_version": "LEO-Enhanced",
                 "timestamp": datetime.now().isoformat(),
                 "is_tabular": is_tabular,
                 "validation_notes": validation_notes,
@@ -1506,7 +1507,7 @@ class MedAIService:
         except Exception as e:
             dt = time.time() - t0
             self._stat(dt, False)
-            logger.error(f"[{req_id}] MedAI analysis failed: {e}")
+            logger.error(f"[{req_id}] LEO analysis failed: {e}")
             logger.error(traceback.format_exc())
             raise
         finally:
@@ -1516,12 +1517,12 @@ class MedAIService:
                 pass
 
 # Global service instance
-svc = MedAIService()
+svc = LeoService()
 
 _ur, _ufs = inference_augmentation_flags()
 _rag_ready = rag_system is not None and getattr(rag_system, "available", True)
 logger.info(
-    "Inference: USE_RAG=%s USE_FEW_SHOT=%s | RAG backend=%s | MEDAI_REQUIRE_GPU=%s",
+    "Inference: USE_RAG=%s USE_FEW_SHOT=%s | RAG backend=%s | LEO_REQUIRE_GPU=%s",
     _ur,
     _ufs,
     "ready" if _rag_ready else "unavailable",
@@ -1545,7 +1546,7 @@ def _no_cache_response(resp):
 @app.route("/health", methods=["GET"])
 def health():
     try:
-        _load_med42 = os.environ.get("MEDAI_LOAD_MED42", "1") == "1"
+        _load_med42 = getenv("LEO_LOAD_MED42", "1") == "1"
         if _load_med42 and not svc.model_loaded and not svc.load_error:
             # Do not block: first load can take many minutes (HF download + weights)
             svc.ensure_model_load_started()
@@ -1576,7 +1577,7 @@ def health():
             "model_name": svc.model_name,
             "lora_loaded": getattr(svc, "lora_loaded", False),
             "lora_adapter_dir": getattr(svc, "lora_adapter_dir", None),
-            "prompt_engine": "MedAI-Optimized",
+            "prompt_engine": "LEO-Optimized",
             "stats": svc.stats,
             "queue_size": svc.request_queue.qsize(),
             "max_concurrent": app.config["MAX_CONCURRENT_REQUESTS"],
@@ -1594,7 +1595,7 @@ def health():
 if __name__ == "__main__":
     import argparse
 
-    _cli = argparse.ArgumentParser(add_help=True, description="MedAI dev server")
+    _cli = argparse.ArgumentParser(add_help=True, description="LEO dev server")
     _cli.add_argument("--host", default=None, help="Bind address (sets SERVICE_HOST)")
     _cli.add_argument("--port", type=int, default=None, help="Port (sets SERVICE_PORT)")
     _args, _unknown = _cli.parse_known_args()
@@ -1603,7 +1604,7 @@ if __name__ == "__main__":
     if _args.port is not None:
         os.environ["SERVICE_PORT"] = str(_args.port)
 
-    logger.info("Starting MedAI service...")
+    logger.info("Starting LEO service...")
     
     # Port selection logic: Default 8085, auto-find free port in 8085-8150 range
     host = os.environ.get("SERVICE_HOST", "0.0.0.0")
@@ -1628,11 +1629,11 @@ if __name__ == "__main__":
     except Exception as e:
         logger.warning("Could not create PID file: {}".format(e))
     
-    if os.environ.get("MEDAI_LOAD_MED42", "1") == "1":
-        logger.info("Starting background MedAI model load (server binds immediately)...")
+    if getenv("LEO_LOAD_MED42", "1") == "1":
+        logger.info("Starting background LEO model load (server binds immediately)...")
         svc.ensure_model_load_started()
     else:
-        logger.info("MEDAI_LOAD_MED42=0: not loading Med42 (LEO runs specialist-only).")
+        logger.info("LEO_LOAD_MED42=0: not loading Med42 (LEO runs specialist-only).")
     
     if host not in ("127.0.0.1", "localhost", "::1") and not leo_auth.enabled():
         logger.warning("Listening on %s with NO LOGIN: anyone who can reach this port can read results. "

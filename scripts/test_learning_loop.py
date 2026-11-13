@@ -36,10 +36,10 @@ def add_test_validated_cases():
             """, (
                 'test_validator',
                 'Dr. Test Validator',
-                'test@medai.ai',
+                'test@leo.example',
                 'Epileptology',
                 'board_certified_epileptologist',
-                'MedAI Medical Center',
+                'LEO Medical Center',
                 True
             ))
             db.commit()

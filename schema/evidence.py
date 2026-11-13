@@ -1,4 +1,4 @@
-"""Evidence-wrapped values for MedAI-EPI (§12 evidence grounding).
+"""Evidence-wrapped values for LEO (§12 evidence grounding).
 
 Every non-metadata field in the ontology is wrapped in Evidence[T]. A field
 without documentation uses value=None with certainty=NOT_DOCUMENTED and no

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert Fonferko-Shadrach 2024 gold annotations → MedAI-EPI **silver** labels.
+"""Convert Fonferko-Shadrach 2024 gold annotations → LEO **silver** labels.
 
 Reads the 200 letters + JSON annotations at
 `data/fonferko_shadrach_2024/zenodo_8356494/Json/` and produces one silver
@@ -14,7 +14,7 @@ if they were adjudicated gold.
 
 Mapping strategy (from `docs/FONFERKO_SHADRACH_MAPPING.md`):
 
-  Fonferko entity           → MedAI-EPI field
+  Fonferko entity           → LEO field
   ----------------          ---------------------------------
   Prescription              → MedicationModule.current_asms (with a
                               medication-status heuristic on nearby text)

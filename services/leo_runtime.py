@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import logging
 import os
+from services.leo_env import getenv
 import threading
 import time
 from dataclasses import dataclass, field
@@ -33,9 +34,9 @@ logger = logging.getLogger(__name__)
 
 
 def env_flag(name: str, default: bool = True) -> bool:
-    """``MEDAI_LEO_EXT_READER=0`` (or false/no/off) turns a switch off; unset keeps ``default``."""
-    import os
-    v = os.environ.get(name)
+    """``LEO_EXT_READER=0`` (or false/no/off) turns a switch off; unset keeps ``default``."""
+    from services.leo_env import getenv
+    v = getenv(name)
     if v is None or not str(v).strip():
         return default
     return str(v).strip().lower() not in ("0", "false", "no", "off")
@@ -131,26 +132,26 @@ class LeoRuntime:
         self.adapter_label = adapter_label
         if ext_reader is None:
             # H2 was trained on the five-field flat contract. Do not run X1C/P1C/F1C on
-            # those weights unless the caller (or MEDAI_LEO_EXT_READER) asks.
-            if adapter_label and os.environ.get("MEDAI_LEO_EXT_READER") is None:
+            # those weights unless the caller (or LEO_EXT_READER) asks.
+            if adapter_label and getenv("LEO_EXT_READER") is None:
                 ext_reader = False
             else:
-                ext_reader = env_flag("MEDAI_LEO_EXT_READER")
+                ext_reader = env_flag("LEO_EXT_READER")
         self.ext_reader = bool(self.use_llm and ext_reader)
-        self.require_second_reader = (env_flag("MEDAI_LEO_REQUIRE_SECOND_READER")
+        self.require_second_reader = (env_flag("LEO_REQUIRE_SECOND_READER")
                                       if require_second_reader is None else bool(require_second_reader))
-        self.ontology_select = bool(self.use_llm and (env_flag("MEDAI_LEO_ONTOLOGY_SELECT", default=False)
+        self.ontology_select = bool(self.use_llm and (env_flag("LEO_ONTOLOGY_SELECT", default=False)
                                                       if ontology_select is None else ontology_select))
         if ext_detectors is None:
             from services.ext_detectors import parse_ext_detectors
             ext_detectors = parse_ext_detectors()
         self.ext_detectors = tuple(ext_detectors or ())
-        self.ask_rag = bool(env_flag("MEDAI_LEO_ASK_RAG", default=False) if ask_rag is None else ask_rag)
-        self.export_codes = bool(env_flag("MEDAI_LEO_EXPORT_CODES", default=False)
+        self.ask_rag = bool(env_flag("LEO_ASK_RAG", default=False) if ask_rag is None else ask_rag)
+        self.export_codes = bool(env_flag("LEO_EXPORT_CODES", default=False)
                                  if export_codes is None else export_codes)
         from services.context_engine import parse_context_engine
         self.context_engine = parse_context_engine(context_engine)
-        self.quote_entail = bool(env_flag("MEDAI_LEO_QUOTE_ENTAIL", default=False)
+        self.quote_entail = bool(env_flag("LEO_QUOTE_ENTAIL", default=False)
                                  if quote_entail is None else quote_entail)
         self._pipeline = None
         self._reasoner = None
@@ -189,7 +190,7 @@ class LeoRuntime:
         from services.med42_model import Med42ModelService
         repo = Path(__file__).resolve().parent.parent
         if adapter_dir:
-            os.environ["MEDAI_LORA_ADAPTER_DIR"] = adapter_dir
+            os.environ["LEO_LORA_ADAPTER_DIR"] = adapter_dir
 
         class _Cfg:
             pass

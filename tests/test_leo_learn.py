@@ -94,7 +94,7 @@ def test_cli_learn_writes_empty_policy_and_refuses_apply(tmp_path, capsys):
 
 def test_archive_flag_reads_permitted_copy(tmp_path, monkeypatch):
     from scripts import leo_cli
-    monkeypatch.setenv("MEDAI_LEO_TRAINING_DIR", str(tmp_path / "leo_training"))
+    monkeypatch.setenv("LEO_TRAINING_DIR", str(tmp_path / "leo_training"))
     job = tmp_path / "leo_training" / ("a" * 32)
     job.mkdir(parents=True)
     rows = [_row(field="seizure_type", decision="accept", reader_preferred="rules",

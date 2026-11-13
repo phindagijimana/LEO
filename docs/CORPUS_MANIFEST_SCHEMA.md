@@ -1,6 +1,6 @@
-# MedAI-EPI Corpus Manifest Schema v1.0
+# LEO Corpus Manifest Schema v1.0
 
-**Universal spreadsheet-per-visit format** for all MedAI-EPI corpora (synth-v1/v2/v3, MTSamples, PMC, F-S, MIMIC-IV, etc.). One row per (patient × visit), stored as both CSV (Excel-viewable) and Parquet (analytical). Notes stored as `.txt` files, gold as `.json` files, joined via manifest.
+**Universal spreadsheet-per-visit format** for all LEO corpora (synth-v1/v2/v3, MTSamples, PMC, F-S, MIMIC-IV, etc.). One row per (patient × visit), stored as both CSV (Excel-viewable) and Parquet (analytical). Notes stored as `.txt` files, gold as `.json` files, joined via manifest.
 
 ## Column definitions
 

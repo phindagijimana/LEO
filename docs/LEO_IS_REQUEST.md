@@ -19,7 +19,7 @@ We request written confirmation that identifiable (or limited-dataset) epilepsy 
 
 **What is written.** Full note text in `*_leo.csv|xlsx`, `.claims.csv`, `.provenance.json`, and owner-only job folders (`data/leo_jobs/`, 24-hour scratch, **not encrypted**). Optional `data/leo_training/` if a reviewer permits training use (not deleted with the job). Audit log has user/event only, not note text.
 
-**Who can read it.** The named investigators; OS/NFS group as configured; backup/snapshot owners. Web UI login is required in research-host mode.
+**Who can read it.** The named investigators; OS/NFS group as configured; backup/snapshot owners. Web UI login is required when research-host mode binds the UI to a node address. `bin/leo batch` and `bin/leo run` open no port. A UI on `127.0.0.1` does not require a user.
 
 **Network.** No note text to OpenAI, Hugging Face, or other external APIs during extract. Weights and the MedCAT CDB are already on disk.
 

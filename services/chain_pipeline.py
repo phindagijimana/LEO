@@ -96,9 +96,9 @@ def _onset_class_items(items: list) -> list:
 @dataclass
 class ChainPipelineConfig:
     """Knobs for the pipeline. Freeze these in run manifests."""
-    rules_version: str = "medai-epi-rules-v0.2.1"
+    rules_version: str = "leo-rules-v0.2.1"
     pipeline_version: str = "leo-v0.9"
-    ontology_release: str = "medai-enum-v0.2.1+ilae2017"
+    ontology_release: str = "leo-enum-v0.2.1+ilae2017"
     min_confidence_for_accept: float = 0.0   # unused in v0 (no calibrated conf)
     min_candidate_score: float = 0.9         # exact label (1.0) or exact synonym (0.9)
     auto_accept_detectors: tuple[str, ...] = (SPECIALIST_DETECTOR,)  # specialist alone can accept

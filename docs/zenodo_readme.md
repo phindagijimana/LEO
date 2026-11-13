@@ -1,6 +1,6 @@
-# MedAI-EPI synthetic corpus v1 — Zenodo record README
+# LEO synthetic corpus v1 — Zenodo record README
 
-**Title:** MedAI-EPI synth-v1: a 500-patient synthetic epilepsy corpus with
+**Title:** LEO synth-v1: a 500-patient synthetic epilepsy corpus with
 schema-conformant phenotype targets
 
 **Authors:** Ndagijimana P; [TBD co-authors]
@@ -16,7 +16,7 @@ schema-conformant phenotype targets
 ## Description
 
 Synth-v1 is a 500-patient synthetic corpus of epilepsy clinical
-documents released alongside the MedAI-EPI framework and its
+documents released alongside the LEO framework and its
 accompanying manuscript. Every patient's phenotype was sampled from
 an epidemiology-informed prior distribution, then each patient's
 authorized clinical content was rendered as one progress note plus a
@@ -26,7 +26,7 @@ prompt executed on OpenAI GPT-5.6-sol. The corpus is intended for:
 
 - Training / validating open-source clinical-extraction models against
   a schema-conformant target set without exposing real patient data.
-- Reproducing the MedAI-EPI paper's fine-tuning experiments.
+- Reproducing the LEO paper's fine-tuning experiments.
 - Benchmarking new extraction pipelines against a corpus whose ground
   truth is deterministic (traceable to the sampler seed).
 
@@ -96,7 +96,7 @@ content.
 
 - Yes: training / evaluating clinical NLP models; benchmarking
   structured-extraction pipelines; teaching / demoing epilepsy
-  phenotyping; reproducing MedAI-EPI paper results.
+  phenotyping; reproducing LEO paper results.
 - No: clinical decision-making; substitution for real patient data in
   regulatory submissions; medical advice.
 
@@ -119,7 +119,7 @@ corresponding manuscript:
 ```bibtex
 @dataset{medai_epi_synth_v1,
   author       = {Ndagijimana, P. and [TBD co-authors]},
-  title        = {{MedAI-EPI synth-v1: a 500-patient synthetic epilepsy corpus}},
+  title        = {{LEO synth-v1: a 500-patient synthetic epilepsy corpus}},
   month        = [TBD],
   year         = [TBD],
   publisher    = {Zenodo},

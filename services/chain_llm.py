@@ -907,7 +907,7 @@ def load_live_reasoner(*, arm: str = "M3", adapter_dir: str = "",
         from services.med42_model import Med42ModelService
 
         if adapter_dir:
-            os.environ["MEDAI_LORA_ADAPTER_DIR"] = adapter_dir
+            os.environ["LEO_LORA_ADAPTER_DIR"] = adapter_dir
 
         class _Cfg:
             pass

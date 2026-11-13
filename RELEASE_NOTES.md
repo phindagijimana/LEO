@@ -1,6 +1,6 @@
-# MedAI-EPI — Release Notes
+# LEO — Release Notes
 
-Every public release of the MedAI-EPI framework corresponds to a
+Every public release of the LEO framework corresponds to a
 git tag and (for v1.0+) a Zenodo software-record DOI. Numbers marked
 `[TBD]` are populated at release cut.
 
@@ -11,7 +11,7 @@ git tag and (for v1.0+) a Zenodo software-record DOI. Numbers marked
 - **Release date:** [TBD]
 - **Git tag:** `v1.0`
 - **Zenodo DOI (software record):** [TBD]
-- **Corresponding manuscript:** Ndagijimana P *et al.*, "MedAI-EPI: an
+- **Corresponding manuscript:** Ndagijimana P *et al.*, "LEO: an
   evidence-grounded epilepsy phenotyping framework for open-weight
   clinical LLMs." *[Target journal TBD]*, [TBD]. Preprint DOI: [TBD].
 
@@ -21,7 +21,7 @@ git tag and (for v1.0+) a Zenodo software-record DOI. Numbers marked
   extraction pipeline (three-tier repair), prompt registry (M0 / M1 / M2
   × 6 modules), chunker, merger, tabular flatten, Flask service and CLI,
   evaluation harness, `Dockerfile.eval` reproducibility container.
-- **LoRA adapter** — MedAI-EPI-tuned Med42-8B (rank 16, α 32,
+- **LoRA adapter** — LEO-tuned Med42-8B (rank 16, α 32,
   41.9M trainable params / 0.52% of the 8.07B base, ~168 MB safetensors),
   released on Hugging Face at `[TBD huggingface-repo-url]` under the
   upstream Med42-8B license
@@ -52,12 +52,12 @@ git tag and (for v1.0+) a Zenodo software-record DOI. Numbers marked
 ### Reproducing paper tables
 
 ```bash
-docker build -f Dockerfile.eval -t medai-epi-eval:v1.0 .
+docker build -f Dockerfile.eval -t leo-eval:v1.0 .
 docker run --rm \
   -v $(pwd)/data/run_manifests:/data/run_manifests:ro \
   -v $(pwd)/data/gold:/data/gold:ro \
   -v $(pwd)/out:/out \
-  medai-epi-eval:v1.0 \
+  leo-eval:v1.0 \
   python -m eval.aggregator_cli \
     --manifests /data/run_manifests --gold /data/gold --out /out
 ```
@@ -70,7 +70,7 @@ of scored tables.
 ```bibtex
 @software{ndagijimana_medai_epi_v1_0,
   author       = {Ndagijimana, P. and [TBD co-authors]},
-  title        = {{MedAI-EPI: v1.0}},
+  title        = {{LEO: v1.0}},
   month        = [TBD],
   year         = [TBD],
   publisher    = {Zenodo},

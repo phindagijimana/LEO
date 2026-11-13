@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""End-to-end HTTP smoke test for the MedAI-EPI Flask surface.
+"""End-to-end HTTP smoke test for the LEO Flask surface.
 
 Runs entirely offline: installs a scripted mock Med42Backend on the app,
 exercises every /extract/* endpoint via Flask's test_client, and asserts on
@@ -133,7 +133,7 @@ def run():
     r = c.get("/")
     check("root redirects", r.status_code == 302 and "/leo/ui" in r.headers.get("Location", ""))
     r = c.get("/extract/ui")
-    check("ui renders", r.status_code == 200 and b"MedAI-EPI" in r.data)
+    check("ui renders", r.status_code == 200 and b"LEO" in r.data)
 
     print("\n== /extract/health + /extract/registry ==")
     r = c.get("/extract/health")

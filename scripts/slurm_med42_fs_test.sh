@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-fs-test
+#SBATCH --job-name=leo-fs-test
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=03:00:00
-#SBATCH --output=logs/medai_fs_test_%j.out
-#SBATCH --error=logs/medai_fs_test_%j.err
+#SBATCH --output=logs/leo_fs_test_%j.out
+#SBATCH --error=logs/leo_fs_test_%j.err
 #
 # Runs Med42-8B M0/M1/M2 over the 40 held-out F-S clinician letters
 # (EA0161..EA0200, reserved by _fs_pairs_train_test(seed=0)).
@@ -19,11 +19,11 @@
 #     sbatch --export=ALL scripts/slurm_med42_fs_test.sh
 #
 #   TUNED_V3 (v3 F-S-split adapter, no constrained):
-#     sbatch --export=ALL,MEDAI_LORA_ADAPTER_DIR=$(pwd)/checkpoints/llama3-med42-8b_lora_epi_v3_fssplit \
+#     sbatch --export=ALL,LEO_LORA_ADAPTER_DIR=$(pwd)/checkpoints/llama3-med42-8b_lora_epi_v3_fssplit \
 #            scripts/slurm_med42_fs_test.sh
 #
 #   TUNED_V3 + CONSTRAINED:
-#     sbatch --export=ALL,MEDAI_LORA_ADAPTER_DIR=$(pwd)/checkpoints/llama3-med42-8b_lora_epi_v3_fssplit,MEDAI_CONSTRAINED=1 \
+#     sbatch --export=ALL,LEO_LORA_ADAPTER_DIR=$(pwd)/checkpoints/llama3-med42-8b_lora_epi_v3_fssplit,LEO_CONSTRAINED=1 \
 #            scripts/slurm_med42_fs_test.sh
 #
 # Manifest tree is auto-picked by config:
@@ -36,10 +36,10 @@ set -euo pipefail
 # Raise max_new_tokens for tuned runs — the adapter emits the full
 # EpilepsyPhenotype JSON (see docs/DATA_QUALITY_AUDIT.md §E "prompt-
 # template drift"), and truncation at 1024 breaks smart_repair.
-export MEDAI_MAX_NEW_TOKENS="${MEDAI_MAX_NEW_TOKENS:-4096}"
+export LEO_MAX_NEW_TOKENS="${LEO_MAX_NEW_TOKENS:-4096}"
 
 echo "=================================================="
-echo "MedAI-EPI: Med42-8B on 40 held-out F-S letters"
+echo "LEO: Med42-8B on 40 held-out F-S letters"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"
@@ -61,10 +61,10 @@ fi
 export APP_HOME="$_SUBMIT_DIR"
 
 # ---- Config selection ------------------------------------------------------
-# MEDAI_LORA_ADAPTER_DIR is set (or not) by the submitter. Empty string or
-# unset → base model. MEDAI_CONSTRAINED=1 activates lm-format-enforcer.
-ADAPTER="${MEDAI_LORA_ADAPTER_DIR:-}"
-CONSTR="${MEDAI_CONSTRAINED:-}"
+# LEO_LORA_ADAPTER_DIR is set (or not) by the submitter. Empty string or
+# unset → base model. LEO_CONSTRAINED=1 activates lm-format-enforcer.
+ADAPTER="${LEO_LORA_ADAPTER_DIR:-}"
+CONSTR="${LEO_CONSTRAINED:-}"
 
 # Decide the manifest tree from the config (once, upfront) so scoring
 # scripts can find the right run.
@@ -77,16 +77,16 @@ elif [ -n "$CONSTR" ]; then
 else
     CFG_TAG="base"
 fi
-export MEDAI_MANIFEST_DIR="${MEDAI_MANIFEST_DIR:-$APP_HOME/data/run_manifests_fs_test_${CFG_TAG}}"
+export LEO_MANIFEST_DIR="${LEO_MANIFEST_DIR:-$APP_HOME/data/run_manifests_fs_test_${CFG_TAG}}"
 
 echo "Config tag        : $CFG_TAG"
 echo "Adapter           : ${ADAPTER:-<none, base model>}"
 echo "Constrained       : ${CONSTR:-<off>}"
-echo "Manifest dir      : $MEDAI_MANIFEST_DIR"
-echo "Max new tokens    : $MEDAI_MAX_NEW_TOKENS"
+echo "Manifest dir      : $LEO_MANIFEST_DIR"
+echo "Max new tokens    : $LEO_MAX_NEW_TOKENS"
 
 if [ -n "$ADAPTER" ] && [ ! -d "$ADAPTER" ]; then
-    echo "ERROR: MEDAI_LORA_ADAPTER_DIR does not exist: $ADAPTER" >&2
+    echo "ERROR: LEO_LORA_ADAPTER_DIR does not exist: $ADAPTER" >&2
     exit 1
 fi
 
@@ -112,6 +112,6 @@ echo "Finished: $(date)"
 echo ""
 echo "Score with:"
 echo "  $PY scripts/score_llm_arms_vs_fs_gold.py \\"
-echo "      --manifests-dir $MEDAI_MANIFEST_DIR \\"
+echo "      --manifests-dir $LEO_MANIFEST_DIR \\"
 echo "      --held-out-only \\"
 echo "      --suffix ${CFG_TAG}_fs_test"

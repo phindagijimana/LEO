@@ -1,7 +1,7 @@
 """POST /extract — paper-track structured phenotype extraction endpoint.
 
 Wraps `services.router.extract_phenotype` with a small Flask surface so
-external researchers can hit MedAI-EPI programmatically. Not a chat
+external researchers can hit LEO programmatically. Not a chat
 interface — one call = one document → one `EpilepsyPhenotype` JSON.
 
 Request body (JSON):
@@ -240,15 +240,15 @@ def extract_health() -> Any:
     load_status = getattr(current_app, "med42_backend_status", "unknown")
 
     # Report the selected inference device so operators can verify their
-    # MEDAI_DEVICE choice was honored. Falls back to torch.cuda inspection
+    # LEO_DEVICE choice was honored. Falls back to torch.cuda inspection
     # if the backend hasn't attached yet.
     device_selected = None
     try:
         import os as _os, torch as _torch
-        env_pref = (_os.environ.get("MEDAI_DEVICE") or "auto").strip().lower()
+        env_pref = (_getenv("LEO_DEVICE") or "auto").strip().lower()
         cuda_ok = bool(_torch.cuda.is_available())
         if env_pref == "cpu":
-            device_selected = "cpu (forced by MEDAI_DEVICE=cpu)"
+            device_selected = "cpu (forced by LEO_DEVICE=cpu)"
         elif env_pref == "cuda":
             device_selected = "cuda" if cuda_ok else "cuda-requested-but-unavailable"
         else:
@@ -257,7 +257,7 @@ def extract_health() -> Any:
         pass
 
     # LoRA state — surface for the /extract/ui badge so users see whether the
-    # currently-active backend is base Med42 or the tuned MedAI-EPI adapter.
+    # currently-active backend is base Med42 or the tuned LEO adapter.
     lora_adapter_dir = getattr(backend, "lora_adapter_dir", None) if backend else None
     # Determine "lora_loaded" — Med42Backend sets lora_adapter_dir only if the
     # underlying service actually attached the adapter.

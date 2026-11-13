@@ -2,9 +2,9 @@
 """Sweep three Med42 variants over the 60-doc pilot corpus (R4e-i).
 
 Variants:
-    (a) base_constr   → base Med42, MEDAI_CONSTRAINED=1, no LoRA adapter
+    (a) base_constr   → base Med42, LEO_CONSTRAINED=1, no LoRA adapter
     (b) tuned         → base Med42 + LoRA adapter (unconstrained)
-    (c) tuned_constr  → base Med42 + LoRA adapter + MEDAI_CONSTRAINED=1
+    (c) tuned_constr  → base Med42 + LoRA adapter + LEO_CONSTRAINED=1
 
 Each variant writes to a distinct manifest dir
 (data/run_manifests_pilot_{base_constr,tuned,tuned_constr}/) so the extended
@@ -14,11 +14,11 @@ We load the model *once* per variant (reload is needed because the LoRA state
 differs). Sequential is fine on a single L40S 24 GB slice.
 
 Selecting variants:
-    Env var MEDAI_PILOT_VARIANTS defaults to "base_constr,tuned,tuned_constr".
-    Set e.g. MEDAI_PILOT_VARIANTS=tuned to run just one.
+    Env var LEO_PILOT_VARIANTS defaults to "base_constr,tuned,tuned_constr".
+    Set e.g. LEO_PILOT_VARIANTS=tuned to run just one.
 
 Adapter directory:
-    Env var MEDAI_ADAPTER_DIR (default checkpoints/llama3-med42-8b_lora_epi).
+    Env var LEO_ADAPTER_DIR (default checkpoints/llama3-med42-8b_lora_epi).
 """
 
 from __future__ import annotations
@@ -32,6 +32,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
+from services.leo_env import getenv
 
 from schema import DocumentMetadata, DocumentType, SCHEMA_VERSION  # noqa: E402
 from services.extract import DecodingConfig  # noqa: E402
@@ -94,17 +95,17 @@ def _run_variant(name: str, use_lora: bool, constrained: bool, adapter_dir: Path
                  docs, arms=("M0", "M1", "M2")):
     manifest_dir = REPO / "data" / f"run_manifests_pilot_{name}"
     manifest_dir.mkdir(parents=True, exist_ok=True)
-    os.environ["MEDAI_MANIFEST_DIR"] = str(manifest_dir)
+    os.environ["LEO_MANIFEST_DIR"] = str(manifest_dir)
     if use_lora:
-        os.environ["MEDAI_LORA_ADAPTER_DIR"] = str(adapter_dir)
+        os.environ["LEO_LORA_ADAPTER_DIR"] = str(adapter_dir)
     else:
-        os.environ.pop("MEDAI_LORA_ADAPTER_DIR", None)
-    os.environ["MEDAI_CONSTRAINED"] = "1" if constrained else "0"
+        os.environ.pop("LEO_LORA_ADAPTER_DIR", None)
+    os.environ["LEO_CONSTRAINED"] = "1" if constrained else "0"
 
     print(f"\n{'='*70}")
     print(f"Variant: {name}   lora={use_lora}   constrained={constrained}")
     print(f"Manifests: {manifest_dir}")
-    print(f"Adapter:   {os.environ.get('MEDAI_LORA_ADAPTER_DIR', '(none)')}")
+    print(f"Adapter:   {getenv('LEO_LORA_ADAPTER_DIR', '(none)')}")
     print(f"{'='*70}\n")
 
     svc = Med42ModelService(_Config())
@@ -113,7 +114,7 @@ def _run_variant(name: str, use_lora: bool, constrained: bool, adapter_dir: Path
     backend = Med42Backend(svc)
     decoding = DecodingConfig(
         do_sample=False, temperature=None, top_p=None,
-        max_new_tokens=int(os.environ.get("MEDAI_MAX_NEW_TOKENS", 1024)),
+        max_new_tokens=int(getenv("LEO_MAX_NEW_TOKENS", 1024)),
         seed=0,
         constrained=constrained,
     )
@@ -167,12 +168,11 @@ def _run_variant(name: str, use_lora: bool, constrained: bool, adapter_dir: Path
 
 
 def main():
-    selected = os.environ.get(
-        "MEDAI_PILOT_VARIANTS", "base_constr,tuned,tuned_constr"
+    selected = getenv("LEO_PILOT_VARIANTS", "base_constr,tuned,tuned_constr"
     ).split(",")
     selected = [s.strip() for s in selected if s.strip()]
 
-    adapter_dir = Path(os.environ.get("MEDAI_ADAPTER_DIR", str(DEFAULT_ADAPTER)))
+    adapter_dir = Path(getenv("LEO_ADAPTER_DIR", str(DEFAULT_ADAPTER)))
     if any(VARIANTS[v][0] for v in selected if v in VARIANTS):
         if not adapter_dir.exists():
             raise SystemExit(f"Adapter dir does not exist: {adapter_dir}")

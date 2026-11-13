@@ -68,7 +68,7 @@ secure staging area  ──►  LEO on institutional compute (local Med42 + EpEx
 Rules for this flow:
 
 - Notes stay inside institutional systems. No outside model API, no cloud copy.
-- LEO keeps jobs in `data/leo_jobs/` for 24 hours by default (`MEDAI_LEO_JOB_TTL_H`). The folder is readable only by its owner. These files contain note text.
+- LEO keeps jobs in `data/leo_jobs/` for 24 hours by default (`LEO_JOB_TTL_H`). The folder is readable only by its owner. These files contain note text.
 - The result file contains note text if the input columns are kept. Treat it like the input.
 - Whether to de-identify before LEO sees the notes is a decision for the IRB and privacy office (section 5). LEO does not de-identify notes.
 

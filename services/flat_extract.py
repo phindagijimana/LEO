@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import json
 import os
+from services.leo_env import getenv
 import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
@@ -38,9 +39,9 @@ from schema.enums import UNKNOWN_EPILEPSY_TYPE_DEFINITION
 # v2: adds "unknown" = UNKNOWN_EPILEPSY_TYPE_DEFINITION, the same wording EpExtra uses.
 # A stored manifest is parsed with the version it was run under.
 FLAT_PROMPT_VERSIONS = ("v1", "v2")
-FLAT_PROMPT_VERSION = os.environ.get("MEDAI_FLAT_PROMPT_VERSION", "v1")
+FLAT_PROMPT_VERSION = getenv("LEO_FLAT_PROMPT_VERSION", "v1")
 if FLAT_PROMPT_VERSION not in FLAT_PROMPT_VERSIONS:
-    raise ValueError(f"MEDAI_FLAT_PROMPT_VERSION must be one of {FLAT_PROMPT_VERSIONS}")
+    raise ValueError(f"LEO_FLAT_PROMPT_VERSION must be one of {FLAT_PROMPT_VERSIONS}")
 FLAT_ARMS = ("L0", "L1", "L2", "L0C", "L1C", "L2C")
 
 EPILEPSY_TYPES = ("focal", "generalized", "combined_focal_generalized")

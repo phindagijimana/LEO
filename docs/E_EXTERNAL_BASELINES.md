@@ -26,7 +26,7 @@ E is arm B1′: MedCAT + ExECT-style rules filling the phenotype table. A system
 
 If only one US clinical-NLP baseline is added, score **cTAKES (or CLAMP) on medications + negation** on the same notes and gold as E.
 
-Existing arms that already occupy this slot: B0 regex, B1 BioClinicalBERT scaffold, B1′ = E, then L / GPT / DeepSeek (`docs/medai_target.md`, `docs/EVAL_PROTOCOL_LEO.md`).
+Existing arms that already occupy this slot: B0 regex, B1 BioClinicalBERT scaffold, B1′ = E, then L / GPT / DeepSeek (`docs/leo_target.md`, `docs/EVAL_PROTOCOL_LEO.md`).
 
 ## Not models to compare to E
 

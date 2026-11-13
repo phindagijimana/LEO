@@ -1,5 +1,5 @@
 """
-MedAI-EPI legacy prompt engine.
+LEO legacy prompt engine.
 
 Powers the legacy /analyze Flask endpoint (services/med42_model.Med42ModelService.analyze).
 NOT used by the paper track — paper-track prompts live in `services/prompt_registry.py`
@@ -7,7 +7,7 @@ with per-module M0/M1/M2 templates, schema injection, and evidence grounding.
 
 Framing (paper §21): this module speaks the language of *research information extraction*,
 not autonomous clinical judgment. Non-neurology specialty branches have been retired
-because MedAI-EPI is scoped to epilepsy phenotyping only.
+because LEO is scoped to epilepsy phenotyping only.
 """
 
 import os
@@ -43,7 +43,7 @@ This is a research phenotyping task, not clinical decision support."""
 
     @staticmethod
     def get_specialty_prompts() -> Dict[str, str]:
-        """Specialty prompts. MedAI-EPI is scoped to neurology (epilepsy); the
+        """Specialty prompts. LEO is scoped to neurology (epilepsy); the
         four non-neurology branches (cardiology/psychiatry/emergency/internal
         medicine) were retired when the project pivoted per §21."""
         return {

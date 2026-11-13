@@ -14,7 +14,7 @@
     DELETE /leo/jobs/<id>               delete the upload and the results from the server
 
 Uploads and results live in ``data/leo_jobs/<id>/`` (gitignored) and contain note text.  They are
-deleted after ``MEDAI_LEO_JOB_TTL_H`` hours (default 24) or on request.  Opt-in training copies live
+deleted after ``LEO_JOB_TTL_H`` hours (default 24) or on request.  Opt-in training copies live
 in ``data/leo_training/<id>/`` (also gitignored) and are **not** deleted with the job TTL.  Nothing
 is written to the evidence ledger by these routes.  The LLM is the web app's own Med42 backend; without it
 (``llm=off`` or the model not loaded) LEO runs specialist-only and every response says so.
@@ -26,6 +26,7 @@ import io
 import json
 import logging
 import os
+from services.leo_env import getenv
 import re
 import shutil
 import tempfile
@@ -48,8 +49,8 @@ leo_bp = Blueprint("leo", __name__, url_prefix="/leo")
 _RUNTIMES: dict[str, Any] = {}
 _RT_LOCK = threading.Lock()
 # One job at a time on this machine by default: two jobs sharing one GPU can run it out of memory. Jobs that are
-# waiting show state "queued". MEDAI_LEO_CONCURRENT_JOBS raises the limit (e.g. for rules-only use).
-_SLOT = threading.Semaphore(max(1, int(os.environ.get("MEDAI_LEO_CONCURRENT_JOBS", "1"))))
+# waiting show state "queued". LEO_CONCURRENT_JOBS raises the limit (e.g. for rules-only use).
+_SLOT = threading.Semaphore(max(1, int(getenv("LEO_CONCURRENT_JOBS", "1"))))
 _EMPTY_SUMMARY = {"rows_processed": 0, "rows_error": 0, "rows_with_llm": 0, "mode": ""}
 _JOBS: dict[str, dict] = {}
 
@@ -66,7 +67,7 @@ def _jobs_root() -> Path:
 
 
 def _purge_old_jobs() -> None:
-    ttl = float(os.environ.get("MEDAI_LEO_JOB_TTL_H", "24")) * 3600
+    ttl = float(getenv("LEO_JOB_TTL_H", "24")) * 3600
     now = time.time()
     for d in _jobs_root().iterdir():
         try:
@@ -126,13 +127,13 @@ def _cache_key(use_llm: bool, flags: dict | None = None, backend: Any = None) ->
     flags = flags or {}
     dets = ",".join(tuple(flags.get("ext_detectors") or ()))
     qe, rag, codes = int(bool(flags.get("quote_entail"))), int(bool(flags.get("ask_rag"))), int(bool(flags.get("export_codes")))
-    chunk = int(os.environ.get("MEDAI_LEO_CHUNK_CHARS", "8000"))
+    chunk = int(getenv("LEO_CHUNK_CHARS", "8000"))
     if not use_llm:
         return f"cpu:{chunk}:d{dets}:q{qe}:g{rag}:c{codes}"
-    arm = os.environ.get("MEDAI_LEO_ARM", "L1C")
-    return (f"llm:{id(backend)}:{arm}:{chunk}:ext{os.environ.get('MEDAI_LEO_EXT_READER', '1')}:"
-            f"r{os.environ.get('MEDAI_LEO_REQUIRE_SECOND_READER', '1')}:"
-            f"o{os.environ.get('MEDAI_LEO_ONTOLOGY_SELECT', '0')}:d{dets}:q{qe}:g{rag}:c{codes}")
+    arm = getenv("LEO_ARM", "L1C")
+    return (f"llm:{id(backend)}:{arm}:{chunk}:ext{getenv('LEO_EXT_READER', '1')}:"
+            f"r{getenv('LEO_REQUIRE_SECOND_READER', '1')}:"
+            f"o{getenv('LEO_ONTOLOGY_SELECT', '0')}:d{dets}:q{qe}:g{rag}:c{codes}")
 
 
 def _runtime(use_llm: bool, flags: dict | None = None):
@@ -143,8 +144,8 @@ def _runtime(use_llm: bool, flags: dict | None = None):
     qe = bool(flags.get("quote_entail"))
     rag = bool(flags.get("ask_rag"))
     codes = bool(flags.get("export_codes"))
-    arm = os.environ.get("MEDAI_LEO_ARM", "L1C")
-    chunk = int(os.environ.get("MEDAI_LEO_CHUNK_CHARS", "8000"))
+    arm = getenv("LEO_ARM", "L1C")
+    chunk = int(getenv("LEO_CHUNK_CHARS", "8000"))
     with _RT_LOCK:
         if use_llm:
             ensure = getattr(current_app, "ensure_med42_loaded", None)
@@ -156,7 +157,7 @@ def _runtime(use_llm: bool, flags: dict | None = None):
             if key not in _RUNTIMES:
                 _RUNTIMES[key] = LeoRuntime(
                     backend=backend, arm=arm, chunk_max_chars=chunk,
-                    adapter_label=Path(os.environ.get("MEDAI_LORA_ADAPTER_DIR", "")).name,
+                    adapter_label=Path(getenv("LEO_LORA_ADAPTER_DIR", "")).name,
                     ext_detectors=dets, quote_entail=qe, ask_rag=rag, export_codes=codes)
         else:
             key = _cache_key(False, flags)
@@ -224,7 +225,7 @@ def status():
         "login_required": auth.enabled(),
         "llm_status": getattr(current_app, "med42_backend_status", "unknown"),
         "llm_ready": llm_ready,
-        "load_med42": os.environ.get("MEDAI_LOAD_MED42", "1") == "1",
+        "load_med42": getenv("LEO_LOAD_MED42", "1") == "1",
         "readers": "model_and_rules" if llm_ready else "rules_only",
         "known_ext_detectors": list(KNOWN_EXT_DETECTORS),
         "versions": LeoRuntime(backend=None, use_llm=False).versions(),
@@ -993,7 +994,7 @@ def review_export(job_id: str):
 _UI_FILE = Path(__file__).with_name("leo_ui.html")
 
 
-GUIDE_URL = "https://github.com/phindagijimana/medAI/blob/main/docs/LEO_USER_GUIDE.md"
+GUIDE_URL = "https://github.com/phindagijimana/LEO/blob/main/docs/LEO_USER_GUIDE.md"
 
 
 @leo_bp.route("/guide", methods=["GET"])

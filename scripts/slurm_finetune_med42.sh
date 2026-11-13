@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-lora
+#SBATCH --job-name=leo-lora
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,25 +7,25 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=04:00:00
-#SBATCH --output=logs/medai_lora_%j.out
-#SBATCH --error=logs/medai_lora_%j.err
+#SBATCH --output=logs/leo_lora_%j.out
+#SBATCH --error=logs/leo_lora_%j.err
 #
 # Submit:  sbatch [--export=ALL,BASE_MODEL=deepseek,CORPUS=both] \
 #              scripts/slurm_finetune_med42.sh
 #
-# LoRA fine-tune Med42-8B (or DeepSeek-R1-Distill-Llama-8B) on MedAI-EPI
+# LoRA fine-tune Med42-8B (or DeepSeek-R1-Distill-Llama-8B) on LEO
 # (prompt, target_phenotype) pairs. Adapter lands in
 # checkpoints/{model_slug}_lora_epi/.
 #
 # Env knobs (all optional, defaults shown):
 #   BASE_MODEL=med42                # or deepseek, or any HF id
 #   CORPUS=pilot                    # or synth-v1, fs, synth+fs, both, all
-#   MEDAI_LORA_ADAPTER_SUFFIX=v2    # → checkpoints/{slug}_lora_epi_v2/
+#   LEO_LORA_ADAPTER_SUFFIX=v2    # → checkpoints/{slug}_lora_epi_v2/
 
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI: LoRA fine-tune Med42-8B on pilot pairs"
+echo "LEO: LoRA fine-tune Med42-8B on pilot pairs"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"
@@ -59,10 +59,10 @@ fi
 cd "$APP_HOME"
 BASE_MODEL="${BASE_MODEL:-med42}"
 CORPUS="${CORPUS:-pilot}"
-SUFFIX="${MEDAI_LORA_ADAPTER_SUFFIX:-v2}"
+SUFFIX="${LEO_LORA_ADAPTER_SUFFIX:-v2}"
 echo ""
 echo "--- Running LoRA fine-tune (base=$BASE_MODEL corpus=$CORPUS suffix=$SUFFIX) ---"
-export MEDAI_LORA_ADAPTER_SUFFIX="$SUFFIX"
+export LEO_LORA_ADAPTER_SUFFIX="$SUFFIX"
 $PY scripts/finetune_lora_epi.py --base-model "$BASE_MODEL" --corpus "$CORPUS" --adapter-suffix "$SUFFIX"
 
 echo ""

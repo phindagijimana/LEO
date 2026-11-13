@@ -1,83 +1,39 @@
 # Documentation
 
-Operator and protocol docs. These **are** tracked (`!docs/*.md`). Manuscript drafts in `writing/` and `paper_doc/` stay local (gitignored). Secrets and note-text outputs stay out of git (`.gitignore`).
+Study the work in this order:
 
-## Files
+1. [`THEORY.md`](THEORY.md) — why L, E, and O, and why they are not voted
+2. [`INTERPRETING_RESULTS.md`](INTERPRETING_RESULTS.md) — which numbers can be quoted
+3. [`IMPLEMENTATION.md`](IMPLEMENTATION.md) — design, decisions, where the code is
+4. [`WEAKNESSES.md`](WEAKNESSES.md) — each hole, what accounts for it, what is next
+5. [`LITERATURE.md`](LITERATURE.md) — papers these pages cite
 
-- **`QUICK_START.md`**: Quick reference guide
-  - Local and HPC deployment commands
-  - Resource mode comparison
-  - Common troubleshooting
+Names on those pages: [`GLOSSARY.md`](GLOSSARY.md).
 
-- **`RESOURCE_MODES.md`**: Detailed resource guide
-  - CPU vs GPU modes
-  - Performance benchmarks
-  - Resource allocation guidelines
-  - Advanced configuration
+The judgment is in those pages, not in a separate biography. [`IMPLEMENTATION.md`](IMPLEMENTATION.md) records each design choice and the code that implements it. [`INTERPRETING_RESULTS.md`](INTERPRETING_RESULTS.md) records which numbers can be quoted. [`WEAKNESSES.md`](WEAKNESSES.md) records what was measured and left open. The deviation log is [`EVAL_PROTOCOL_LEO.md`](EVAL_PROTOCOL_LEO.md). The repository does not split that record by person.
 
-- **`HPC_CLI_GUIDE.md`**: HPC deployment guide
-  - SLURM job management
-  - Module loading
-  - Port forwarding
-  - Troubleshooting
+## Operator pages
 
-- **`LEO_USER_GUIDE.md`**: operator guide (commands, Validator, learn, PHI)
-- **`IMPLEMENTATION.md`**: A–Z walkthrough, decisions, contributions, weaknesses
-- **`WEAKNESSES.md`**: each hole, what accounts for it today, what to improve next
-- **`LEO_ROUTING_RULES.md`**: how LEO fuses the specialist (EpExtra) and the LLM and decides ACCEPT, REVIEW or REJECT
-  - Fusion table, verification order, reason codes, the leo-v0.4 and v0.5 rules (acute, rescue, frequency) and their switches; opt-in sidecars (`sidecar_only`, D18–D20)
-- **`EVAL_PROTOCOL_LEO.md`**: frozen evaluation protocol, deviations log (D1–D24), append-only results log (through 10.39)
-- **`FIELD_SPECIALIST_DETECTORS.md`**: extra literature detectors as fusion sidecars (not E gazetteers); shipped `--ext-detector` names and §9 remaining-hole literature map
-- **`ROLE_PLACEMENTS.md`**: RAG for ask_/audit, O export codes, ConText ablation inside E; 70B/CoT/SC not shipped
-- **`MEASURED_FAILURE_TECHNIQUES.md`**: status/time, quote entailment, routing policy, LoRA-off-fusion, BIO NER blocked
-- **`ACTIVE_LEARNING_PLAN.md`**: `leo learn` Loop A/B from validator files; extract unchanged; Loop C paused
-- **`LORA_FLAT_CONTRACT.md`**: why fused H2 lost and how a future adapter must agree with E
-- **`E_EXTERNAL_BASELINES.md`**: how to score cTAKES/CLAMP/i2b2 *against E* (B-arm; still unscored)
-- **`SCOPE_DECISIONS.md`**: deferred scope items (ILAE 2025, NINDS CDE, ICD-10-CM, EpSO, ORDO, definition of current ASM)
-- **`CHAIN_OF_THREE_ALIGNMENT.md`**: mapping of the Chain-of-Three design to the code, with change log
+These are also the Read the Docs site (`docs_site/` is symlinks into this folder). Preview: `pip install -r docs_site/requirements.txt && mkdocs serve`.
 
-## Public documentation
+| File | Use |
+|---|---|
+| [`index.md`](index.md) | Public landing |
+| [`QUICKSTART.md`](QUICKSTART.md) | `bin/leo check` and a first batch |
+| [`LEO_USER_GUIDE.md`](LEO_USER_GUIDE.md) | Commands, Validator, learn |
+| [`LEO_HOSTING.md`](LEO_HOSTING.md) | Workstation, Slurm, weights |
+| [`LEO_CONTAINER.md`](LEO_CONTAINER.md) | Docker / Apptainer |
+| [`LEO_RESEARCH_DEPLOY.md`](LEO_RESEARCH_DEPLOY.md) | `--research`: local weights, offline, no cloud |
+| [`LEO_PHI.md`](LEO_PHI.md) | HIPAA-18 flags; not de-identification |
+| [`LEO_IS_REQUEST.md`](LEO_IS_REQUEST.md) | Text to send privacy / research IS |
+| [`LEO_THIRD_PARTY.md`](LEO_THIRD_PARTY.md) | Med42, UMLS, CDB — not in git |
+| [`LEO_ROUTING_RULES.md`](LEO_ROUTING_RULES.md) | ACCEPT / REVIEW / REJECT |
+| [`ACTIVE_LEARNING_PLAN.md`](ACTIVE_LEARNING_PLAN.md) | `leo learn`; extract unchanged |
 
-Operator pages on this site / Read the Docs (MkDocs; `docs_dir` is `docs_site/`, symlinks into `docs/`):
+These files only point at the LEO guides above: `QUICK_START.md`, `HPC_CLI_GUIDE.md`, `RESOURCE_MODES.md`. At the repo root, `COMMANDS.md`, `PROJECT_STRUCTURE.md`, `DEPLOYMENT.md`, `SELF_HOSTING.md`, `TEST_RESULTS_SUMMARY.md`, and `REAL_WORLD_TEST_RESULTS.md` do the same.
 
-- `index.md` — landing
-- `QUICKSTART.md`, `LEO_USER_GUIDE.md`, `LEO_HOSTING.md`, `THEORY.md`, `LITERATURE.md`, `INTERPRETING_RESULTS.md`
-- `LEO_CONTAINER.md`, `LEO_RESEARCH_DEPLOY.md`, `LEO_PHI.md`, `LEO_IS_REQUEST.md`, `LEO_THIRD_PARTY.md`
-- `LEO_ROUTING_RULES.md`, `IMPLEMENTATION.md`, `WEAKNESSES.md`, `ACTIVE_LEARNING_PLAN.md`
+## In the repo, not on the public site
 
-Not on the HTML site: `EVAL_PROTOCOL_LEO.md`, paper drafts (`writing/`, `paper_doc/`), hold-out leak tables. Import `phindagijimana/medAI` at readthedocs.org after this config is on `main`.
+The frozen evaluation log is [`EVAL_PROTOCOL_LEO.md`](EVAL_PROTOCOL_LEO.md). Hold-out tables stay under `eval/results/`. Paper drafts in `writing/` and `paper_doc/` stay local.
 
-## Usage
-
-These files are for local reference. They contain detailed information that complements the main documentation.
-
-### Quick Reference
-```bash
-# View quick start
-cat docs/QUICK_START.md
-
-# View resource modes
-cat docs/RESOURCE_MODES.md
-
-# View HPC guide
-cat docs/HPC_CLI_GUIDE.md
-```
-
-### Search Documentation
-```bash
-# Find deployment info
-grep -r "deployment" docs/
-
-# Find GPU info
-grep -r "GPU" docs/
-```
-
-## Organization
-
-- **Quick guides**: For fast reference during deployment
-- **Detailed guides**: For in-depth understanding
-- **Troubleshooting**: Common issues and solutions
-
-## Note
-
-These files are in `.gitignore` as they're intended for local use. The main `README.md` and `DEPLOYMENT.md` in the root directory are the canonical public documentation.
+Other lab notes in this folder (scope decisions, field-specialist plan, external baselines, corpus outreach) are for the study. They are not the front door.

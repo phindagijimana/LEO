@@ -146,7 +146,7 @@ def run_table(df: pd.DataFrame, rt: LeoRuntime, *, phenotypes: list[Phenotype], 
     table = pd.concat([base, leo], axis=1)
     claims = pd.DataFrame(all_claims, columns=CLAIM_COLUMNS)
     prov = {
-        "tool": "LEO (MedAI-EPI)", "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "tool": "LEO", "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "started_utc": t0.isoformat(timespec="seconds"), **rt.versions(),
         "rows_requested": n_total, "rows_processed": done, "rows_error": n_err, "rows_with_llm": n_llm,
         "include_review_values": include_review,
@@ -198,7 +198,7 @@ def outputs_from_paste(*, text: str, doc_id: str, row: dict, claims: list[dict],
                              columns=CLAIM_COLUMNS)
     t0 = datetime.now(timezone.utc)
     prov = {
-        "tool": "LEO (MedAI-EPI)", "created_utc": t0.isoformat(timespec="seconds"),
+        "tool": "LEO", "created_utc": t0.isoformat(timespec="seconds"),
         "started_utc": t0.isoformat(timespec="seconds"), **versions,
         "rows_requested": 1, "rows_processed": 1, "rows_error": int(bool(error)),
         "rows_with_llm": int(bool(llm_used)), "include_review_values": include_review,

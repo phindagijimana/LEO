@@ -1,4 +1,4 @@
-# MedAI-EPI eval container — minimal deps for schema + services + eval only.
+# LEO eval container — minimal deps for schema + services + eval only.
 # No torch, no transformers, no Flask. See Dockerfile.eval.
 
 pydantic>=2.0

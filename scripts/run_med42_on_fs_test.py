@@ -12,7 +12,7 @@ For each held-out pid:
   1. Read the note text from
      data/fonferko_shadrach_2024/zenodo_8381080/Gold1-200_corrected_spelling/{pid}.txt
      (same source clinician text used by score_llm_arms_vs_fs_gold.py).
-  2. If a LoRA adapter is loaded (MEDAI_LORA_ADAPTER_DIR set), prepend
+  2. If a LoRA adapter is loaded (LEO_LORA_ADAPTER_DIR set), prepend
      `PATIENT_ID: {pid}\n\n{note}` — this mirrors the v2/v3 training-time
      augmentation contract (see finetune_lora_epi.py::_augment_pair).
   3. For each arm (M0, M1, M2), route through services.router.extract_phenotype,
@@ -31,11 +31,11 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
+from services.leo_env import getenv, setdefault
 
 # Manifests go to a dedicated dir so we don't collide with the 200-doc
 # F-S sweep at data/run_manifests/ or the pilot sweeps.
-os.environ.setdefault(
-    "MEDAI_MANIFEST_DIR", str(REPO / "data" / "run_manifests_fs_test"),
+setdefault("LEO_MANIFEST_DIR", str(REPO / "data" / "run_manifests_fs_test"),
 )
 
 from schema import DocumentMetadata, DocumentType, SCHEMA_VERSION
@@ -117,9 +117,9 @@ def main():
     backend = Med42Backend(svc)
     decoding = DecodingConfig(
         do_sample=False, temperature=None, top_p=None,
-        max_new_tokens=int(os.environ.get("MEDAI_MAX_NEW_TOKENS", 4096)),
+        max_new_tokens=int(getenv("LEO_MAX_NEW_TOKENS", 4096)),
         seed=0,
-        constrained=os.environ.get("MEDAI_CONSTRAINED", "").lower() in ("1", "true", "yes"),
+        constrained=getenv("LEO_CONSTRAINED", "").lower() in ("1", "true", "yes"),
     )
     if decoding.constrained:
         print("Schema-constrained decoding: ON (lm-format-enforcer)")
@@ -128,15 +128,15 @@ def main():
     # a loaded LoRA adapter was trained to copy the PATIENT_ID token from
     # the prompt into every ID field of the emitted JSON, so at inference
     # we hand it the real F-S pid and expect it to propagate.
-    use_id_aug = bool(os.environ.get("MEDAI_LORA_ADAPTER_DIR"))
+    use_id_aug = bool(getenv("LEO_LORA_ADAPTER_DIR"))
     if use_id_aug:
         print("LoRA adapter detected → prepending PATIENT_ID line to each note "
               "(inference contract for the v2/v3 augmentation-trained adapter).")
 
-    # MEDAI_ARMS=M2 runs a single arm; MEDAI_RESUME=1 skips finished (letter, arm).
-    arms = tuple(a.strip() for a in os.environ.get("MEDAI_ARMS", "M0,M1,M2").split(",") if a.strip())
-    resume = os.environ.get("MEDAI_RESUME", "").lower() in ("1", "true", "yes")
-    manifest_dir = Path(os.environ["MEDAI_MANIFEST_DIR"])
+    # LEO_ARMS=M2 runs a single arm; LEO_RESUME=1 skips finished (letter, arm).
+    arms = tuple(a.strip() for a in getenv("LEO_ARMS", "M0,M1,M2").split(",") if a.strip())
+    resume = getenv("LEO_RESUME", "").lower() in ("1", "true", "yes")
+    manifest_dir = Path(os.environ["LEO_MANIFEST_DIR"])
     print(f"Arms: {arms}  resume={resume}")
     n_ok = n_err = n_skip = 0
     for i, pid in enumerate(pids, 1):

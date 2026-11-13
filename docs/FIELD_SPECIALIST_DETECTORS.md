@@ -198,11 +198,11 @@ Protocol: **D18–D20** and **§10.33–10.35** in `docs/EVAL_PROTOCOL_LEO.md`. 
 | Guideline remaining holes | `services/ext_detectors/guideline.py` (`fail-reason`, `rescue-if`, `ictal`, `eeg-done`, `dre`, `first-feature`) |
 | Attach without changing verdicts | `services/ext_detectors/attach.py` |
 | Pipeline | `ChainPipelineConfig.ext_detectors`, `services/chain_pipeline.py` |
-| Runtime / CLI / env | `LeoRuntime.ext_detectors`, `--ext-detector`, `MEDAI_LEO_EXT_DETECTOR` |
+| Runtime / CLI / env | `LeoRuntime.ext_detectors`, `--ext-detector`, `LEO_EXT_DETECTOR` |
 | Claim + table | `Claim.sidecar_alternative`, `ReasonCode.SIDECAR_ONLY`, `*_sidecar` in `leo_tabular` |
 | Tests | `tests/test_ext_detectors.py` |
 
-Flags: off unless `--ext-detector NAME` or `MEDAI_LEO_EXT_DETECTOR` (comma list). Known: `ctakes`, `freq`, `stated-type`, `hs`, `fail-reason`, `rescue-if`, `ictal`, `eeg-done`, `dre`, `first-feature`. Independent of `--ext-reader`. `--ext-detector b1` / `xie` / `decker` still raise (need training); `engel` raises (not a catalogue column).
+Flags: off unless `--ext-detector NAME` or `LEO_EXT_DETECTOR` (comma list). Known: `ctakes`, `freq`, `stated-type`, `hs`, `fail-reason`, `rescue-if`, `ictal`, `eeg-done`, `dre`, `first-feature`. Independent of `--ext-reader`. `--ext-detector b1` / `xie` / `decker` still raise (need training); `engel` raises (not a catalogue column).
 
 ## 9. Remaining field weaknesses — literature (2026-10-07)
 

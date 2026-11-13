@@ -42,7 +42,7 @@ Web: `bin/leo user add NAME` (turns login on), `bin/leo start`, `bin/leo status`
 
 CPU / rules-only has no second reader. `--accepted-only` then yields an empty table. Jobs source `.env` and `venv-medcat`.
 
-Slurm resources (override per site): `--partition`, `--hours`, `--gres` (default `gpu:l40s.24g:1` or `MEDAI_LEO_GRES`), `--cpus`, `--mem`. Defaults here: GPU 8 CPU / 64G / L40S 24G; CPU 16 / 48G. Workstation vs HPC: `docs/LEO_HOSTING.md`.
+Slurm resources (override per site): `--partition`, `--hours`, `--gres` (default `gpu:l40s.24g:1` or `LEO_GRES`), `--cpus`, `--mem`. Defaults here: GPU 8 CPU / 64G / L40S 24G; CPU 16 / 48G. Workstation vs HPC: `docs/LEO_HOSTING.md`.
 
 ## 3. Input and output
 
@@ -68,7 +68,7 @@ Optional flags (off by default; they do not flip D17): `--quote-entail`, `--ext-
 
 ## 5. Web app and Validator
 
-`bin/leo start` → `/leo/ui` (also `/`). Paste a note or upload a file. Paste download is the same CSV zip / Excel as a one-row spreadsheet (`note_id`, `text`, then `epilepsy_type`, `epilepsy_type_status`, …). The on-screen Phenotype / Value / Status table is for reading only. **Describe a job** turns a sentence into a job file you confirm before anything runs (`bin/leo run "…"`). Jobs live 24 hours in `data/leo_jobs/` (`MEDAI_LEO_JOB_TTL_H`). The paper M0/M1/M2 page is a separate URL (`/extract/ui`), not a LEO tab.
+`bin/leo start` → `/leo/ui` (also `/`). Paste a note or upload a file. Paste download is the same CSV zip / Excel as a one-row spreadsheet (`note_id`, `text`, then `epilepsy_type`, `epilepsy_type_status`, …). The on-screen Phenotype / Value / Status table is for reading only. **Describe a job** turns a sentence into a job file you confirm before anything runs (`bin/leo run "…"`). Jobs live 24 hours in `data/leo_jobs/` (`LEO_JOB_TTL_H`). The paper M0/M1/M2 page is a separate URL (`/extract/ui`), not a LEO tab.
 
 **Validator** (same store as the download):
 
@@ -99,7 +99,7 @@ Loop A = which reader to show. Loop B = accept-threshold report (still rules). L
 
 ## 7. Data protection
 
-Real notes only on approved compute with IRB (`docs/LEO_IS_REQUEST.md`). `--research` keeps extract offline (local weights/CDB, no cloud LLM). Login is optional on `127.0.0.1`; required if the UI binds a node address. `--local` binds `127.0.0.1`. Job folders owner-only, deleted after 24 hours, **not encrypted**. `data/leo_training/` is owner-only and is **not** deleted with the job. UMLS key stays in `.env`. Do not commit review files.
+Real notes only on approved compute with IRB (`docs/LEO_IS_REQUEST.md`). `--research` keeps extract offline (local weights/CDB, no cloud LLM). `batch` and `run` open no port, so they do not require a login. Login is optional when the UI binds `127.0.0.1`; it is required if `leo start` binds a node address. `--local` binds `127.0.0.1`. `bin/leo phi-scan` flags likely HIPAA-18 identifiers and does not treat `findings`, `vincristine`, or an id-less label (`MRN pending`) as a hit (`docs/LEO_PHI.md`). Job folders owner-only, deleted after 24 hours, **not encrypted**. `data/leo_training/` is owner-only and is **not** deleted with the job. UMLS key stays in `.env`. Do not commit review files.
 
 ## 8. Limits
 

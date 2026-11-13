@@ -1,4 +1,4 @@
-"""UK <-> US clinical vocabulary normalisation for MedAI-EPI.
+"""UK <-> US clinical vocabulary normalisation for LEO.
 
 Phase 4 deliverable §1. A pre-tokenisation text-level rewrite pass that
 harmonises UK-English clinical spelling and drug names against US-English

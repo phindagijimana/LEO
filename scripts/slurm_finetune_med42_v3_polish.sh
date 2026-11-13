@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-lora-v3polish
+#SBATCH --job-name=leo-lora-v3polish
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=08:00:00
-#SBATCH --output=logs/medai_lora_v3polish_%j.out
-#SBATCH --error=logs/medai_lora_v3polish_%j.err
+#SBATCH --output=logs/leo_lora_v3polish_%j.out
+#SBATCH --error=logs/leo_lora_v3polish_%j.err
 #
 # LoRA fine-tune Med42-8B on the polished synth-v3 corpus.
 #
@@ -34,7 +34,7 @@
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI: LoRA fine-tune Med42-8B on synth-v3-polish"
+echo "LEO: LoRA fine-tune Med42-8B on synth-v3-polish"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"
@@ -65,7 +65,7 @@ cd "$APP_HOME"
 
 BASE_MODEL="${BASE_MODEL:-med42}"
 CORPUS="${CORPUS:-synth-v3-polish}"
-SUFFIX="${MEDAI_LORA_ADAPTER_SUFFIX:-v3_polish}"
+SUFFIX="${LEO_LORA_ADAPTER_SUFFIX:-v3_polish}"
 
 # Prerequisite check — fail fast if the corpus isn't ready.
 if [ ! -f "data/eval_corpora/synth_v3_polish/manifest.csv" ]; then
@@ -86,7 +86,7 @@ echo ""
 echo "--- Running LoRA fine-tune (base=$BASE_MODEL corpus=$CORPUS suffix=$SUFFIX) ---"
 echo "Adapter will land at checkpoints/llama3-med42-8b_lora_epi_${SUFFIX}/"
 
-export MEDAI_LORA_ADAPTER_SUFFIX="$SUFFIX"
+export LEO_LORA_ADAPTER_SUFFIX="$SUFFIX"
 $PY scripts/finetune_lora_epi.py \
     --base-model "$BASE_MODEL" \
     --corpus "$CORPUS" \

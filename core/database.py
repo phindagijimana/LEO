@@ -1,5 +1,5 @@
 """
-Database setup for MedAI Validation System
+Database setup for the LEO validation system
 """
 import sqlite3
 import os

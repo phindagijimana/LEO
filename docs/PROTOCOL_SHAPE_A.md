@@ -1,18 +1,18 @@
-# MedAI-EPI Paper 1 (Shape A) — Study Protocol
+# LEO Paper 1 (Shape A) — Study Protocol
 
 **Version:** 0.1, 2026-09-22  
 **Status:** **Superseded** by `docs/EVAL_PROTOCOL_LEO.md` (frozen 2026-10-01) and `writing/MedAI_EPI_Manuscript_LEO.md`. Kept as history of the M0/M1/M2 research questions. Do not use RQ-A1–A6 as the submission hypotheses.
 
 ## 1. Rationale
 
-The MedAI-EPI Paper 1 blueprint (`paper_doc/MedAI_Paper1_Heterogeneous_Clinical_Documents_Full_Blueprint.docx`, "Shape B") specifies a retrospective clinical NLP validation study over an adjudicated institutional cohort. That study is gated by IRB, cohort access, annotator recruitment, and pilot annotation — realistically **6–12 months**.
+The LEO Paper 1 blueprint (`paper_doc/MedAI_Paper1_Heterogeneous_Clinical_Documents_Full_Blueprint.docx`, "Shape B") specifies a retrospective clinical NLP validation study over an adjudicated institutional cohort. That study is gated by IRB, cohort access, annotator recruitment, and pilot annotation — realistically **6–12 months**.
 
 This protocol defines a smaller, **open-corpus-only** Shape A study that:
 
 - Uses **only publicly available or freely licensable corpora**, no PHI, no IRB.
 - Publishes the schema, pipeline, evaluation harness, and Docker container as the primary artifact.
 - Reports **silver-metric** performance on Fonferko-Shadrach 2024 + (optionally) TUH EEG Corpus.
-- Positions MedAI-EPI as an **open reproducible framework** for the community.
+- Positions LEO as an **open reproducible framework** for the community.
 - **De-risks** and precedes the full institutional Shape B study.
 
 Publishing Shape A first establishes priority, produces cite-able artifacts, and strengthens the eventual Shape B submission.

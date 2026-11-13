@@ -7,7 +7,7 @@ instead loads the tuned adapter live on top of Med42-8B and produces a
 fresh Evidence[T]-wrapped extraction, plus a diff-vs-gold comparison.
 
 Usage (requires GPU):
-    MEDAI_LORA_ADAPTER_DIR=checkpoints/llama3-med42-8b_lora_epi \
+    LEO_LORA_ADAPTER_DIR=checkpoints/llama3-med42-8b_lora_epi \
     venv/bin/python scripts/demo_tuned_extraction.py --doc-id EA0001 --arm M2
 
 Writes:
@@ -26,6 +26,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
+from services.leo_env import getenv
 
 from schema import DocumentMetadata, DocumentType, SCHEMA_VERSION  # noqa: E402
 from services.extract import DecodingConfig  # noqa: E402
@@ -128,11 +129,11 @@ def main():
         raise SystemExit(f"F-S letter not found: {doc_txt_path}")
     silver = json.loads((SILVER_DIR / f"{args.doc_id}.json").read_text())
 
-    if not os.environ.get("MEDAI_LORA_ADAPTER_DIR"):
-        os.environ["MEDAI_LORA_ADAPTER_DIR"] = str(
+    if not getenv("LEO_LORA_ADAPTER_DIR"):
+        os.environ["LEO_LORA_ADAPTER_DIR"] = str(
             REPO / "checkpoints" / "llama3-med42-8b_lora_epi"
         )
-    adapter_dir = os.environ["MEDAI_LORA_ADAPTER_DIR"]
+    adapter_dir = os.environ["LEO_LORA_ADAPTER_DIR"]
     if not Path(adapter_dir).exists():
         raise SystemExit(f"Adapter dir does not exist: {adapter_dir}")
 
@@ -154,7 +155,7 @@ def main():
 
     decoding = DecodingConfig(
         do_sample=False, temperature=None, top_p=None,
-        max_new_tokens=int(os.environ.get("MEDAI_MAX_NEW_TOKENS", 1024)),
+        max_new_tokens=int(getenv("LEO_MAX_NEW_TOKENS", 1024)),
         seed=0, constrained=args.constrained,
     )
     doc = DocumentMetadata(

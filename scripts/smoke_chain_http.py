@@ -64,7 +64,7 @@ def scripted_llm(text, document_id, doc_date):
 
 def main() -> int:
     tmp = tempfile.mkdtemp(prefix="leo_smoke_")
-    os.environ["MEDAI_LEDGER_DB"] = str(Path(tmp) / "evidence.sqlite")
+    os.environ["LEO_LEDGER_DB"] = str(Path(tmp) / "evidence.sqlite")
     os.environ.setdefault("APP_HOME", str(REPO))
 
     import app as app_module
@@ -133,7 +133,7 @@ def main() -> int:
         r = client.post(f"/extract/review/{cid}/resolve", json={"action": "bogus"})
         check("bad action -> 400", r.status_code == 400)
 
-    print("== CLI (medai-epi chain / review) against a live local server ==")
+    print("== CLI (leo-extract chain / review) against a live local server ==")
     import subprocess
     import threading
     from werkzeug.serving import make_server

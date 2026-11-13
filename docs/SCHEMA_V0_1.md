@@ -1,12 +1,12 @@
-# MedAI-EPI Phenotype Schema v0.1
+# LEO Phenotype Schema v0.1
 
 **⚠️ SUPERSEDED.** This document describes v0.1. The active schema is v0.2 — see `SCHEMA_V0_2.md`. v0.1 is retained for historical reference only.
 
 ---
 
-**Purpose.** A single, versioned, machine-checkable specification of the epilepsy phenotype fields MedAI-EPI extracts from clinical documents. This document is the human-readable companion to `schema/`. Any change to the enums, modules, or applicability masks in code must be reflected here before v0.1 is frozen.
+**Purpose.** A single, versioned, machine-checkable specification of the epilepsy phenotype fields LEO extracts from clinical documents. This document is the human-readable companion to `schema/`. Any change to the enums, modules, or applicability masks in code must be reflected here before v0.1 is frozen.
 
-**Framing (§21).** MedAI-EPI is a **research phenotyping assistant**. Every field is an extraction from a source document, not a clinical inference. The schema is designed so that unknown / not-documented is always a valid answer and is preferred over guessing.
+**Framing (§21).** LEO is a **research phenotyping assistant**. Every field is an extraction from a source document, not a clinical inference. The schema is designed so that unknown / not-documented is always a valid answer and is preferred over guessing.
 
 **Reviewer's job.** Read each module, confirm the field list and allowed values, and flag: (1) missing fields the annotators will need, (2) allowed values that are wrong or too coarse/fine, (3) source doc types that should or should not be able to populate the field. Sign-off on this document freezes v0.1; changes after that become v0.2.
 

@@ -1,7 +1,7 @@
 # synth-v3 Master Plan — US-Realistic Epilepsy Clinical Notes
 
 **Status:** design phase, pending user green-light for execution
-**Owner:** MedAI-EPI team
+**Owner:** LEO team
 **Goal:** Generate a robust synthetic US epilepsy clinical notes corpus that clinician reviewers cannot reliably distinguish from real US EHR notes, while remaining fully controlled (schema-conformant gold + reproducible + safe).
 
 ## 1. Vision — what "close to real" actually means

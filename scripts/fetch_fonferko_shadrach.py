@@ -33,7 +33,7 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-UA = "MedAI-EPI corpus-ingestion (research use; contact via project maintainer)"
+UA = "LEO corpus-ingestion (research use; contact via project maintainer)"
 ROOT = Path(__file__).resolve().parent.parent / "data" / "fonferko_shadrach_2024"
 DOWNLOADS = ROOT / "_downloads"
 

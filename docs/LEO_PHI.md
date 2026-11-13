@@ -6,17 +6,17 @@ URMC’s list is the federal 18 ([research coordinator HIPAA topics](https://www
 
 | HIPAA | Identifier | This scanner |
 |---|---|---|
-| A | Names | Labeled `Patient:` / `Mr.` lines only |
+| A | Names | `Patient:` / `Name:` / `Pt:` then a capitalized name, or `Mr.` / `Dr.` lines. `Pt: doing well` is not a name |
 | B | Geography smaller than a state | Street + ZIP with a label or `NY 14620` |
 | C | Dates except year; ages > 89 | `MM/DD/YYYY`, month names, `90-year-old` |
 | D–F | Phone, fax, email | Regex |
-| G–K | SSN, MRN, plan, account, license | Labeled numbers |
-| L–M | Vehicle / device IDs | VIN, plate, serial, IMEI |
+| G–K | SSN, MRN, plan, account, license | Whole-word label, and the value must contain a digit |
+| L–M | Vehicle / device IDs | VIN, plate, serial, IMEI — same whole-word and digit rule |
 | N–O | URL, IP | Regex |
 | P–Q | Biometrics, full-face photos | Phrase only (no image model) |
-| R | Other unique codes | CSN / FIN / encounter / NPI |
+| R | Other unique codes | CSN / FIN / encounter / NPI — same whole-word and digit rule |
 
-A study ID must not be derived from these (initials do not count).
+A labeled id is a whole word, so `FIN` does not match `findings` and `VIN` does not match `vincristine`. The value after the label must contain a digit, so `MRN pending` and `DEA certified` are not hits. Drug names and phenotype words are left in the text. A study ID must not be derived from these (initials do not count).
 
 ## Commands
 

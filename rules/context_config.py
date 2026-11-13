@@ -1,4 +1,4 @@
-"""medspaCy ConText configuration for MedAI-EPI.
+"""medspaCy ConText configuration for LEO.
 
 Phase 2 deliverable §3. Builds a spaCy :class:`spacy.language.Language`
 pipeline with:
@@ -34,12 +34,13 @@ reviewer can filter later.
 from __future__ import annotations
 
 import os
+from services.leo_env import getenv
 from typing import Any, Optional
 
 # PyRuSH (the sentencizer) logs every token of every document at DEBUG through
 # loguru's default stderr handler.  That writes the full note text into job logs,
 # which is unacceptable for real clinical notes.  Drop it unless explicitly asked.
-if os.environ.get("MEDAI_DEBUG_NLP", "").lower() not in ("1", "true", "yes"):
+if getenv("LEO_DEBUG_NLP", "").lower() not in ("1", "true", "yes"):
     try:  # pragma: no cover
         from loguru import logger as _loguru_logger
 

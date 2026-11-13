@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-pilot-deepseek
+#SBATCH --job-name=leo-pilot-deepseek
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=03:00:00
-#SBATCH --output=logs/medai_pilot_deepseek_%j.out
-#SBATCH --error=logs/medai_pilot_deepseek_%j.err
+#SBATCH --output=logs/leo_pilot_deepseek_%j.out
+#SBATCH --error=logs/leo_pilot_deepseek_%j.err
 #SBATCH --dependency=afterok:143696
 #
 # Submit (queued behind the R4c LoRA fine-tune job 143696):
@@ -25,7 +25,7 @@
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI: DeepSeek-8B M0/M1/M2 on pilot corpus"
+echo "LEO: DeepSeek-8B M0/M1/M2 on pilot corpus"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"
@@ -46,7 +46,7 @@ if [ -f "$_SUBMIT_DIR/.env" ]; then
 fi
 export APP_HOME="$_SUBMIT_DIR"
 
-export MEDAI_MANIFEST_DIR="$APP_HOME/data/run_manifests_pilot_deepseek"
+export LEO_MANIFEST_DIR="$APP_HOME/data/run_manifests_pilot_deepseek"
 
 PY="$APP_HOME/venv/bin/python"
 if [ ! -x "$PY" ]; then
@@ -67,7 +67,7 @@ $PY scripts/run_deepseek_on_pilot.py
 
 echo ""
 echo "Finished: $(date)"
-echo "Manifests: $MEDAI_MANIFEST_DIR/$(date -u +%Y-%m-%d)/"
+echo "Manifests: $LEO_MANIFEST_DIR/$(date -u +%Y-%m-%d)/"
 echo ""
 echo "Follow-up scoring:"
-echo "    $PY scripts/score_med42_on_pilot.py --manifests-dir $MEDAI_MANIFEST_DIR --suffix deepseek"
+echo "    $PY scripts/score_med42_on_pilot.py --manifests-dir $LEO_MANIFEST_DIR --suffix deepseek"

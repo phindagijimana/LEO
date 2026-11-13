@@ -3,7 +3,7 @@
 **Required (notes must not leave the box).** CDB and Med42 already on disk;
 Hugging Face / transformers offline; no cloud LLM backend.
 
-**Not required on 127.0.0.1.** Web login, ``MEDAI_LEO_IRB_ACK``, job-folder
+**Not required on 127.0.0.1.** Web login, ``LEO_IRB_ACK``, job-folder
 ``0700`` — reported as info. Login **is** required if the UI binds a node
 address (Slurm). Written IRB/IS approval is policy, not a code flag.
 
@@ -13,6 +13,7 @@ fails only on required misses.
 from __future__ import annotations
 
 import os
+from services.leo_env import getenv, setdefault
 import stat
 from dataclasses import dataclass
 from pathlib import Path
@@ -38,7 +39,7 @@ class Check:
 def research_requested(flag: bool | None = None) -> bool:
     if flag:
         return True
-    return os.environ.get("MEDAI_LEO_RESEARCH", "").strip().lower() in ("1", "true", "yes")
+    return getenv("LEO_RESEARCH", "").strip().lower() in ("1", "true", "yes")
 
 
 def apply_offline_env() -> None:
@@ -46,7 +47,7 @@ def apply_offline_env() -> None:
     os.environ["HF_HUB_OFFLINE"] = "1"
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
     os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
-    os.environ.setdefault("MEDAI_LEO_BLOCK_CLOUD", "1")
+    setdefault("LEO_BLOCK_CLOUD", "1")
 
 
 def offline_env_set() -> bool:
@@ -67,11 +68,11 @@ def cdb_present(repo: Path | None = None) -> bool:
 
 
 def irb_acked() -> bool:
-    return os.environ.get("MEDAI_LEO_IRB_ACK", "").strip().lower() in ("1", "true", "yes")
+    return getenv("LEO_IRB_ACK", "").strip().lower() in ("1", "true", "yes")
 
 
 def cloud_backend_requested() -> bool:
-    for key in ("MEDAI_LEO_BACKEND", "MEDAI_EXTRACT_BACKEND", "LEO_LLM_BACKEND"):
+    for key in ("LEO_BACKEND", "LEO_EXTRACT_BACKEND", "LEO_LLM_BACKEND"):
         val = os.environ.get(key, "").strip().lower()
         if val.startswith("openai") or val in ("cloud", "api"):
             return True
@@ -89,7 +90,7 @@ def login_ready() -> tuple[bool, str]:
     if users:
         return True, f"{len(users)} user(s) in {leo_auth.users_path()}"
     if leo_auth.enabled():
-        return False, "MEDAI_LEO_REQUIRE_LOGIN is on but no users — nobody can sign in. bin/leo user add NAME"
+        return False, "LEO_REQUIRE_LOGIN is on but no users — nobody can sign in. bin/leo user add NAME"
     return False, "login off (optional on 127.0.0.1; required if the UI binds a node address)"
 
 
@@ -129,7 +130,7 @@ def report(repo: Path | None = None, host: str | None = None) -> list[Check]:
         Check(offline_env_set(), "HF/transformers offline",
               "set by --research; or export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1"),
         Check(not cloud_backend_requested(), "no cloud LLM backend",
-              "unset MEDAI_LEO_BACKEND=openai — notes must not leave the host"),
+              "unset LEO_BACKEND=openai — notes must not leave the host"),
         Check(login_ok, "web login", login_detail, required=need_login),
         Check(irb_acked(), "IRB/IS written approval",
               "policy — send docs/LEO_IS_REQUEST.md; not a code gate", required=False),

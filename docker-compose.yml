@@ -1,4 +1,4 @@
-# MedAI-EPI — one-command local deployment.
+# LEO — one-command local deployment.
 #
 #   docker compose up               # GPU service on port 8085 (default)
 #   docker compose --profile cpu up # CPU-only image on port 8086
@@ -14,19 +14,19 @@
 
 services:
 
-  medai-epi:
+  leo:
     build:
       context: .
       dockerfile: Dockerfile.gpu
-    image: medai-epi:gpu
-    container_name: medai-epi
+    image: leo:gpu
+    container_name: leo
     ports:
       - "${SERVICE_PORT:-8085}:8085"
     env_file:
       - .env
     environment:
       SERVICE_HOST: 0.0.0.0
-      MEDAI_REQUIRE_GPU: "1"
+      LEO_REQUIRE_GPU: "1"
     volumes:
       - ./data/run_manifests:/app/data/run_manifests
       - ./model_cache:/root/.cache/huggingface
@@ -48,15 +48,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: medai-epi:cpu
-    container_name: medai-epi-cpu
+    image: leo:cpu
+    container_name: leo-cpu
     ports:
       - "${SERVICE_PORT_CPU:-8086}:8085"
     env_file:
       - .env
     environment:
       SERVICE_HOST: 0.0.0.0
-      MEDAI_REQUIRE_GPU: "0"
+      LEO_REQUIRE_GPU: "0"
     volumes:
       - ./data/run_manifests:/app/data/run_manifests
       - ./logs:/app/logs

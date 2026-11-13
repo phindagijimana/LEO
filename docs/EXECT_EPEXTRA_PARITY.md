@@ -150,7 +150,7 @@ Observed or documented in this repository; the unmeasured items need the US set
 | Document structure | letters vs templated Epic notes with problem lists, med lists, copy-forward text | preprocessor `us_note_preprocessing.py`; unquantified on real notes |
 | Copy-forward / stale text | old medication lists repeated in new notes | **not measured**; risk to `current_asms` precision |
 | Negation / experiencer | family history ("mother had seizures") | ConText; silver-labelled only |
-| Scorer / label mismatch | silver labels made on raw notes vs preprocessed text | MTSamples F1 0.513 vs F-S 0.806 is partly real, partly silver mismatch (`docs/medai_target.md`) |
+| Scorer / label mismatch | silver labels made on raw notes vs preprocessed text | MTSamples F1 0.513 vs F-S 0.806 is partly real, partly silver mismatch (`docs/leo_target.md`) |
 | Frequency phrasing | "2 per month", "1-2 a week", "seizure free since 2021" | `seizure_frequency.period` recall 0.417, the weakest numeric field |
 | Seizure-type granularity | ILAE 2017 vs older terms; "focal onset", "epileptic" | `predominant_seizure_type` F1 0.550; also weakest retrieval field |
 

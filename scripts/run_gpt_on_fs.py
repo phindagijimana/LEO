@@ -7,7 +7,7 @@ chosen because it authored no F-S content (there was no F-S synthesis by
 GPT — F-S is Shadrach 2024's native Zenodo release). Manuscript reports
 this tier choice explicitly.
 
-Cost cap: aborts if the running spend estimate exceeds MEDAI_OPENAI_COST_CAP
+Cost cap: aborts if the running spend estimate exceeds LEO_OPENAI_COST_CAP
 (default $25 USD).
 
 Manifests: data/run_manifests_fs_gpt/<date>/
@@ -31,9 +31,9 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
+from services.leo_env import getenv, setdefault
 
-os.environ.setdefault(
-    "MEDAI_MANIFEST_DIR", str(REPO / "data" / "run_manifests_fs_gpt")
+setdefault("LEO_MANIFEST_DIR", str(REPO / "data" / "run_manifests_fs_gpt")
 )
 
 from schema import DocumentMetadata, DocumentType, SCHEMA_VERSION  # noqa: E402
@@ -43,9 +43,9 @@ FS_DOCS_DIR = REPO / "data" / "fs_corpus" / "documents"
 
 # Rough per-1K-token pricing for cost cap logic. Actual bill computed post-run
 # from usage; this is only for pre-flight gating.
-COST_PER_1K_TOKENS_USD = float(os.environ.get("MEDAI_OPENAI_COST_PER_1K", "0.03"))
+COST_PER_1K_TOKENS_USD = float(getenv("LEO_OPENAI_COST_PER_1K", "0.03"))
 # Rough average tokens per document × 3 arms.
-EST_TOKENS_PER_DOC = int(os.environ.get("MEDAI_OPENAI_EST_TOKENS_PER_DOC", "4000"))
+EST_TOKENS_PER_DOC = int(getenv("LEO_OPENAI_EST_TOKENS_PER_DOC", "4000"))
 
 
 def _fs_docs():
@@ -82,7 +82,7 @@ def main():
         docs = docs[: args.limit]
 
     est_cost = _estimate_cost(len(docs), arms)
-    cost_cap = float(os.environ.get("MEDAI_OPENAI_COST_CAP", "25"))
+    cost_cap = float(getenv("LEO_OPENAI_COST_CAP", "25"))
 
     print("=== GPT (F-S) extractor sweep ===")
     print(f"Tier:            {args.tier}")
@@ -90,12 +90,12 @@ def main():
     print(f"Arms:            {arms}")
     print(f"Est. tokens/doc: {EST_TOKENS_PER_DOC} (× {len(arms)} arms)")
     print(f"Est. cost:       ${est_cost:.2f}  (cap ${cost_cap:.2f})")
-    print(f"Manifests:       {os.environ['MEDAI_MANIFEST_DIR']}")
+    print(f"Manifests:       {os.environ['LEO_MANIFEST_DIR']}")
 
     if est_cost > cost_cap:
         raise SystemExit(
             f"ABORT: pre-flight cost estimate ${est_cost:.2f} exceeds "
-            f"cap ${cost_cap:.2f}. Set MEDAI_OPENAI_COST_CAP=<higher> to override."
+            f"cap ${cost_cap:.2f}. Set LEO_OPENAI_COST_CAP=<higher> to override."
         )
 
     if args.dry_run:
@@ -111,7 +111,7 @@ def main():
     backend = OpenAIBackend(model_name=args.tier)
     decoding = DecodingConfig(
         do_sample=False, temperature=None, top_p=None,
-        max_new_tokens=int(os.environ.get("MEDAI_MAX_NEW_TOKENS", 1024)),
+        max_new_tokens=int(getenv("LEO_MAX_NEW_TOKENS", 1024)),
         seed=0,
         constrained=False,  # OpenAI backend does not use lm-format-enforcer
     )

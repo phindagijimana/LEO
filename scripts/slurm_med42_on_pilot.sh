@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=medai-pilot-med42
+#SBATCH --job-name=leo-pilot-med42
 #SBATCH --partition=interactive
 #SBATCH --gres=gpu:l40s.24g:1
 #SBATCH --nodes=1
@@ -7,8 +7,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=03:00:00
-#SBATCH --output=logs/medai_pilot_med42_%j.out
-#SBATCH --error=logs/medai_pilot_med42_%j.err
+#SBATCH --output=logs/leo_pilot_med42_%j.out
+#SBATCH --error=logs/leo_pilot_med42_%j.err
 #
 # Submit:
 #     sbatch scripts/slurm_med42_on_pilot.sh
@@ -26,7 +26,7 @@
 set -euo pipefail
 
 echo "=================================================="
-echo "MedAI-EPI: Med42-8B M0/M1/M2 on EpiSynth pilot"
+echo "LEO: Med42-8B M0/M1/M2 on EpiSynth pilot"
 echo "=================================================="
 echo "Job ID:  ${SLURM_JOB_ID:-local}"
 echo "Node:    ${SLURM_NODELIST:-$(hostname)}"
@@ -48,7 +48,7 @@ fi
 export APP_HOME="$_SUBMIT_DIR"
 
 # Route manifests to a dedicated dir — do NOT overwrite the F-S sweep.
-export MEDAI_MANIFEST_DIR="$APP_HOME/data/run_manifests_pilot"
+export LEO_MANIFEST_DIR="$APP_HOME/data/run_manifests_pilot"
 
 PY="$APP_HOME/venv/bin/python"
 if [ ! -x "$PY" ]; then
@@ -69,7 +69,7 @@ $PY scripts/run_med42_on_pilot.py
 
 echo ""
 echo "Finished: $(date)"
-echo "Manifests: $MEDAI_MANIFEST_DIR/$(date -u +%Y-%m-%d)/"
+echo "Manifests: $LEO_MANIFEST_DIR/$(date -u +%Y-%m-%d)/"
 echo ""
 echo "Follow-up scoring:"
 echo "    $PY scripts/score_med42_on_pilot.py"

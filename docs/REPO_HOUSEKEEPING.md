@@ -12,11 +12,11 @@ groups in §3.
 | H3 | `references/exect_v2_*.csv` derive from ExECT-V2 files that are study-only. | Redistribution terms of ExECT-V2 are not recorded here. | Keep ignored. State in `docs/EXECT_V2_STUDY.md` that only metadata is described there (already stated). |
 | H4 | `eval/results/concept_retrieval*.{md,json}` quote SNOMED / RxNorm labels. | Same licence risk. | **Fixed:** ignored in `.gitignore`. Only aggregate numbers go in tracked docs. |
 | H5 | Core chain code is untracked: `routes/chain_extract.py`, `routes/review_ui.py`, `services/chain_llm.py`, `ft_extract.py`, `flat_extract.py`, `ontology_loaders.py`, `ontology_releases.py`, `curated_code_audit.py`, `rules/asm_lexicon.py`, plus `app.py` (modified) registers them. | A commit that includes `app.py` without them breaks the app (blueprint registration is wrapped in try/except, so it fails silently with a log warning). | Commit in the dependency order in §3. |
-| H6 | `slurm-151964.out` and `logs/*` are untracked job output. | Logs may contain note text; they were produced when PyRuSH wrote every token at DEBUG. | `slurm-*.out` now ignored. **Fixed at source:** `rules/context_config.py` silences loguru unless `MEDAI_DEBUG_NLP=1`. Review `logs/` before any publication; do not commit them. |
+| H6 | `slurm-151964.out` and `logs/*` are untracked job output. | Logs may contain note text; they were produced when PyRuSH wrote every token at DEBUG. | `slurm-*.out` now ignored. **Fixed at source:** `rules/context_config.py` silences loguru unless `LEO_DEBUG_NLP=1`. Review `logs/` before any publication; do not commit them. |
 | H7 | `Chain_System/chain-of-three-compendium (1).pdf` is untracked. | Third-party PDF; redistribution rights unknown. | Do not commit unless the source and licence are recorded. |
 | H8 | Run manifests (`data/run_manifests_*`, about 60 directories) are untracked. They hold model outputs on F-S letters, MTSamples (no licence) and synthetic notes. | MTSamples text must not be redistributed (`.gitignore` already says so for its raw copy); manifests may embed raw note text or quotes. | Decide per directory: synthetic and F-S (CC-BY) manifests may be tracked or archived (Zenodo); anything derived from MTSamples stays ignored. Add explicit ignore rules for `run_manifests_medcat_rules_mtsamples_*`. |
 | H9 | The Flask app (`venv`, py3.9, no MedCAT) and the chain (`venv-medcat`, py3.11, no Flask) live in different environments. The chain routes need both in one process. | `/extract/chain` cannot run from either venv as installed. | Build one environment with both (needs a network install; blocked in this sandbox), or run the app from `venv-medcat` after adding `flask`, `flask-cors`. Smoke tests here borrowed Flask from `venv` through `PYTHONPATH` (see §4). |
-| H10 | The `bin/medai-epi` CLI has no `chain` or `review` subcommand. | Reviewers must use the HTTP API or the UI; the CLI only reaches the older `/extract` endpoints. | Add `medai-epi chain` and `medai-epi review` as thin wrappers over the routes (small change). **Done:** `medai-epi chain` and `medai-epi review list|resolve` in `scripts/medai_epi_cli.py`, checked against a live server in `scripts/smoke_chain_http.py`. |
+| H10 | The extract HTTP client had no `chain` or `review` subcommand. | Reviewers must use the HTTP API or the UI; that client only reaches the older `/extract` endpoints. | **Done:** `leo-extract chain` and `leo-extract review list|resolve` in `scripts/medai_epi_cli.py` (`bin/leo-extract`; `bin/medai-epi` still launches it), checked against a live server in `scripts/smoke_chain_http.py`. |
 
 ## 2. What was verified in this pass
 
@@ -54,7 +54,7 @@ Before each commit: run the full `pytest tests/` under `venv-medcat`; run
 | test | command | result |
 |---|---|---|
 | Existing HTTP surface (`/extract/*`) | `PYTHONPATH=/tmp/flask_site venv-medcat/bin/python scripts/smoke_e2e_http.py` | all checks passed |
-| Existing CLI (`bin/medai-epi`) | `venv/bin/python scripts/smoke_cli.py` | all checks passed |
+| Extract HTTP client (`bin/leo-extract`) | `venv/bin/python scripts/smoke_cli.py` | all checks passed |
 | **New** chain + ledger + review queue + review UI | `PYTHONPATH=/tmp/flask_site venv-medcat/bin/python scripts/smoke_chain_http.py` | all checks passed (24 HTTP + 5 CLI) |
 | Chain CLI with replayed Med42 output (F-S letter EA0161) | `scripts/extract_chain_cli.py ... --llm-manifests data/run_manifests_fs_test_flat --llm-arm L0` | 17 claims; 4 LLM agreements, 1 disagreement, 1 LLM-only; ran without a GPU |
 

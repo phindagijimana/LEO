@@ -294,7 +294,7 @@ def test_read_table_formats(tmp_path):
 
 @pytest.fixture()
 def client(tmp_path, monkeypatch, runtimes):
-    monkeypatch.setenv("MEDAI_LOAD_MED42", "0")
+    monkeypatch.setenv("LEO_LOAD_MED42", "0")
     monkeypatch.setenv("APP_HOME", str(tmp_path))
     pytest.importorskip("flask_cors")
     import app as appmod
@@ -1189,7 +1189,7 @@ def test_login_audit_isolation_and_restart(client, tmp_path):
 
 def test_required_login_with_no_users_locks_everyone_out(client, monkeypatch):
     c, _ = client
-    monkeypatch.setenv("MEDAI_LEO_REQUIRE_LOGIN", "1")
+    monkeypatch.setenv("LEO_REQUIRE_LOGIN", "1")
     assert c.get("/leo/phenotypes").status_code == 401
     assert c.post("/leo/login", data={"username": "x", "password": "yyyyyyyyyyyy"}).status_code == 401
 
