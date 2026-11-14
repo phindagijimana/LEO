@@ -64,4 +64,4 @@ Sidecars (`--ext-detector`) are extra literature jobs (frequency, stated type, H
 - A claim that accepted cells are safe.
 - ILAE 2025 as the shipped enums (still 2017; 2025 is scoped, not flipped).
 
-Design walk-through: [Design](IMPLEMENTATION.md). How to quote a number: [Interpreting results](INTERPRETING_RESULTS.md).
+Design walk-through: [Design](IMPLEMENTATION.md). How the prompt and the adapter were chosen: [Prompting and fine-tuning](PROMPT_AND_FINETUNE.md). How to quote a number: [Interpreting results](INTERPRETING_RESULTS.md).

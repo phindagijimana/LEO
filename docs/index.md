@@ -24,7 +24,7 @@ Code: [github.com/phindagijimana/LEO](https://github.com/phindagijimana/LEO).
 
 ## Documentation
 
-Study the work in this order: [Theory and Science](THEORY.md), [Interpreting results](INTERPRETING_RESULTS.md), [Design](IMPLEMENTATION.md), [Weaknesses](WEAKNESSES.md), [Literature](LITERATURE.md). Names on those pages: [Glossary](GLOSSARY.md).
+Study the work in this order: [Theory and Science](THEORY.md), [Interpreting results](INTERPRETING_RESULTS.md), [Design](IMPLEMENTATION.md), [Weaknesses](WEAKNESSES.md), [Literature](LITERATURE.md), [Prompting and fine-tuning](PROMPT_AND_FINETUNE.md). Names on those pages: [Glossary](GLOSSARY.md).
 
 | Page | Use |
 |---|---|
@@ -33,6 +33,7 @@ Study the work in this order: [Theory and Science](THEORY.md), [Interpreting res
 | [Design](IMPLEMENTATION.md) | Why each step exists |
 | [Weaknesses](WEAKNESSES.md) | What is still wrong |
 | [Literature](LITERATURE.md) | Papers LEO cites |
+| [Prompting and fine-tuning](PROMPT_AND_FINETUNE.md) | Which prompts and adapters were run, and which one shipped |
 | [Glossary](GLOSSARY.md) | D17, L1C, F-S, research extract, `leo-v0.9` |
 | [Installation](LEO_HOSTING.md) | Workstation, Slurm, weights, UMLS |
 | [Container](LEO_CONTAINER.md) | Docker / Apptainer; mount weights and CDB |

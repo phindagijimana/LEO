@@ -7,6 +7,7 @@ Study the work in this order:
 3. [`IMPLEMENTATION.md`](IMPLEMENTATION.md) — design, decisions, where the code is
 4. [`WEAKNESSES.md`](WEAKNESSES.md) — each hole, what accounts for it, what is next
 5. [`LITERATURE.md`](LITERATURE.md) — papers these pages cite
+6. [`PROMPT_AND_FINETUNE.md`](PROMPT_AND_FINETUNE.md) — prompting and LoRA arms, and why L1C shipped
 
 Names on those pages: [`GLOSSARY.md`](GLOSSARY.md).
 

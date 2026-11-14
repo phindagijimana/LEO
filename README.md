@@ -6,7 +6,7 @@ Cells where the two readers agree are the research extract. On 40 synthetic lett
 
 > **Research use only.** Does not diagnose or recommend treatment. Real notes need IRB and approved compute. Tested on **synthetic notes only**.
 
-Study the work, in this order: [`docs/THEORY.md`](docs/THEORY.md), [`docs/INTERPRETING_RESULTS.md`](docs/INTERPRETING_RESULTS.md), [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md), [`docs/WEAKNESSES.md`](docs/WEAKNESSES.md), [`docs/LITERATURE.md`](docs/LITERATURE.md). Names used on those pages: [`docs/GLOSSARY.md`](docs/GLOSSARY.md). The design choices, the numbers that can be quoted, and the holes that were left open are the record of the work.
+Study the work, in this order: [`docs/THEORY.md`](docs/THEORY.md), [`docs/INTERPRETING_RESULTS.md`](docs/INTERPRETING_RESULTS.md), [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md), [`docs/WEAKNESSES.md`](docs/WEAKNESSES.md), [`docs/LITERATURE.md`](docs/LITERATURE.md), [`docs/PROMPT_AND_FINETUNE.md`](docs/PROMPT_AND_FINETUNE.md). Names used on those pages: [`docs/GLOSSARY.md`](docs/GLOSSARY.md). The design choices, the numbers that can be quoted, and the holes that were left open are the record of the work.
 
 Operator: [`docs/LEO_USER_GUIDE.md`](docs/LEO_USER_GUIDE.md). Hosting: [`docs/LEO_HOSTING.md`](docs/LEO_HOSTING.md). Map of the rest: [`docs/README.md`](docs/README.md).
 
@@ -76,6 +76,7 @@ Research extract = `accepted` **and** `specialist+llm` (71/82 = 0.866 on the 40 
 | `docs/IMPLEMENTATION.md` | A–Z design, decisions, strengths, weaknesses |
 | `docs/WEAKNESSES.md` | Each hole, what accounts for it, what to improve next |
 | `docs/LITERATURE.md` | Papers cited on the docs site |
+| `docs/PROMPT_AND_FINETUNE.md` | Prompt and LoRA arms, and why L1C shipped |
 | `docs/GLOSSARY.md` | D17, L1C, F-S, research extract, `leo-v0.9` |
 | `docs/QUICKSTART.md` | `bin/leo check` and a first batch |
 | `docs/LEO_USER_GUIDE.md` | Run the tool |

@@ -28,6 +28,7 @@ nav:
   - Theory and Science: THEORY.md
   - Interpreting results: INTERPRETING_RESULTS.md
   - Literature: LITERATURE.md
+  - Prompting and fine-tuning: PROMPT_AND_FINETUNE.md
   - Routing rules: LEO_ROUTING_RULES.md
   - Design: IMPLEMENTATION.md
   - Weaknesses: WEAKNESSES.md
